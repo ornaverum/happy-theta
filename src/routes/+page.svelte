@@ -5,7 +5,7 @@
 </script>
 
 <div class='w-full h-full min-h-96'>
-	<Card class='bg-primary-100 mx-auto w-max'>
+	<Card class='bg-primary-100 mx-auto w-max my-20'>
 		<h1 class="text-3xl dark:text-white w-max">Welcome to Inertial Apple</h1>
 		<p class="dark:text-white my-4">
 			Physics tools for students and teachers. Still under development.

@@ -20,7 +20,7 @@
 		<span class="self-center whitespace-nowrap text-xl font-semibold dark:text-white">Inertial Apple</span>
 
 	</NavBrand>
-	<NavHamburger  />
+	<NavHamburger class='ml-16' />
 	<NavUl >
 	  <NavLi href="{base}/">Home</NavLi>
 	  <NavLi href="{base}/free-body-diagram">Free Body Diagram</NavLi>
@@ -35,7 +35,7 @@
 {@render children?.()}
 
 
-<Footer class="bottom-0 z-20 w-full p-4 bg-white border-t border-gray-200 shadow md:flex md:items-center md:justify-between md:p-6 dark:bg-gray-800 dark:border-gray-600">
+<Footer class="fixed bottom-0 z-20 w-full p-4 bg-white border-t border-gray-200 shadow md:flex md:items-center md:justify-between md:p-6 dark:bg-gray-800 dark:border-gray-600">
 	<div class="sm:flex sm:items-center sm:justify-between">
 	<FooterCopyright href="/" by="Jack Neel Waddell" year={2024} />
 	<FooterLinkGroup ulClass="flex flex-wrap items-center mt-3 text-sm text-gray-500 dark:text-gray-400 sm:mt-0">
