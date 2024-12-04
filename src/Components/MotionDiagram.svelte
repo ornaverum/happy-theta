@@ -25,6 +25,7 @@
 		posList?: Dot[];
 		velList?: VectorArrow[];
 		accList?: acceleration[];
+		handleDelete?: (e: MouseEvent)=> void;
 	}
 
 	let {
@@ -38,7 +39,8 @@
 		marginY = 5,
 		posList = $bindable([]),
 		velList = $bindable([]),
-		accList = $bindable([])
+		accList = $bindable([]),
+		handleDelete
 	}: Props = $props();
 
 
@@ -96,8 +98,8 @@
 	<div class="flex flex-row">
 		{#if (showControlButtons)}
 			<div id='button-container flex flex-row m-4 p-4'>
-				<Button class='bg-accent hover:bg-red-800' on:click={()=>{dispatch('deleteMe', {id: id})}
-				}><TrashBinOutline/></Button>
+				<Button class='bg-accent hover:bg-red-800' on:click={handleDelete}
+					><TrashBinOutline/></Button>
 				<Button class='bg-accent hover:bg-secondary-600' on:click={()=>{
 					posList = [];
 					velList = [];

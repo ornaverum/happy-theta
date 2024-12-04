@@ -39,7 +39,7 @@
 		mdArray = [...mdArray, md];
 	}
 
-	let divToCapture: HTMLDivElement = $state();
+	let divToCapture: HTMLDivElement = $state(null);
 
 	const saveDivAsImage = async () => {
 		let tempCtrl = showControlButtons;
@@ -84,7 +84,7 @@
 		<ul class='list-none'>
 			{#each mdArray as md}
 				<li>
-					<MotionDiagram on:deleteMe={handleDelete} {...md} bind:posList={md.posList} bind:accList={md.accList} bind:title={md.title} {showControlButtons}/>
+					<MotionDiagram {handleDelete} {...md} bind:posList={md.posList} bind:accList={md.accList} bind:title={md.title} {showControlButtons}/>
 				</li>
 			{/each}
 		</ul>
