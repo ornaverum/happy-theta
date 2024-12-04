@@ -24,7 +24,7 @@
 		marginY?: number;
 		posList?: Dot[];
 		velList?: VectorArrow[];
-		accList?: acceleration[];
+		accList?: VectorArrow[];
 		handleDelete?: (e: MouseEvent)=> void;
 	}
 
@@ -70,14 +70,7 @@
 		marginY: marginY,
 	})
 
-	let gridComponent: Grid = $state();
-	let positionComponent: Position;
-	let velocityComponent: Velocity;
-	let accelerationComponent: Acceleration;
-	let activeComponent:any = Position;
-
-
-	let divToCapture: HTMLDivElement = $state();
+	let divToCapture: HTMLDivElement = document.querySelector('#capture');
 
 </script>
 
@@ -114,7 +107,7 @@
 				</div>
 			</div>
 		{/if}
-		<div id='capture' bind:this={divToCapture}>
+		<div id='capture'>
 			<div id='fbd' class='bg-gray-50 p-4'>
 				<Stage {width} {height} id='main_stage'
 					on:mouseleave={() => {onStage = false;}}
