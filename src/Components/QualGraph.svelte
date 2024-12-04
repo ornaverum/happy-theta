@@ -8,30 +8,60 @@
 	import { Dropdown, DropdownItem } from 'flowbite-svelte';
 	import EditLabel from './EditLabel.svelte';
 
-
-	import {createEventDispatcher} from 'svelte';
-	let dispatch = createEventDispatcher();
-
 	let name: string = 'QualGraph';
 
 
-
-
-    // make 6 segments instead of 5
-
-
-    
-
     let nCells = 6;
+
+	interface Props {
+		width?: number;
+		height?: number;
+		color?: string;
+		title?: string;
+		labels?: any;
+		showNegativeAxes?: any;
+		showControlButtons?: boolean;
+		showGrid?: boolean;
+		id?: number;
+		dotList?: Dot[] | null;
+		pathList?: GraphPath[];
+	}
+
+	let {
+		width = 500,
+		height = 500,
+		color = 'blue',
+		title = $bindable('Graph Title'),
+		labels = $bindable({
+        	x: 'Time',
+        	y: 'Position',
+    	}),
+		showNegativeAxes = $bindable({
+        x: false,
+        y: true,
+    }),
+		showControlButtons = true,
+		showGrid = true,
+		id = 0,
+		dotList = $bindable([]),
+		pathList = $bindable([])
+	}: Props = $props();
+	let previewDot: Dot | null = $state(null);
+	let previewGraph: GraphPath | null = $state(null);
+
+	let addingDot: boolean = $state(true); // true if adding dot, false if adding path
+
+	let showYLabelOptions = false;
+	let showAxisOptions = false;
 
     let margin = 5;
     let windowSize = Math.min(width, height);
 	let gridSize = windowSize - 2*margin;
     let cellSize = gridSize/nCells;
-    
 	let gridCenter = windowSize/2.0;
-
     let origin = {x:margin, y:gridSize+margin};  // Assuming origin is at bottom left
+
+	
 
 	let gridList: any[] = $state([]);
 	let id_num = 0;
@@ -113,47 +143,6 @@
 	}
 
 
-
-	interface Props {
-		width?: number;
-		height?: number;
-		color?: string;
-		title?: string;
-		labels?: any;
-		showNegativeAxes?: any;
-		showControlButtons?: boolean;
-		showGrid?: boolean;
-		id?: number;
-		dotList?: Dot[] | null;
-		pathList?: GraphPath[];
-	}
-
-	let {
-		width = 500,
-		height = 500,
-		color = 'blue',
-		title = 'Graph Title',
-		labels = {
-        x: 'Time',
-        y: 'Position',
-    },
-		showNegativeAxes = $bindable({
-        x: false,
-        y: true,
-    }),
-		showControlButtons = true,
-		showGrid = true,
-		id = 0,
-		dotList = $bindable([]),
-		pathList = $bindable([])
-	}: Props = $props();
-	let previewDot: Dot | null = $state(null);
-	let previewGraph: GraphPath | null = $state(null);
-
-	let addingDot: boolean = $state(true); // true if adding dot, false if adding path
-
-	let showYLabelOptions = false;
-	let showAxisOptions = false;
 
 
 	const getPreviewDot= (pos = {x:gridCenter, y:height/2.0}) => {
@@ -311,6 +300,7 @@
 
 
 <div id='graph-container' class='p-4 flex flex-col border-2'>
+	
 	{#if showControlButtons}
 		<div id='button-header' class="justify-left flex flex-row m-2 p-2">
 			<Button color="red" size="xs" variant="outline" class="mr-2"
@@ -354,41 +344,40 @@
 		</div>
 		<div id='graph' class="flex flex-col" >
 
-			<Stage config={{width, height, id:'main_stage'}}
+			<Stage {width} {height} id='main_stage'
 				on:click={handleClickCanvas}
 				on:mousemove={handleMoveCanvas}
 				on:mouseleave={handleLeaveCanvas}
 			>
 				<Layer config={{id: 'grid_layer'}}>
 					{#each gridList as item (item.id)}
-						<Line config={{
-							points: [item.x0, item.y0, item.x1, item.y1],
-							stroke: 'gray',
-							strokeWidth: item.strokeWidth,
-							}} />
+						<Line points= {[item.x0, item.y0, item.x1, item.y1]}
+							stroke='gray'
+							strokeWidth= {item.strokeWidth}
+							/>
 					{/each}
 				</Layer>
-				<Layer config={{id:'dot_layer'}}>
+				<Layer id='dot_layer'>
 					{#each dotList as dot (dot.id)}
-						<Circle config={{
-							x: dot.x,
-							y: dot.y,
-							radius: dot.radius,
-							fill: dot.fill,
-							opacity: dot.opacity,
-						}} />
+						<Circle 
+							x= {dot.x}
+							y= {dot.y}
+							radius= {dot.radius}
+							fill= {dot.fill}
+							opacity = {dot.opacity}
+						/>
 					{/each}
 					{#if addingDot && previewDot}
-						<Circle config={{x:previewDot.x, y:previewDot.y, radius: previewDot.radius,
-							fill: previewDot.fill, opacity: previewDot.opacity}} />
+						<Circle x={previewDot.x} y={previewDot.y} radius= {previewDot.radius}
+							fill= {previewDot.fill} opacity= {previewDot.opacity} />
 					{/if}
 				</Layer>
-				<Layer config = {{id: 'path_layer'}}>
+				<Layer id= 'path_layer'>
 					{#if !addingDot && previewGraph}
-						<Path config={previewGraph} />
+						<Path {previewGraph} />
 					{/if}
 					{#each pathList as path (path.id)}
-						<Path config={path} />
+						<Path {path} />
 					{/each}
 				</Layer>
 			</Stage>

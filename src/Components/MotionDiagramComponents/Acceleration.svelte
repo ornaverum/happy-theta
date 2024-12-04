@@ -94,7 +94,7 @@
 			previewAcc.dir = 0;
 			previewAcc.arrow = null;
 			previewAcc.dot = {
-				id: 'previewDot',
+				id: -1,
 				x: snappedPos.x,
 				y: snappedPos.y,
 				radius: 4,
@@ -125,33 +125,32 @@
 		{#if (acc.dot)}
 			<Circle config={acc.dot}/>
 		{:else if (acc.arrow)}
-			<Arrow config={{points: [acc.arrow.pos0.x, acc.arrow.pos0.y, acc.arrow.pos1.x, acc.arrow.pos1.y],
-				stroke: acc.arrow.stroke,
-				opacity: acc.arrow.opacity,
-				strokeWidth: 4,
-				}}/>
+			<Arrow points= {[acc.arrow.pos0.x, acc.arrow.pos0.y, acc.arrow.pos1.x, acc.arrow.pos1.y]}
+				stroke= {acc.arrow.stroke}
+				opacity= {acc.arrow.opacity}
+				strokeWidth= {4}
+				/>
 		{/if}
 	{/each}
 	{#if active}
-        <Rect config={{
-            x: 0,
-            y: 0,
-            height: height,
-            width: width,
-            fill: 'white',
-            opacity: 0,
-        }} 
+        <Rect 
+            x={0}
+            y= {0}
+            {height}
+            {width}
+            fill= 'white'
+            opacity= {0}
             on:click={handleClick}
 			on:mousemove={handleMouseMove}
         />
 		{#if (previewAcc.dot)}
-			<Circle config={previewAcc.dot}/>
+			<Circle {...previewAcc.dot}/>
 		{:else if (previewAcc.arrow)}
-			<Arrow config={{points: [previewAcc.arrow.pos0.x, previewAcc.arrow.pos0.y, previewAcc.arrow.pos1.x, previewAcc.arrow.pos1.y],
-				stroke: previewAcc.arrow.stroke,
-				opacity: previewAcc.arrow.opacity,
-				strokeWidth: 4,
-				}}/>
+			<Arrow points={[previewAcc.arrow.pos0.x, previewAcc.arrow.pos0.y, previewAcc.arrow.pos1.x, previewAcc.arrow.pos1.y]}
+				stroke= {previewAcc.arrow.stroke}
+				opacity= {previewAcc.arrow.opacity}
+				strokeWidth= {4}
+				/>
 		{/if}
 
     {/if}

@@ -7,34 +7,12 @@
 
 	import type { Dot, VectorArrow, acceleration } from './kinematicsTypes';
 
- 	import { createEventDispatcher } from 'svelte'
-
-	const dispatch = createEventDispatcher()
-	// import html2canvas from 'html2canvas';
-
     import { Label, Select, Input, Button, Toggle } from 'flowbite-svelte';
     import {TrashBinOutline, FileExportOutline, EditOutline, ArrowRightOutline, RefreshOutline} from 'flowbite-svelte-icons';
 	// import { position } from 'html2canvas/dist/types/css/property-descriptors/position';
 
 	let name: string = 'Motion Diagram Component';
 
-
-
-	let editTitle:boolean = $state(false);
-
-	let gridPointList: number[] = [];
-	for (let i = -15; i <= 15; i++) {
-		gridPointList.push(i);
-	}
-
-	let gridSize:number = width;
-	let cellSize:number = gridSize/(gridNum + 1);
-	let gridCenter:number = gridSize/2.0;
-	let yValue:number = $state(cellSize);
-
-	let toggleChecked:boolean = $state(false);
-	let onStage:boolean = $state(false);
-	
 	interface Props {
 		width?: number;
 		height?: number;
@@ -63,6 +41,23 @@
 		accList = $bindable([])
 	}: Props = $props();
 
+
+
+	let editTitle:boolean = $state(false);
+
+	let gridPointList: number[] = [];
+	for (let i = -15; i <= 15; i++) {
+		gridPointList.push(i);
+	}
+
+	let gridSize:number = width;
+	let cellSize:number = gridSize/(gridNum + 1);
+	let gridCenter:number = gridSize/2.0;
+	let yValue:number = $state(cellSize);
+
+	let toggleChecked:boolean = $state(false);
+	let onStage:boolean = $state(false);
+	
 	let params = $state({
 		width: width,
 		height: height,
@@ -119,11 +114,11 @@
 		{/if}
 		<div id='capture' bind:this={divToCapture}>
 			<div id='fbd' class='bg-gray-50 p-4'>
-				<Stage config={{width, height, id:'main_stage'}}
+				<Stage {width} {height} id='main_stage'
 					on:mouseleave={() => {onStage = false;}}
 					on:mouseenter={() => {onStage = true;}}
 					>
-					<Grid bind:this={gridComponent} {width} {height} {marginY}/>
+					<Grid  {width} {height} {marginY}/>
 					<Velocity bind:velList={velList} {posList}/>
 					<Acceleration active={toggleChecked && onStage} bind:accList={accList} {...params} {posList}/>
 					<Position active={!toggleChecked && onStage} bind:posList={posList} {...params}/>

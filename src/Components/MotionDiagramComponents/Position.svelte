@@ -86,7 +86,7 @@
 		let pos = {x: event.detail.evt.layerX, y: event.detail.evt.layerY};
         let snappedPos = getPreviewPosition(pos);
         previewPos = {
-            id: 'preview',
+            id: -1,
             x: snappedPos.x,
             y: snappedPos.y,
             radius: 8,
@@ -97,22 +97,21 @@
     
 </script>
 
-<Layer config={{id:'position_layer'}} 
->
+<Layer id='position_layer'
+    >
     {#each posList as pos (pos.id)}
-        <Circle config={pos} />
+        <Circle {pos} />
     {/each}
     {#if active}
-        <Circle config={previewPos} />
+        <Circle {previewPos} />
 
-        <Rect config={{
-            x: 0,
-            y: 0,
-            height: height,
-            width: width,
-            fill: 'red',
-            opacity: 0,
-        }}
+        <Rect 
+            x= {0}
+            y={ 0}
+            {height}
+            {width}
+            fill = 'red'
+            opacity= {0}
             on:click={handleClick}
             on:mousemove={handleMouseMove}
         />

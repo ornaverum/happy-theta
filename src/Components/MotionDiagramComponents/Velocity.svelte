@@ -37,12 +37,12 @@
 </script>
 
 
-<Layer config={{id:'velocity_layer'}}>
+<Layer id='velocity_layer'>
     {#each velList as arrow (arrow.id)}
-        <Arrow config={{points: [arrow.pos0.x, arrow.pos0.y, arrow.pos1.x, arrow.pos1.y],
-        stroke: arrow.stroke,
-        opacity: arrow.opacity,
-        strokeWidth: 4,
-        }}/>
+        <Arrow points= {[arrow.pos0.x, arrow.pos0.y, arrow.pos1.x, arrow.pos1.y]}
+        stroke= {arrow.stroke}
+        opacity= {arrow.opacity}
+        strokeWidth= {4}
+        />
     {/each}
 </Layer>

@@ -66,34 +66,34 @@
 </script>
 
 
-<Layer config={{id: 'grid_layer'}} >
+<Layer id='grid_layer' >
 
 		{#each gridList as item (item.id)}
-			<Line config={{
-				points: [item.x0, item.y0, item.x1, item.y1],
-				stroke: item.strokeColor,
-				strokeWidth: item.strokeWidth,
-				}} />
+			<Line 
+				points= {[item.x0, item.y0, item.x1, item.y1]}
+				stroke= {item.strokeColor}
+				strokeWidth= {item.strokeWidth}
+				/>
 		{/each}
-		<Text config={{
-			x: width-10,
-			y: 0.5*cellSize,
-			text: label,
-			fontSize: 20,
-			fill: 'black',
-			align: 'center',
-		}}/>
+		<Text 
+			x= {width-10}
+			y= {0.5*cellSize}
+			text= {label}
+			fontSize={20}
+			fill= 'black'
+			align= 'center'
+		/>
 	<!-- </Layer> -->
 	{#if active}
 		<!-- <Layer config={{id: 'active_layer'}}> -->
-		<Rect config={{
-			x: 0,
-			y: 0,
-			height: height,
-			width: width,
-			fill: 'white',
-			opacity: 0,
-		}} 
+		<Rect 
+			x= {0}
+			y= {0}
+			{height}
+			{width}
+			fill= 'white'
+			opacity= {0}
+		 
 		on:click={(e) => console.log(' grid click')}
 		/>
 		<!-- </Layer> -->
