@@ -5,7 +5,7 @@
 	import Position from './MotionDiagramComponents/Position.svelte';
 	import Grid from './MotionDiagramComponents/Grid.svelte';
 
-	import type { Dot, VectorArrow, acceleration } from './kinematicsTypes';
+	import type { Point, Dot, VectorArrow, acceleration } from './kinematicsTypes';
 
     import { Label, Select, Input, Button, Toggle } from 'flowbite-svelte';
     import {TrashBinOutline, FileExportOutline, EditOutline, ArrowRightOutline, RefreshOutline} from 'flowbite-svelte-icons';
@@ -44,6 +44,7 @@
 	}: Props = $props();
 
 
+	let circleProps = {radius: 8, color: 'blue'}
 
 	let editTitle:boolean = $state(false);
 
@@ -70,9 +71,20 @@
 		marginY: marginY,
 	})
 
-	let divToCapture: HTMLDivElement = document.querySelector('#capture');
+	// let divToCapture: HTMLDivElement = document.querySelector('#capture');
+	let samplePositions: Point[] = [];
+	samplePositions.push({x:0, y:0});
+	samplePositions.push({x:100, y:10});
 
 </script>
+
+{#snippet drawPositionDots(xs:Point[])}
+	<Layer>
+		{#each xs as x}
+			<Circle {...x, circleProps} />
+		{/each}
+	</Layer>
+{/snippet}
 
 <main class="flex flex-col justify-center p-4 items-center">
 	<div id='Title' class='m-4 p-2 text-2xl font-bold flex flex-row rounded-xl border-1'>
@@ -113,10 +125,12 @@
 					on:mouseleave={() => {onStage = false;}}
 					on:mouseenter={() => {onStage = true;}}
 					>
-					<Grid  {width} {height} {marginY}/>
-					<Velocity bind:velList={velList} {posList}/>
-					<Acceleration active={toggleChecked && onStage} bind:accList={accList} {...params} {posList}/>
-					<Position active={!toggleChecked && onStage} bind:posList={posList} {...params}/>
+					<Grid size={{x:width, y:height}} gridCenteredValue={{x:15, y:0}}/>
+					<!-- <Velocity bind:velList={velList} {posList}/> -->
+					<!-- <Acceleration active={toggleChecked && onStage} bind:accList={accList} {...params} {posList}/> -->
+
+					{@render drawPositionDots(samplePositions)}
+
 				</Stage>
 			</div>
 		</div>

@@ -15,7 +15,7 @@ export type Dot = {
     opacity: number,
 };
 
-export type Point ={
+export type Point = {
     x: number,
     y: number,
 };
