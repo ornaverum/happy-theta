@@ -1,9 +1,10 @@
 <script lang="ts">
-	import { Stage, Layer, Line, Circle, Arrow, Text} from 'svelte-konva';
+	import { Stage, Layer, Line, Circle, Arrow, Text, Rect} from 'svelte-konva';
 	import Acceleration from './MotionDiagramComponents/Acceleration.svelte';
 	import Velocity from './MotionDiagramComponents/Velocity.svelte';
 	import Position from './MotionDiagramComponents/Position.svelte';
 	import Grid from './MotionDiagramComponents/Grid.svelte';
+	import {getPointFromStage, getStageFromPoint} from './MotionDiagramComponents/Grid.svelte';
 
 	import type { Point, Dot, VectorArrow, acceleration } from './kinematicsTypes';
 
@@ -76,6 +77,8 @@
 	samplePositions.push({x:0, y:0});
 	samplePositions.push({x:100, y:10});
 
+
+	getStageFromPoint({x: 0, y: 0});
 </script>
 
 {#snippet drawPositionDots(xs:Point[])}
@@ -103,20 +106,21 @@
 	<div class="flex flex-row">
 		{#if (showControlButtons)}
 			<div id='button-container flex flex-row m-4 p-4'>
-				<Button class='bg-accent hover:bg-red-800' on:click={handleDelete}
-					><TrashBinOutline/></Button>
-				<Button class='bg-accent hover:bg-secondary-600' on:click={()=>{
+				<!-- <Button class='bg-accent hover:bg-red-800' on:click={handleDelete}
+					><TrashBinOutline/></Button> -->
+				<!-- <Button class='bg-accent hover:bg-secondary-600' on:click={()=>{
 					posList = [];
 					velList = [];
 					accList = [];
 					yValue = cellSize;
 					params.yValue = yValue;
-				}}><RefreshOutline/></Button>
-				<div class='flex flex-row text-sm'>
+				}}><RefreshOutline/></Button> -->
+				<!-- <div class='flex flex-row text-sm'>
 					Position
 					<Toggle bind:checked={toggleChecked} class='ml-2'/>
 					Acceleration
-				</div>
+				</div> -->
+				Howard
 			</div>
 		{/if}
 		<div id='capture'>
@@ -125,11 +129,15 @@
 					on:mouseleave={() => {onStage = false;}}
 					on:mouseenter={() => {onStage = true;}}
 					>
-					<Grid size={{x:width, y:height}} gridCenteredValue={{x:15, y:0}}/>
-					<!-- <Velocity bind:velList={velList} {posList}/> -->
-					<!-- <Acceleration active={toggleChecked && onStage} bind:accList={accList} {...params} {posList}/> -->
+					<Grid size={{x:width, y:height}} origin={{x:15, y:0}} numCell={{x:30, y:0}}/>
+					<!-- <Velocity bind:velList={velList} {posList}/>
+					<Acceleration active={toggleChecked && onStage} bind:accList={accList} {...params} {posList}/>
 
-					{@render drawPositionDots(samplePositions)}
+					{@render drawPositionDots(samplePositions)} -->
+					<!-- <Layer>
+						<Rect x={0} y={0} width={width/2} height={height/2} fill='blue' opacity={1}/>
+					</Layer> -->
+					
 
 				</Stage>
 			</div>

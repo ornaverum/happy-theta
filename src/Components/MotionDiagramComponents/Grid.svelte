@@ -4,6 +4,8 @@
 	import type { Point } from '../kinematicsTypes';
 	import {onMount} from 'svelte';
 
+	import Grid from './Grid.svelte';
+
 	type GridLine = {
 		id: number,
 		x0: number,
@@ -15,21 +17,25 @@
 	}
 
 	interface Props {
-		size: {x:number, y:number};
-		cellNum?: {x:number, y:number};
+		size: Point;
+		numCell?: Point;
 		gridList?: GridLine[];
-		gridCenteredValue?: {x: number, y: number};
-		margin?: {x:number, y:number};
+		origin?: Point;
+		margin?: Point;
 		active?: boolean;
+		getStageFromPoint?:Function;
+		getPointFromStage?:Function;
 	}
 
 	let {
 		size = {x: 800, y:100},
-		cellNum = {x:30, y:0},
-		gridCenteredValue = {x: 10, y:0},
+		numCell = {x:30, y:0},
+		origin = {x: 10, y:0},
 		gridList = [],
 		margin = {x: 5, y:5},
-		active = false
+		active = false,
+		getStageFromPoint = $bindable(()=>{}),
+		getPointFromStage = $bindable(()=>{}),
 	}: Props = $props();
 
 
@@ -39,48 +45,59 @@
 	}
 
 	
-
 	// size is the height or width, depending
 	const generateGridCoords = (size:number, numGrids:number, margin:number = 10)=>{
 		return range(margin, size-margin, numGrids);
 	}
 
-
-	let label: {x:string, y:string};
+	let label: {x:string, y:string} = $state({x:'x', y:'y'});
     let id_num: number = 0;
-	let cellSize: number;  // make aspect ratio of all cells 1:1
-	let gridCenter: {x: number, y: number};
+	let cellSize: number = $state(1);  // make aspect ratio of all cells 1:1
+	let gridCenter: Point;
 	let yValue :number;
+	let offSet: Point = $state({x: 0, y: 0});
+	let grid:Grid;
+
+	
 
 	onMount(()=>{
 		label = {x:'x', y:'y'};
-		cellSize = Math.min(size.x/(cellNum.x+1), size.y/(cellNum.y+1));
+		cellSize = Math.min((size.x-2*margin.x)/(numCell.x+1), (size.y-2*margin.y)/(numCell.y+1));
 		gridCenter = {x: size.x/2.0, y: size.y/2.0};
 		yValue = cellSize;
+		offSet = calculateOffset( {x: numCell.x/2.0 * cellSize, y: numCell.y/2.00*cellSize}, {x: size.x/2.0, y: size.y/2.0});
 		buildGridLines();
+
+		getStageFromPoint = (point: Point)=>{
+			return {x: point.x*cellSize + offSet.x, y: point.y*cellSize + offSet.y};
+		}
+
+		getPointFromStage = (point: Point)=>{
+			return {x: (point.x - offSet.x)/cellSize, y: (point.y - offSet.y)/cellSize};
+		}
 	});
 
 	// translate from coordinate values to pixel coordinates
-	export const findClosestGridPoint:Function = (pt:Point)=>{
-		let pix: {x: number, y: number} = {x: 0 , y:0};
-		pix.x = (pt.x - gridCenteredValue.x)*cellSize + gridCenter.x;
-		pix.y = (pt.y - gridCenteredValue.y)*cellSize + gridCenter.y;
 
-		return pix;
-	};
+
+	const calculateOffset:Function= (gridCenter: Point, stageCenter: Point)=>{
+		return {x: -gridCenter.x + stageCenter.x, y: -gridCenter.y + stageCenter.y};
+	}
+
+
 
 	const buildGridLines:Function = ()=>{
 		// gridlines for x (i.e., parallel to y-axis)
-		for (let i = 0; i <= cellNum.x; i++) {
-			let startParallel = (i - gridCenteredValue.x) * cellSize +gridCenter.x;
-			let startPerp = margin.y;
-			let endPerp = size.y - margin.y;
+		for (let i = 0; i <= numCell.x; i++) {
+			let xVal = i*cellSize;
+			let yVali = numCell.y==0 ? -cellSize : 0;
+			let yValf = numCell.y*cellSize | cellSize;
 			gridList.push({
 				id: id_num++,
-				x0: startParallel,
-				y0: startPerp,
-				x1: startParallel,
-				y1: endPerp,
+				x0: xVal,
+				y0: yVali,
+				x1: xVal,
+				y1: yValf,
 				strokeWidth: i%5==0 ? 4 : 2,
 				strokeColor: 'gray',
 			});
@@ -88,10 +105,10 @@
 
 		// gridlines for y (i.e., parallel to x-axis)
 
-		for (let i = 0; i <= cellNum.y; i++) {
-			let startParallel = (i-gridCenteredValue.y) * cellSize + gridCenter.y;
-			let startPerp = margin.x;
-			let endPerp = size.x - margin.x;
+		for (let i = 0; i <= numCell.y; i++) {
+			let startParallel = i * cellSize;
+			let startPerp = 0;
+			let endPerp = numCell.x * cellSize;
 			gridList.push({
 				id: id_num++,
 				x0: startPerp,
@@ -103,37 +120,44 @@
 			});
 		}
 
+		// y axis
 		gridList.push({
 			id: id_num++,
-			x0: -(cellNum.x-gridCenteredValue.x) * cellSize + gridCenter.x,
-			y0: margin.y,
-			x1: -(cellNum.x-gridCenteredValue.x) * cellSize + gridCenter.x,
-			y1: size.y-margin.y,
+			x0: origin.x * cellSize,
+			y0: numCell.y==0?cellSize * 1.5:numCell.y*cellSize,
+			x1: origin.x * cellSize,
+			y1: numCell.y==0?-cellSize * 1.5:0-2.5,
 			strokeWidth: 5,
 			strokeColor: 'black',
 		});
 
+		// x axis
 		gridList.push({
 			id: id_num++,
-			x0: margin.x,
-			y0: gridCenter.y,
-			x1: size.x - margin.x,
-			y1: gridCenter.y,
+			x0: -2.5,
+			y0: (numCell.y - origin.y) * cellSize,
+			x1: numCell.x*cellSize +2.5,
+			y1: (numCell.y - origin.y) * cellSize,
 			strokeWidth:  5,
 			strokeColor: 'black',
 		});
+
+		console.log('gridList: ', gridList);
 	}
 
 </script>
 
 
 <Layer id='grid_layer' >
-
 		{#each gridList as item (item.id)}
 			<Line 
-				points= {[item.x0, item.y0, item.x1, item.y1]}
+				points= {[item.x0 + offSet.x, 
+						item.y0 + offSet.y, 
+						item.x1 + offSet.x, 
+						item.y1 + offSet.y]}
 				stroke= {item.strokeColor}
 				strokeWidth= {item.strokeWidth}
+				opacity= {1}
 				/>
 		{/each}
 		<Text 
@@ -144,9 +168,7 @@
 			fill= 'black'
 			align= 'center'
 		/>
-	<!-- </Layer> -->
 	{#if active}
-		<!-- <Layer config={{id: 'active_layer'}}> -->
 		<Rect 
 			x= {0}
 			y= {0}
@@ -157,6 +179,16 @@
 		 
 		on:click={(e) => console.log(' grid click')}
 		/>
-		<!-- </Layer> -->
 	{/if}
 </Layer>
+
+<!-- <Layer>
+	<Rect 
+		x= {0}
+		y= {0}
+		height = {size.y}
+		width = {size.x}
+		fill= 'green'
+		opacity= {1}
+		on:click={(e) => console.log(' grid click')}/>
+</Layer> -->

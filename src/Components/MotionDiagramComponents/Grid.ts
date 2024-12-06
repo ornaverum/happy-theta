@@ -4,18 +4,25 @@ export class Grid {
     margin: number;
     axes: {x: number, y:number}
     tickCoords: {x: number[], y:number[]};
-    numTicks:{x:number, y:number};
+    numCells:{x:number, y:number};
 
-    gridCenter: {x: number, y:number};
+    origin: {x: number, y:number};
     gridSize: {x: number, y:number};
 
-    constructor(height:number, width:number, margin:number, numTicks:{x:number, y:number}){
+    constructor(height:number, width:number, margin:number, numCells:{x:number, y:number}){
         this.height = height;
         this. width = width;
         this.margin = margin;
-        this.numTicks = numTicks;
+        this.numCells = numCells;
     }
 
+	export const getPointFromStage:Function = (pt:Point)=>{
+		return {x: (pt.x - offSet.x)/cellSize, y: (pt.y - offSet.y)/cellSize};
+	}
+
+	export const getStageFromPoint:Function = (pt:Point)=>{
+		return {x: pt.x*cellSize + offSet.x, y: pt.y*cellSize + offSet.y};
+	}
 
 
 } 
