@@ -3,8 +3,6 @@
 	import Acceleration from './MotionDiagramComponents/Acceleration.svelte';
 	import Velocity from './MotionDiagramComponents/Velocity.svelte';
 	import Position from './MotionDiagramComponents/Position.svelte';
-	import Grid from './MotionDiagramComponents/Grid.svelte';
-	import {getPointFromStage, getStageFromPoint} from './MotionDiagramComponents/Grid.svelte';
 
 	import type { Point, Dot, VectorArrow, acceleration } from './kinematicsTypes';
 
