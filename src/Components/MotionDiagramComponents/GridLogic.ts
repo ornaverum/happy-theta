@@ -1,10 +1,14 @@
 import type {Point} from '../kinematicsTypes';
 
-type GridLineVals = {
+type GridLine = {
     x0: number,
     y0: number,
     x1: number,
     y1: number,
+    strokeColor?: string,
+    strokeWidth?: number,
+
+
 }
 
 export default class GridLogic {
@@ -16,7 +20,7 @@ export default class GridLogic {
     stageCenter?: Point;
     gridCenter?: Point;
     offSet?: Point;
-    gridList?: GridLineVals[];
+    gridList?: GridLine[];
 
     constructor(size:Point, margin:Point, numCells:Point, origin:Point){
         this.size = size;
@@ -47,10 +51,13 @@ export default class GridLogic {
         return {x: (point.x - offSet.x)/cellSize, y: (point.y - offSet.y)/cellSize};
     }
 
+    getGridList:Function = ()=>{
+        return this.gridList;
+    }
 
     buildGridLines:Function = (numCells:Point, cellSize:number, origin:Point)=>{
         // gridlines for x (i.e., parallel to y-axis)
-        let gridList:GridLineVals[] = [];
+        let gridList:GridLine[] = [];
         for (let i = 0; i <= numCells.x; i++) {
             let xVal = i*cellSize;
             let yVali = numCells.y==0 ? -cellSize : 0;
@@ -60,6 +67,8 @@ export default class GridLogic {
                 y0: yVali,
                 x1: xVal,
                 y1: yValf,
+                strokeColor: 'gray',
+                strokeWidth: i%5==0?4:2,
             });
         }
     
@@ -74,6 +83,8 @@ export default class GridLogic {
                 y0: startParallel,
                 x1: endPerp,
                 y1: startParallel,
+                strokeColor: 'gray',
+                strokeWidth: i%5==0?4:2,
             });
         }
     
@@ -83,6 +94,8 @@ export default class GridLogic {
             y0: numCells.y==0?cellSize * 1.5:numCells.y*cellSize,
             x1: origin.x * cellSize,
             y1: numCells.y==0?-cellSize * 1.5:0-2.5,
+            strokeColor: 'black',
+                strokeWidth: 5,
         });
     
         // x axis
@@ -91,6 +104,8 @@ export default class GridLogic {
             y0: (numCells.y - origin.y) * cellSize,
             x1: numCells.x*cellSize +2.5,
             y1: (numCells.y - origin.y) * cellSize,
+            strokeColor: 'black',
+                strokeWidth: 5,
         });
         return gridList;
     }

@@ -52,7 +52,6 @@
 		gridCenter = {x: size.x/2.0, y: size.y/2.0};
 		yValue = cellSize;
 		offSet = calculateOffset( {x: numCell.x/2.0 * cellSize, y: numCell.y/2.00*cellSize}, {x: size.x/2.0, y: size.y/2.0});
-		buildGridLines();
 
 
 	});
@@ -70,7 +69,7 @@
 
 
 <Layer id='grid_layer' >
-		{#each gridList as item (item.id)}
+		{#each gridLogic?.getGridList() as item (item.id)}
 			<Line 
 				points= {[item.x0 + offSet.x, 
 						item.y0 + offSet.y, 

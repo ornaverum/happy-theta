@@ -3,6 +3,8 @@
 	import Acceleration from './MotionDiagramComponents/Acceleration.svelte';
 	import Velocity from './MotionDiagramComponents/Velocity.svelte';
 	import Position from './MotionDiagramComponents/Position.svelte';
+	import Grid from './MotionDiagramComponents/Grid.svelte';
+	import GridLogic from './MotionDiagramComponents/GridLogic';
 
 	import type { Point, Dot, VectorArrow, acceleration } from './kinematicsTypes';
 
@@ -76,7 +78,6 @@
 	samplePositions.push({x:100, y:10});
 
 
-	getStageFromPoint({x: 0, y: 0});
 </script>
 
 {#snippet drawPositionDots(xs:Point[])}
