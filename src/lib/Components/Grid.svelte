@@ -1,7 +1,7 @@
 <script lang='ts'>
 
     import { Stage, Layer, Line, Circle, Arrow, Text, Group, Rect, type KonvaMouseEvent} from 'svelte-konva';
-	import type { Point, Position } from '../kinematicsTypes';
+	import type { Point, Position } from './kinematicsTypes';
 	import {onMount} from 'svelte';
 	import GridLogic from './GridLogic';
 

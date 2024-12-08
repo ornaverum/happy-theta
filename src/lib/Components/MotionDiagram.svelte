@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { Stage, Layer, Line, Circle, Arrow, Text, Rect, type KonvaMouseEvent} from 'svelte-konva';
-	import Grid from './MotionDiagramComponents/Grid.svelte';
-	import GridLogic from './MotionDiagramComponents/GridLogic';
+	import Grid from './Grid.svelte';
+	import GridLogic from './GridLogic';
 
-	import type { Point, Position, Velocity, acceleration } from './kinematicsTypes';
+	import type { Point, Vector } from '$lib/types';
 
     import { Label, Select, Input, Button, Toggle } from 'flowbite-svelte';
     import {TrashBinOutline, FileExportOutline, EditOutline, ArrowRightOutline, RefreshOutline} from 'flowbite-svelte-icons';
@@ -20,8 +20,7 @@
 		id?: number;
 		marginY?: number;
 		posList?: Point[];
-		velList?: Point[][];
-		accList?: Velocity[];
+		accList?: Vector[];
 		handleDelete?: (e: MouseEvent)=> void;
 	}
 
@@ -35,7 +34,6 @@
 		id = 0,
 		marginY = 5,
 		posList = $bindable([]),
-		velList = $bindable([]),
 		accList = $bindable([]),
 		handleDelete = (e: MouseEvent) => {},
 	}: Props = $props();
@@ -97,19 +95,7 @@
 
 	const addPosition:Function = () => {
 		posList = [...posList, {...previewPos}];
-		updateVelList();
 
-	}
-
-	const updateVelList: Function = ()=>{
-		let len = posList.length;
-		if (len < 2) return;
-		let vel = [posList[len-1], posList[len]];
-		for (let i = 0; i < posList.length-1; i++){
-			
-			velList = [...velList, vel];
-		}
-		console.log(velList);
 	}
 
 </script>

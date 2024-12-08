@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Canvas from '../../Components/Canvas.svelte';
+	import Canvas from '../../lib/Components/Canvas.svelte';
 	import Katex from 'svelte-katex';
 	let canvas;
 </script>

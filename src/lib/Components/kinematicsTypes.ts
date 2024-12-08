@@ -27,16 +27,8 @@ export type MD = {
     height: number,
     gridNum: number,
     marginY: number,
-    posList: Position[],
-    velList: VectorArrow[],
-    accList: VectorArrow[],
-}
-
-export type acceleration = {
-    id: number,
-    dir: number,
-    Position: Position,
-    arrow: VectorArrow,
+    posList: Point[],
+    accList: Vector[],
 }
 
 export type GraphPath = {

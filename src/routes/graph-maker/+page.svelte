@@ -1,15 +1,15 @@
 <script lang="ts">
 	import { Stage, Layer, Line, Circle, Path} from 'svelte-konva';
 	import {page} from '$app/stores';
-  	import DragArrow from '../../Components/QualGraph.svelte';
-	import EditLabel from '../../Components/EditLabel.svelte';
-	import type {GraphPath, Point} from '../../Components/kinematicsTypes';
+  	import DragArrow from '$lib/Components/QualGraph.svelte';
+	import EditLabel from '$lib/Components/EditLabel.svelte';
+	import type {GraphPath, Point} from '$lib/Components/kinematicsTypes';
 
     import { Label, Select, Input, Button, Checkbox, Toggle} from 'flowbite-svelte';
     import {TrashBinOutline, FileExportOutline, ChevronDownOutline, CirclePlusOutline, RefreshOutline} from 'flowbite-svelte-icons';
 	import { Dropdown, DropdownItem } from 'flowbite-svelte';
 
-	import QualGraph from '../../Components/QualGraph.svelte';
+	import QualGraph from '$lib/Components/QualGraph.svelte';
 
 	import html2canvas from 'html2canvas';
 

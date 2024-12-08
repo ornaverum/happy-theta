@@ -1,6 +1,6 @@
 <script lang="ts">
-	import MotionDiagram from './../../Components/MotionDiagram.svelte';
-	import type { MD } from '../../Components/kinematicsTypes';
+	import MotionDiagram from '$lib/Components/MotionDiagram.svelte';
+	import type { MD } from '$lib/types';
 
 	import { Stage, Layer, Line, Circle, Arrow} from 'svelte-konva';
 	import html2canvas from 'html2canvas';
@@ -84,7 +84,7 @@
 		<ul class='list-none'>
 			{#each mdArray as md}
 				<li>
-					<MotionDiagram {...md} bind:posList={md.posList} bind:velList={md.velList} bind:accList={md.accList} bind:title={md.title} {showControlButtons}/>
+					<MotionDiagram {...md} bind:posList={md.posList} bind:accList={md.accList} bind:title={md.title} {showControlButtons}/>
 				</li>
 			{/each}
 		</ul>
