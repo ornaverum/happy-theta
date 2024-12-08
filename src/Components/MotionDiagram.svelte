@@ -31,7 +31,7 @@
 
 	let {
 		width = 800,
-		height = 100,
+		height = 200,
 		label = 'x',
 		title = $bindable('Title'),
 		gridNum = 30,
@@ -46,32 +46,15 @@
 
 
 	let circleProps = {radius: 8, color: 'blue'}
-
+	
+	let gridLogic = new GridLogic({x:width, y:height}, {x:5, y:5}, {x:30, y:0}, {x: 0, y: 0});
 	let editTitle:boolean = $state(false);
 
-	let gridPointList: number[] = [];
-	for (let i = -15; i <= 15; i++) {
-		gridPointList.push(i);
-	}
 
-	let gridSize:number = width;
-	let cellSize:number = gridSize/(gridNum + 1);
-	let gridCenter:number = gridSize/2.0;
-	let yValue:number = $state(cellSize);
 
 	let toggleChecked:boolean = $state(false);
 	let onStage:boolean = $state(false);
 	
-	let params = $state({
-		width: width,
-		height: height,
-		cellSize: cellSize,
-		gridCenter: gridCenter,
-		yValue: yValue,
-		gridNum: gridNum,
-		marginY: marginY,
-	})
-
 	// let divToCapture: HTMLDivElement = document.querySelector('#capture');
 	let samplePositions: Point[] = [];
 	samplePositions.push({x:0, y:0});
@@ -119,23 +102,20 @@
 					<Toggle bind:checked={toggleChecked} class='ml-2'/>
 					Acceleration
 				</div> -->
-				Howard
 			</div>
 		{/if}
 		<div id='capture'>
 			<div id='fbd' class='bg-gray-50 p-4'>
 				<Stage {width} {height} id='main_stage'
-					on:mouseleave={() => {onStage = false;}}
-					on:mouseenter={() => {onStage = true;}}
+					onmouseleave={() => {onStage = false; console.log('mouseleave')}}
+					onmouseenter={() => {onStage = true; console.log('mouseenter')}}
 					>
-					<Grid size={{x:width, y:height}} origin={{x:15, y:0}} numCell={{x:30, y:0}}/>
+					<Grid {gridLogic} active={onStage}/>
 					<!-- <Velocity bind:velList={velList} {posList}/>
 					<Acceleration active={toggleChecked && onStage} bind:accList={accList} {...params} {posList}/>
 
 					{@render drawPositionDots(samplePositions)} -->
-					<!-- <Layer>
-						<Rect x={0} y={0} width={width/2} height={height/2} fill='blue' opacity={1}/>
-					</Layer> -->
+
 					
 
 				</Stage>

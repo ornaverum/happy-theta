@@ -14,28 +14,18 @@
 		y1: number,
 		strokeWidth: number,
 		strokeColor: string,
+		gridLineType: 'minor' | 'major' | 'axis',
 	}
 
 	interface Props {
-		size: Point;
-		numCell?: Point;
-		gridList?: GridLine[];
-		origin?: Point;
-		margin?: Point;
 		active?: boolean;
 		gridLogic?: GridLogic;
 	}
 
 	let {
-		size = {x: 800, y:100},
-		numCell = {x:30, y:0},
-		origin = {x: 10, y:0},
-		gridList = [],
-		margin = {x: 5, y:5},
 		active = false,
 		gridLogic = $bindable(),
 	}: Props = $props();
-
 
 	let label: {x:string, y:string} = $state({x:'x', y:'y'});
     let id_num: number = 0;
@@ -44,44 +34,40 @@
 	let yValue :number;
 	let offSet: Point = $state({x: 0, y: 0});
 
-	
+	let gridLineStyles:
+	{
+		minor: {strokeWidth: number, strokeColor: string},
+		major: {strokeWidth: number, strokeColor: string},
+		axis: {strokeWidth: number, strokeColor: string},
+	} 
 
-	onMount(()=>{
-		label = {x:'x', y:'y'};
-		cellSize = Math.min((size.x-2*margin.x)/(numCell.x+1), (size.y-2*margin.y)/(numCell.y+1));
-		gridCenter = {x: size.x/2.0, y: size.y/2.0};
-		yValue = cellSize;
-		offSet = calculateOffset( {x: numCell.x/2.0 * cellSize, y: numCell.y/2.00*cellSize}, {x: size.x/2.0, y: size.y/2.0});
-
-
-	});
-
-	// translate from coordinate values to pixel coordinates
-
-
-	const calculateOffset:Function= (gridCenter: Point, stageCenter: Point)=>{
-		return {x: -gridCenter.x + stageCenter.x, y: -gridCenter.y + stageCenter.y};
+	= {
+		minor : {strokeWidth: 1, strokeColor: 'gray'},
+		major : {strokeWidth: 2, strokeColor: 'gray'},
+		axis : {strokeWidth: 4, strokeColor: 'black'},
 	}
-
-
+	
+	// translate from coordinate values to pixel coordinates
 
 </script>
 
 
 <Layer id='grid_layer' >
-		{#each gridLogic?.getGridList() as item (item.id)}
+		<!-- <Rect x= {400} y= {50} height = {100} width = {800} fill= 'green' opacity= {0.5} /> -->
+		<!-- <Line points= {[400, 50, 800, 100, 0, 0 , 50, 50]} strokeWidth={18} stroke= {'blue'} opacity= {1} /> -->
+		{#each gridLogic?.getGridList() as item}
 			<Line 
-				points= {[item.x0 + offSet.x, 
-						item.y0 + offSet.y, 
-						item.x1 + offSet.x, 
-						item.y1 + offSet.y]}
-				stroke= {item.strokeColor}
-				strokeWidth= {item.strokeWidth}
+				points= {[item.x0, 
+						item.y0 , 
+						item.x1 , 
+						item.y1 ]}
+				strokeWidth= {gridLineStyles[item.gridLineType].strokeWidth}
+				stroke= {gridLineStyles[item.gridLineType].strokeColor}
 				opacity= {1}
 				/>
 		{/each}
 		<Text 
-			x= {size.x-10}
+			x= {gridLogic?.size.x-10}
 			y= {0.5*cellSize}
 			text= {label.x}
 			fontSize={20}
@@ -92,23 +78,12 @@
 		<Rect 
 			x= {0}
 			y= {0}
-			height = {size.y}
-			width = {size.x}
+			height = {gridLogic.size.y}
+			width = {gridLogic.size.x}
 			fill= 'white'
 			opacity= {0}
 		 
-		on:click={(e) => console.log(' grid click')}
+		onclick={(e) => console.log(' grid click', e)}
 		/>
 	{/if}
 </Layer>
-
-<!-- <Layer>
-	<Rect 
-		x= {0}
-		y= {0}
-		height = {size.y}
-		width = {size.x}
-		fill= 'green'
-		opacity= {1}
-		on:click={(e) => console.log(' grid click')}/>
-</Layer> -->

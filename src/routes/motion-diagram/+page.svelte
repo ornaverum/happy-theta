@@ -16,7 +16,7 @@
 	let showControlButtons: boolean = $state(true);
 
 	let width = 800;
-    let height = 100;
+    let height = 200;
 
 	let mdArray: MD[] = $state([]);
 	let id_ind = 0;

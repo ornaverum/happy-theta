@@ -5,9 +5,7 @@ type GridLine = {
     y0: number,
     x1: number,
     y1: number,
-    strokeColor?: string,
-    strokeWidth?: number,
-
+    gridLineType?: 'minor' | 'major' | 'axis',
 
 }
 
@@ -56,56 +54,56 @@ export default class GridLogic {
     }
 
     buildGridLines:Function = (numCells:Point, cellSize:number, origin:Point)=>{
+
         // gridlines for x (i.e., parallel to y-axis)
         let gridList:GridLine[] = [];
         for (let i = 0; i <= numCells.x; i++) {
             let xVal = i*cellSize;
             let yVali = numCells.y==0 ? -cellSize : 0;
-            let yValf = numCells.y*cellSize | cellSize;
+            let yValf = numCells.y==0 ? cellSize : numCells.y*cellSize;
             gridList.push({
-                x0: xVal,
-                y0: yVali,
-                x1: xVal,
-                y1: yValf,
-                strokeColor: 'gray',
-                strokeWidth: i%5==0?4:2,
+                x0: xVal + this.offSet.x,
+                y0: yVali + this.offSet.y,
+                x1: xVal + this.offSet.x,
+                y1: yValf+ this.offSet.y,
+                gridLineType: i%5==0?'major':'minor',
             });
         }
     
         // gridlines for y (i.e., parallel to x-axis)
     
-        for (let i = 0; i <= numCells.y; i++) {
+        for (let i = 0; i < numCells.y; i++) {
             let startParallel = i * cellSize;
             let startPerp = 0;
             let endPerp = numCells.x * cellSize;
             gridList.push({
-                x0: startPerp,
-                y0: startParallel,
-                x1: endPerp,
-                y1: startParallel,
-                strokeColor: 'gray',
-                strokeWidth: i%5==0?4:2,
+                x0: startPerp + this.offSet.x,
+                y0: startParallel+ this.offSet.y,
+                x1: endPerp + this.offSet.x,
+                y1: startParallel+ this.offSet.y,
+                gridLineType: i%5==0?'major':'minor',
             });
         }
     
         // y axis
+        let x_0 = origin.x * cellSize + this.offSet.x;
         gridList.push({
-            x0: origin.x * cellSize,
-            y0: numCells.y==0?cellSize * 1.5:numCells.y*cellSize,
-            x1: origin.x * cellSize,
-            y1: numCells.y==0?-cellSize * 1.5:0-2.5,
-            strokeColor: 'black',
-                strokeWidth: 5,
+            x0: x_0,
+            y0: numCells.y==0?cellSize * 1.5+ this.offSet.y:numCells.y*cellSize+ this.offSet.y,
+            x1: x_0,
+            y1: numCells.y==0?-cellSize * 1.5 + this.offSet.y:0+ this.offSet.y,
+            gridLineType: 'axis',
         });
     
         // x axis
+        let y_0 = (numCells.y - origin.y) * cellSize+ this.offSet.y;
         gridList.push({
-            x0: -2.5,
-            y0: (numCells.y - origin.y) * cellSize,
-            x1: numCells.x*cellSize +2.5,
-            y1: (numCells.y - origin.y) * cellSize,
-            strokeColor: 'black',
-                strokeWidth: 5,
+            x0: -2.5 + this.offSet.x,
+            y0: y_0,
+            x1: numCells.x*cellSize +2.5 + this.offSet.x,
+            y1: y_0,
+            gridLineType: 'axis',
+
         });
         return gridList;
     }
