@@ -47,6 +47,7 @@
 		axis : {strokeWidth: 4, strokeColor: 'black'},
 	}
 	
+	let previewPos: Point = $state({x: 0 , y:0});
 	// translate from coordinate values to pixel coordinates
 
 </script>
@@ -83,7 +84,18 @@
 			fill= 'white'
 			opacity= {0}
 		 
-		onclick={(e) => console.log(' grid click', e)}
+			onclick={(e) => console.log(' grid click', e)}
+			onmousemove={(e) => {
+				let pt:Point = gridLogic.getSnappedPointFromStage({x:e.evt.layerX, y:e.evt.layerY});
+				previewPos = gridLogic.getStageFromPoint(pt);
+			}}
+		/>
+		<Circle 
+			x = {previewPos.x}
+			y = {previewPos.y}
+			radius= {8}
+			fill= 'blue'
+			opacity= {0.5}
 		/>
 	{/if}
 </Layer>
