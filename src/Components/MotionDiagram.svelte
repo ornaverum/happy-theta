@@ -45,7 +45,7 @@
 	let velocityArrowProps = {strokeWidth: 3, stroke: 'green', fill: 'green', opacity: 1}
 	
 	// constructor(size:Point, margin:Point, numCells:Point, origin:Point)
-	let gridLogic = new GridLogic({x:width, y:height}, {x:5, y:5}, {x:30, y:0}, {x: 0, y: 0});
+	let gridLogic = new GridLogic({x:width, y:height}, {x:5, y:5}, {x:30, y:5}, {x: 0, y: 0});
 	let editTitle:boolean = $state(false);
 
 	let toggleChecked:boolean = $state(false);
@@ -57,7 +57,7 @@
 
 
 	const handleGridMouseMove:(e: KonvaMouseEvent)=>void = (e: KonvaMouseEvent) => {
-		let pt:Point = gridLogic.getSnappedPointFromStage({x:e.evt.layerX, y:e.evt.layerX});
+		let pt:Point = gridLogic.getSnappedPointFromStage({x:e.evt.layerX, y:e.evt.layerY});
 		previewPos = gridLogic.getStageFromPoint(pt);
 	}
 	const handleGridClick:(e: KonvaMouseEvent)=>void = (e: KonvaMouseEvent) => {
