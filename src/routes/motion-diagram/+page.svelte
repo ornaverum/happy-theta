@@ -1,6 +1,6 @@
 <script lang="ts">
 	import MotionDiagram from './../../Components/MotionDiagram.svelte';
-	import type { Dot, VectorArrow, MD } from '../../Components/kinematicsTypes';
+	import type { MD } from '../../Components/kinematicsTypes';
 
 	import { Stage, Layer, Line, Circle, Arrow} from 'svelte-konva';
 	import html2canvas from 'html2canvas';
