@@ -1,24 +1,24 @@
+export type Point = {
+    x: number,
+    y: number,
+};
+
 export type VectorArrow = {
     id: number,
-    pos0: {x: number, y: number},
-    pos1: {x: number, y: number},
+    pos0: Point,
+    pos1: Point,
     stroke: string,
     opacity: number,
 };
 
-export type Dot = {
+export type Position = {
     id: number,
-    x: number,
-    y: number,
+    pos: Point,
     radius: number,
     fill: string,
     opacity: number,
 };
 
-export type Point = {
-    x: number,
-    y: number,
-};
 
 export type MD = {
     id: number,
@@ -27,7 +27,7 @@ export type MD = {
     height: number,
     gridNum: number,
     marginY: number,
-    posList: Dot[],
+    posList: Position[],
     velList: VectorArrow[],
     accList: VectorArrow[],
 }
@@ -35,7 +35,7 @@ export type MD = {
 export type acceleration = {
     id: number,
     dir: number,
-    dot: Dot,
+    Position: Position,
     arrow: VectorArrow,
 }
 

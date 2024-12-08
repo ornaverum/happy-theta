@@ -84,7 +84,7 @@
 		<ul class='list-none'>
 			{#each mdArray as md}
 				<li>
-					<MotionDiagram {handleDelete} {...md} bind:posList={md.posList} bind:velList={md.velList} bind:accList={md.accList} bind:title={md.title} {showControlButtons}/>
+					<MotionDiagram {...md} bind:posList={md.posList} bind:velList={md.velList} bind:accList={md.accList} bind:title={md.title} {showControlButtons}/>
 				</li>
 			{/each}
 		</ul>

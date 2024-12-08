@@ -1,7 +1,7 @@
 <script lang='ts'>
 
     import { Stage, Layer, Line, Circle, Arrow, Text, Group, Rect} from 'svelte-konva';
-	import type { Point } from '../kinematicsTypes';
+	import type { Point, Position } from '../kinematicsTypes';
 	import {onMount} from 'svelte';
 	import GridLogic from './GridLogic';
 
@@ -20,11 +20,15 @@
 	interface Props {
 		active?: boolean;
 		gridLogic?: GridLogic;
+		handleClick?: (e: MouseEvent) => void;
+		handleMouseMove?: (e: MouseEvent) => void;
 	}
 
 	let {
 		active = false,
 		gridLogic = $bindable(),
+		handleClick = (e: MouseEvent) => {},
+		handleMouseMove = (e: MouseEvent) => {},
 	}: Props = $props();
 
 	let label: {x:string, y:string} = $state({x:'x', y:'y'});
@@ -46,9 +50,6 @@
 		major : {strokeWidth: 2, strokeColor: 'gray'},
 		axis : {strokeWidth: 4, strokeColor: 'black'},
 	}
-	
-	let previewPos: Point = $state({x: 0 , y:0});
-	// translate from coordinate values to pixel coordinates
 
 </script>
 
@@ -83,19 +84,8 @@
 			width = {gridLogic.size.x}
 			fill= 'white'
 			opacity= {0}
-		 
-			onclick={(e) => console.log(' grid click', e)}
-			onmousemove={(e) => {
-				let pt:Point = gridLogic.getSnappedPointFromStage({x:e.evt.layerX, y:e.evt.layerY});
-				previewPos = gridLogic.getStageFromPoint(pt);
-			}}
-		/>
-		<Circle 
-			x = {previewPos.x}
-			y = {previewPos.y}
-			radius= {8}
-			fill= 'blue'
-			opacity= {0.5}
+			onclick={handleClick}
+			onmousemove={handleMouseMove}
 		/>
 	{/if}
 </Layer>
