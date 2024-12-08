@@ -20,7 +20,7 @@
 		id?: number;
 		marginY?: number;
 		posList?: Point[];
-		velList?: Velocity[];
+		velList?: Point[][];
 		accList?: Velocity[];
 		handleDelete?: (e: MouseEvent)=> void;
 	}
@@ -42,7 +42,7 @@
 
 	let nextId:number = 0;
 	let positionCircleProps = {radius: 8, fill: 'blue', opacity: 1}
-	let velocityArrowProps = {width: 2, color: 'green'}
+	let velocityArrowProps = {strokeWidth: 3, stroke: 'green', fill: 'green', opacity: 1}
 	
 	// constructor(size:Point, margin:Point, numCells:Point, origin:Point)
 	let gridLogic = new GridLogic({x:width, y:height}, {x:5, y:5}, {x:30, y:0}, {x: 0, y: 0});
@@ -52,16 +52,11 @@
 	let onStage:boolean = $state(false);
 	
 	// let divToCapture: HTMLDivElement = document.querySelector('#capture');
-	let samplePositions: Point[] = [];
-	samplePositions.push({x:0, y:0});
-	samplePositions.push({x:100, y:10});
 
-	// let previewPos:Position = $state({pos:{x:0, y:0}, id:0, ...positionCircleProps, opacity: 0.5});
 	let previewPos:Point = $state({x:0, y:0});
 
 
 	const handleGridMouseMove:(e: KonvaMouseEvent)=>void = (e: KonvaMouseEvent) => {
-		// console.log('grid mouse move', e);
 		let pt:Point = gridLogic.getSnappedPointFromStage({x:e.evt.layerX, y:e.evt.layerX});
 		previewPos = gridLogic.getStageFromPoint(pt);
 	}
@@ -70,8 +65,19 @@
 	}
 
 	const addPosition:Function = () => {
-		let pos:Point = {...previewPos};
-		posList = [...posList, pos];
+		posList = [...posList, {...previewPos}];
+		updateVelList();
+
+	}
+
+	const updateVelList: Function = ()=>{
+		let len = posList.length;
+		if (len < 2) return;
+		let vel = [posList[len-1], posList[len]];
+		for (let i = 0; i < posList.length-1; i++){
+			
+			velList = [...velList, vel];
+		}
 	}
 
 </script>
@@ -81,6 +87,18 @@
 		{#each xs as x}
 			<Circle {...positionCircleProps} {...x} id={(nextId++)+''} />
 		{/each}
+	</Layer>
+{/snippet}
+
+{#snippet drawVelocities(xs:Point[])}
+	<Layer>
+		{#if xs.length > 1}
+			{#each xs as x, i}
+				{#if i > 0}
+					<Arrow {...velocityArrowProps} points={[xs[i-1].x, xs[i-1].y, xs[i].x, xs[i].y]} id={(nextId++)+''} />
+				{/if}
+			{/each}
+		{/if}
 	</Layer>
 {/snippet}
 
@@ -130,6 +148,9 @@
 					<Acceleration active={toggleChecked && onStage} bind:accList={accList} {...params} {posList}/> -->
 
 					{@render drawPositions(posList)}
+
+					{@render drawVelocities(posList)}
+
 
 					<Layer>
 						<Circle {...previewPos} {...positionCircleProps} opacity={0.5} id={'preview'}/>
