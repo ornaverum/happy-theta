@@ -1,11 +1,9 @@
 <script lang="ts">
-	import { Stage, Layer, Line, Circle, Arrow, Text, Rect} from 'svelte-konva';
-	import Acceleration from './MotionDiagramComponents/Acceleration.svelte';
-	import Velocity from './MotionDiagramComponents/Velocity.svelte';
+	import { Stage, Layer, Line, Circle, Arrow, Text, Rect, type KonvaMouseEvent} from 'svelte-konva';
 	import Grid from './MotionDiagramComponents/Grid.svelte';
 	import GridLogic from './MotionDiagramComponents/GridLogic';
 
-	import type { Point, Position, VectorArrow, acceleration } from './kinematicsTypes';
+	import type { Point, Position, Velocity, acceleration } from './kinematicsTypes';
 
     import { Label, Select, Input, Button, Toggle } from 'flowbite-svelte';
     import {TrashBinOutline, FileExportOutline, EditOutline, ArrowRightOutline, RefreshOutline} from 'flowbite-svelte-icons';
@@ -21,9 +19,9 @@
 		showControlButtons?: boolean;
 		id?: number;
 		marginY?: number;
-		posList?: Position[];
-		velList?: VectorArrow[];
-		accList?: VectorArrow[];
+		posList?: Point[];
+		velList?: Velocity[];
+		accList?: Velocity[];
 		handleDelete?: (e: MouseEvent)=> void;
 	}
 
@@ -42,13 +40,13 @@
 		handleDelete = (e: MouseEvent) => {},
 	}: Props = $props();
 
-
-	let circleProps = {radius: 8, color: 'blue'}
+	let nextId:number = 0;
+	let positionCircleProps = {radius: 8, fill: 'blue', opacity: 1}
+	let velocityArrowProps = {width: 2, color: 'green'}
 	
+	// constructor(size:Point, margin:Point, numCells:Point, origin:Point)
 	let gridLogic = new GridLogic({x:width, y:height}, {x:5, y:5}, {x:30, y:0}, {x: 0, y: 0});
 	let editTitle:boolean = $state(false);
-
-
 
 	let toggleChecked:boolean = $state(false);
 	let onStage:boolean = $state(false);
@@ -58,33 +56,30 @@
 	samplePositions.push({x:0, y:0});
 	samplePositions.push({x:100, y:10});
 
-	let previewPos:Position = $state({pos:{x:0, y:0}, id:0, radius: 8, fill: 'blue', opacity: 0.5});
+	// let previewPos:Position = $state({pos:{x:0, y:0}, id:0, ...positionCircleProps, opacity: 0.5});
+	let previewPos:Point = $state({x:0, y:0});
 
-	const handleGridMouseMove:(e: MouseEvent)=>void = (e: MouseEvent) => {
+
+	const handleGridMouseMove:(e: KonvaMouseEvent)=>void = (e: KonvaMouseEvent) => {
 		// console.log('grid mouse move', e);
 		let pt:Point = gridLogic.getSnappedPointFromStage({x:e.evt.layerX, y:e.evt.layerX});
-		pt = gridLogic.getStageFromPoint(pt);
-		previewPos = {pos: pt, id: 0, radius: 8, fill: 'blue', opacity: 0.5};
+		previewPos = gridLogic.getStageFromPoint(pt);
 	}
-	const handleGridClick:(e: MouseEvent)=>void = (e: MouseEvent) => {
-		console.log('grid mouse click');
+	const handleGridClick:(e: KonvaMouseEvent)=>void = (e: KonvaMouseEvent) => {
 		addPosition();
 	}
 
 	const addPosition:Function = () => {
-		let pos:Position = {...previewPos};
-		pos.id = posList.length;
-		pos.opacity = 1;
+		let pos:Point = {...previewPos};
 		posList = [...posList, pos];
-		console.log(posList);
 	}
 
 </script>
 
-{#snippet drawPositions(xs:Position[])}
+{#snippet drawPositions(xs:Point[])}
 	<Layer>
 		{#each xs as x}
-			<Circle {...x.pos} {...x} id={x.id+''} />
+			<Circle {...positionCircleProps} {...x} id={(nextId++)+''} />
 		{/each}
 	</Layer>
 {/snippet}
@@ -127,15 +122,17 @@
 				<Stage {width} {height} id='main_stage'
 					onmouseleave={() => {onStage = false; console.log('mouseleave')}}
 					onmouseenter={() => {onStage = true; console.log('mouseenter')}}
+					onclick={handleGridClick}
+					onmousemove={handleGridMouseMove}
 					>
-					<Grid {gridLogic} active={onStage} handleClick={handleGridClick} handleMouseMove={handleGridMouseMove}/>
+					<Grid {gridLogic} active={onStage}/>
 					<!-- <Velocity bind:velList={velList} {posList}/>
 					<Acceleration active={toggleChecked && onStage} bind:accList={accList} {...params} {posList}/> -->
 
 					{@render drawPositions(posList)}
 
 					<Layer>
-						<Circle {...previewPos.pos} {...previewPos} id={'preview'}/>
+						<Circle {...previewPos} {...positionCircleProps} opacity={0.5} id={'preview'}/>
 					</Layer>
 
 				</Stage>

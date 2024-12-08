@@ -3,7 +3,7 @@ export type Point = {
     y: number,
 };
 
-export type VectorArrow = {
+export type Velocity = {
     id: number,
     pos0: Point,
     pos1: Point,

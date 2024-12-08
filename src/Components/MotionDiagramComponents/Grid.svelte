@@ -1,6 +1,6 @@
 <script lang='ts'>
 
-    import { Stage, Layer, Line, Circle, Arrow, Text, Group, Rect} from 'svelte-konva';
+    import { Stage, Layer, Line, Circle, Arrow, Text, Group, Rect, type KonvaMouseEvent} from 'svelte-konva';
 	import type { Point, Position } from '../kinematicsTypes';
 	import {onMount} from 'svelte';
 	import GridLogic from './GridLogic';
@@ -20,15 +20,11 @@
 	interface Props {
 		active?: boolean;
 		gridLogic?: GridLogic;
-		handleClick?: (e: MouseEvent) => void;
-		handleMouseMove?: (e: MouseEvent) => void;
 	}
 
 	let {
 		active = false,
 		gridLogic = $bindable(),
-		handleClick = (e: MouseEvent) => {},
-		handleMouseMove = (e: MouseEvent) => {},
 	}: Props = $props();
 
 	let label: {x:string, y:string} = $state({x:'x', y:'y'});
@@ -76,16 +72,5 @@
 			fill= 'black'
 			align= 'center'
 		/>
-	{#if active}
-		<Rect 
-			x= {0}
-			y= {0}
-			height = {gridLogic.size.y}
-			width = {gridLogic.size.x}
-			fill= 'white'
-			opacity= {0}
-			onclick={handleClick}
-			onmousemove={handleMouseMove}
-		/>
-	{/if}
+
 </Layer>
