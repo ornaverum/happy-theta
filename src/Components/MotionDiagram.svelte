@@ -15,7 +15,7 @@
 		height?: number;
 		label?: string;
 		title?: string;
-		gridNum?: number;
+		numCells?: Point;
 		showControlButtons?: boolean;
 		id?: number;
 		marginY?: number;
@@ -30,7 +30,7 @@
 		height = 200,
 		label = 'x',
 		title = $bindable('Title'),
-		gridNum = 30,
+		numCells = {x: 30, y:0},
 		showControlButtons = true,
 		id = 0,
 		marginY = 5,
@@ -45,7 +45,7 @@
 	let velocityArrowProps = {strokeWidth: 3, stroke: 'green', fill: 'green', opacity: 1}
 	
 	// constructor(size:Point, margin:Point, numCells:Point, origin:Point)
-	let gridLogic = new GridLogic({x:width, y:height}, {x:5, y:5}, {x:30, y:5}, {x: 0, y: 0});
+	let gridLogic = new GridLogic({x:width, y:height}, {x:5, y:5}, {...numCells}, {x: 0, y: 0});
 	let editTitle:boolean = $state(false);
 
 	let toggleChecked:boolean = $state(false);
@@ -53,12 +53,43 @@
 	
 	// let divToCapture: HTMLDivElement = document.querySelector('#capture');
 
-	let previewPos:Point = $state({x:0, y:0});
+	let previewPos:Point = $state({x:-100, y:-100});
 
+
+	// in case of 1D, shift points to avoid overlap
+	const shiftPoint:Function = (pt:Point, prior:Point, prePrior:Point) => {
+		if ( (numCells.y>0 && numCells.x>0) || !prior)
+			return pt;
+		
+		let dV:Point = {x: pt.x - prior.x, y: pt.y - prior.y};
+		let shift:Point = {x:0, y:0};
+
+		if (numCells.y == 0 && dV.x == 0)
+			shift.y = 10;
+		else if (numCells.x == 0 && dV.y == 0)
+			shift.x = 10;
+
+		if (prePrior){
+			let dV2:Point = {x: prior.x - prePrior.x, y: prior.y - prePrior.y};
+			if (numCells.y==0 && (Math.sign(dV.x) == -Math.sign(dV2.x))){
+				shift.y = 10;
+			} else if (numCells.x==0 && (Math.sign(dV.y) == -Math.sign(dV2.y))){
+				shift.x = 10;
+			}
+		}
+		return {x:pt.x + shift.x, y:pt.y + shift.y};
+	}
 
 	const handleGridMouseMove:(e: KonvaMouseEvent)=>void = (e: KonvaMouseEvent) => {
 		let pt:Point = gridLogic.getSnappedPointFromStage({x:e.evt.layerX, y:e.evt.layerY});
-		previewPos = gridLogic.getStageFromPoint(pt);
+		let newPt: Point = gridLogic.getStageFromPoint(pt);
+		if (numCells.y == 0 || numCells.x == 0){
+			let prior:Point|null = posList[posList.length-1]||null;
+			let prePrior:Point|null = posList[posList.length-2]||null;
+			newPt = shiftPoint({...newPt}, {...prior}, {...prePrior});
+		}
+
+		previewPos = {...newPt};
 	}
 	const handleGridClick:(e: KonvaMouseEvent)=>void = (e: KonvaMouseEvent) => {
 		addPosition();
@@ -78,6 +109,7 @@
 			
 			velList = [...velList, vel];
 		}
+		console.log(velList);
 	}
 
 </script>
@@ -95,7 +127,11 @@
 		{#if xs.length > 1}
 			{#each xs as x, i}
 				{#if i > 0}
-					<Arrow {...velocityArrowProps} points={[xs[i-1].x, xs[i-1].y, xs[i].x, xs[i].y]} id={(nextId++)+''} />
+					{#if (numCells.y==0 && (xs[i-1].x == x.x))}
+					{:else if (numCells.x==0 && (xs[i-1].y == x.y))}
+					{:else}
+						<Arrow {...velocityArrowProps} points={[xs[i-1].x, xs[i-1].y, x.x, x.y]} id={(nextId++)+''} />
+					{/if}
 				{/if}
 			{/each}
 		{/if}
