@@ -1,5 +1,6 @@
 <script>
 	import '../app.css';
+	import { page } from '$app/stores';
 	import { base } from '$app/paths';
 	import { DarkMode } from 'flowbite-svelte';
 	import { Navbar, NavBrand, NavLi, NavUl, NavHamburger } from 'flowbite-svelte';
@@ -9,19 +10,20 @@
 	/** @type {{children?: import('svelte').Snippet}} */
 	let { children } = $props();
 
+	let activeURL = $state($page.url.pathname)
 </script>
 
 <!-- <DarkMode btnClass={darkmodebtn} /> -->
  <!-- <DarkMode></DarkMode> -->
 
-<Navbar  >
+<Navbar let:hidden let:toggle >
 	<NavBrand href="/">
 		<object data="/IALogo.svg" class="me-3 h-6 sm:h-9" title="Inertial Apple Logo"></object>
 		<span class="self-center whitespace-nowrap text-xl font-semibold dark:text-white">Inertial Apple</span>
 
 	</NavBrand>
 	<NavHamburger class='ml-16' />
-	<NavUl >
+	<NavUl {hidden}>
 	  <NavLi href="{base}/">Home</NavLi>
 	  <NavLi href="{base}/free-body-diagram">Free Body Diagram</NavLi>
 	  <NavLi href="{base}/motion-diagram">Motion Diagram</NavLi>
