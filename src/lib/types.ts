@@ -23,10 +23,7 @@ export type Force = {
     type: string,
     agent: string,
     object: string,
-    components: {
-        x: number,
-        y: number,
-    },
+    components: Point,
     color: string;
     draggable: boolean;
     editText: boolean;

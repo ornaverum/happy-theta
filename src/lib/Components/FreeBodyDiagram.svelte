@@ -31,13 +31,13 @@
         handleDelete = (e: MouseEvent) => {},
     }: Props = $props();
 
-    let origin:Point = {x:5, y:5};
+    let originPoint:Point = {x:5, y:5};
+    let gridLogic = new GridLogic({x:width, y:height}, {...margin}, {...numCells}, {...originPoint});
+
+    let originStage: Point = gridLogic.getStageFromPoint(originPoint);
     let nextId:number = 0;
-    let previewForceVector:Vector = $state({pos0:{x:0, y:0}, pos1:{x:0, y:0}});
-    let previewArray: number[] = $state([0, 0, 0, 0]);
+    let previewForcePoint:Point = $state({x:0, y:0});
     let arrowProps = {strokeWidth: 3, stroke: 'green', fill: 'green', opacity: 1}
-    // let gridLogic = new GridLogic({x:width, y:height}, {x:5, y:5}, {x:10, }, {origin});
-    let gridLogic = new GridLogic({x:width, y:height}, {...margin}, {...numCells}, {...origin});
 	let editTitle:boolean = $state(false);
 
 	let toggleChecked:boolean = $state(false);
@@ -48,8 +48,7 @@
 		let newPt: Point = gridLogic.getStageFromPoint(pt);
         let OPos:Point = gridLogic.getStageFromPoint(origin);
 
-		previewForceVector = {pos0:OPos, pos1:newPt};
-        previewArray = [OPos.x, OPos.y, newPt.x, newPt.y];
+		previewForcePoint = {...newPt};
 	}
 
 	const handleGridClick:(e: KonvaMouseEvent)=>void = (e: KonvaMouseEvent) => {
@@ -58,19 +57,28 @@
 	}
 
     const addForce:Function = () => {
-        let newForceVector = {...previewForceVector};
-        let newForce = {id: nextId, pos0: {x:0, y:0}, pos1: {x:0, y:0}, force: {x:0, y:0}};
+        let newForce:Force = {id: nextId++, 
+            symbol: 'F',
+            agent: 'A',
+            object: 'O',
+            type: 'force',
+            components: {...previewForcePoint},
+            color: 'green',
+            draggable: true,
+            editText: false,
+        }
+        forceList = [...forceList, newForce];
     }
 
 </script>
 
-{#snippet drawForces(xs:Point[])}
+<!-- {#snippet drawForces(xs:Point[])}
 	<Layer>
 		{#each xs as x}
 			<Circle {...positionCircleProps} {...x} id={(nextId++)+''} />
 		{/each}
 	</Layer>
-{/snippet}
+{/snippet} -->
 
 
 <main class="flex flex-col bg-gray-50 justify-center">
@@ -95,7 +103,15 @@
                     <Grid {gridLogic}/>
 
                     <Layer>
-                        <Arrow points={[...previewArray]} {...arrowProps} id={(nextId++)+''} opacity={1}/>
+                        <Arrow points={[originStage.x, originStage.y, previewForcePoint.x, previewForcePoint.y]} 
+                            {...arrowProps} id={(nextId++)+''} opacity={1}/>
+                    </Layer>
+
+                    <Layer>
+                        {#each forceList as force}
+                            <Arrow points={[originStage.x, originStage.y, force.components.x, force.components.y]} 
+                                {...arrowProps} id={force.id+''} opacity={1} stroke='#336699'/>
+                        {/each}
                     </Layer>
 
 				</Stage>
