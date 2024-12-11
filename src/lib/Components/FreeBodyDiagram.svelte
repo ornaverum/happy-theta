@@ -45,12 +45,14 @@
 	let toggleChecked:boolean = $state(false);
 	let onStage:boolean = $state(false);
 
+
+    let netForceVector:Point = $state({...originStage});
     const handleGridMouseMove:(e: KonvaMouseEvent)=>void = (e: KonvaMouseEvent) => {
 		let pt:Point = gridLogic.getSnappedPointFromStage({x:e.evt.layerX, y:e.evt.layerY});
 		let newPt: Point = gridLogic.getStageFromPoint(pt);
         let OPos:Point = gridLogic.getStageFromPoint(origin);
-
-		previewForcePoint = {...newPt};
+        console.log(pt);
+		previewForcePoint = {...pt};
 	}
 
 	const handleGridClick:(e: KonvaMouseEvent)=>void = (e: KonvaMouseEvent) => {
@@ -70,6 +72,12 @@
             editText: false,
         }
         forceList = [...forceList, newForce];
+
+        netForceVector = {...originPoint};
+        forceList.forEach((force:Force) => {
+            netForceVector.x += (force.components.x -originPoint.x);
+            netForceVector.y += force.components.y -originPoint.y;
+        });
     }
 
 
@@ -89,6 +97,20 @@
     ];
 
 </script>
+
+
+{#snippet drawForce(forceComp:Point, params:{
+    id:string,
+    opacity:number,
+    color:string,
+    strokeWidth:number,
+    })}
+    <Arrow points={[originStage.x, originStage.y, 
+        gridLogic.getStageFromPoint(forceComp).x, 
+        gridLogic.getStageFromPoint(forceComp).y]} 
+        {...arrowProps} opacity = {params.opacity} fill={params.color} stroke={params.color} 
+        strokeWidth={params.strokeWidth} id={params.id} />    
+{/snippet}
 
 <!-- {#snippet drawForces(xs:Point[])}
 	<Layer>
@@ -121,16 +143,23 @@
                     <Grid {gridLogic}/>
                     {#if onStage}
                         <Layer>
-                            <Arrow points={[originStage.x, originStage.y, previewForcePoint.x, previewForcePoint.y]} 
-                                {...arrowProps} id={(nextId++)+''} opacity={0.7} />
+                            {@render drawForce(previewForcePoint, 
+                                {id: 'preview', opacity: 0.5, color: 'green', strokeWidth: 3})}
                         </Layer>
                     {/if}
                     
                     <Layer>
                         {#each forceList as force, i}
-                            <Arrow points={[originStage.x, originStage.y, force.components.x, force.components.y]} 
-                                {...arrowProps} id={force.id+''} opacity={1} stroke={colorList[force.id%12].cc} fill={colorList[force.id%12].cc}/>
+                            {@render drawForce(force.components, {id: force.id+'', opacity: 1, color: colorList[force.id%12].cc, strokeWidth: 3})}
                         {/each}
+                    </Layer>
+
+                    <Layer>
+                        {#if netForceVector.x == originStage.x && netForceVector.y == originStage.y}
+                            <Circle opacity={0.4} fill='black' {...originStage} radius = {8} id={'net'} />
+                        {:else}
+                            {@render drawForce(netForceVector, {id: 'net', opacity: 0.5, color: 'black', strokeWidth: 6})}
+                        {/if}
                     </Layer>
 
 				</Stage>
