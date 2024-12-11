@@ -168,35 +168,56 @@
                 <div id='fbd-label' class='mx-auto text-lg font-bold flex flex-row rounded-xl border-1'>
 					<p>TAO Chart</p>
 				</div>
-                {#if forceList.length == 0}
-					<div class='mx-auto my-4 p-2 text-xl font-bold rounded-xl border-1'>
-						<p>No Forces Yet</p>
-						<p class='text-sm'>Add a force by double clicking on the FBD or clicking the button below</p>
-					</div>
-				{:else}
-                    
+                <div class='mx-auto my-4 p-2 text-xl font-bold rounded-xl border-1'>
+                    {#if forceList.length == 0}
+                        <div class='mx-auto my-4 p-2 text-xl font-bold rounded-xl border-1'>
+                            <p>No Forces Yet</p>
+                            <p class='text-sm'>Add a force by double clicking on the FBD or clicking the button below</p>
+                        </div>
+                    {:else}
+                    <div id='tao-title' class= " p-2.5 m-1 gap-2 font-bold rounded-xl my-auto grid grid-cols-[0.25fr_1fr_2fr_2fr_2fr_0.25fr]">
+                        <p></p>
+                        <p class='justify-center mx-auto'>Symbol</p>
+                        <p class='justify-center mx-auto'>Type</p>
+                        <p class='justify-center mx-auto'>Agent</p>
+                        <p class='justify-center mx-auto'>Object</p>
+                        <p></p>
+                    </div>
+                        <div id='tao-items' class=''>
+                            {#each forceList as force (force.id)}
+                                <div id='tao-item' class= {`${colorList[force.id%12].tw} p-2.5 m-1 gap-2 font-bold rounded-xl grid grid-cols-[0.25fr_1fr_2fr_2fr_2fr_0.25fr] w-full`}>
+                                    <div class='' contenteditable="true">{force.symbol}</div>
+                                    <div class='' contenteditable="true">{force.type}</div>
+                                    <div class='' contenteditable="true">{force.agent}</div>
+                                    <div class='' contenteditable="true">{force.object}</div>
+                                </div>
+                            {/each}
+                        </div>
+                    {/if}
+                        
 
-                <Table class='mx-auto my-4 p-2 text-xl font-bold rounded-xl border-1'>
-                    <TableHead class='p-2.5 m-1 text-sm'>
-                      <TableHeadCell>Symbol</TableHeadCell>
-                      <TableHeadCell>Type</TableHeadCell>
-                      <TableHeadCell>Agent</TableHeadCell>
-                      <TableHeadCell>Object</TableHeadCell>
-                    </TableHead>
-                    <TableBody tableBodyClass="divide-y text-xs m-0 p-0">
-                        {#each forceList as force (force.id)}
-                            <TableBodyRow class={`${colorList[force.id%12].tw} rounded-lg`}>
-                                <TableBodyCell class='text-white' contenteditable="true">{force.symbol}</TableBodyCell>
-                                <TableBodyCell class='text-white' contenteditable="true">{force.type}</TableBodyCell>
-                                <TableBodyCell class='text-white' contenteditable="true">{force.agent}</TableBodyCell>
-                                <TableBodyCell class='text-white ' contenteditable="true">{force.object}</TableBodyCell>
-                              </TableBodyRow>
-                        {/each}
-                      
-                    </TableBody>
-                  </Table>
+                    <!-- <Table class='mx-auto my-4 p-2 text-xl font-bold rounded-xl border-1'>
+                        <TableHead class='p-2.5 m-1 text-sm'>
+                        <TableHeadCell>Symbol</TableHeadCell>
+                        <TableHeadCell>Type</TableHeadCell>
+                        <TableHeadCell>Agent</TableHeadCell>
+                        <TableHeadCell>Object</TableHeadCell>
+                        </TableHead>
+                        <TableBody tableBodyClass="divide-y text-xs m-0 p-0">
+                            {#each forceList as force (force.id)}
+                                <TableBodyRow class={`${colorList[force.id%12].tw} rounded-lg`}>
+                                    <TableBodyCell class='text-white' contenteditable="true">{force.symbol}</TableBodyCell>
+                                    <TableBodyCell class='text-white' contenteditable="true">{force.type}</TableBodyCell>
+                                    <TableBodyCell class='text-white' contenteditable="true">{force.agent}</TableBodyCell>
+                                    <TableBodyCell class='text-white ' contenteditable="true">{force.object}</TableBodyCell>
+                                </TableBodyRow>
+                            {/each}
+                        
+                        </TableBody>
+                    </Table> -->
 
-				{/if}
+				</div>
+
                
             </div>
 		</div>
