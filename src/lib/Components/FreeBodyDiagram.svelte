@@ -5,7 +5,9 @@
     let name: string = 'Free Body Diagram';
     import type { Point, Vector, Force } from '$lib/types';
     import { Label, Select, Input, Button, Toggle } from 'flowbite-svelte';
-    import {TrashBinOutline, FileExportOutline, EditOutline, ArrowRightOutline, RefreshOutline, CirclePlusOutline} from 'flowbite-svelte-icons';
+    import {TrashBinOutline, FileExportOutline, EditOutline, ArrowRightOutline, RefreshOutline, CirclePlusOutline, TagOutline} from 'flowbite-svelte-icons';
+    import { Table, TableBody, TableBodyCell, TableBodyRow, TableHead, TableHeadCell, Checkbox, TableSearch } from 'flowbite-svelte';
+
 
     interface Props {
         width?: number;
@@ -117,11 +119,13 @@
                     onmousemove={handleGridMouseMove}
 				>
                     <Grid {gridLogic}/>
-
-                    <Layer>
-                        <Arrow points={[originStage.x, originStage.y, previewForcePoint.x, previewForcePoint.y]} 
-                            {...arrowProps} id={(nextId++)+''} opacity={0.7} />
-                    </Layer>
+                    {#if onStage}
+                        <Layer>
+                            <Arrow points={[originStage.x, originStage.y, previewForcePoint.x, previewForcePoint.y]} 
+                                {...arrowProps} id={(nextId++)+''} opacity={0.7} />
+                        </Layer>
+                    {/if}
+                    
                     <Layer>
                         {#each forceList as force, i}
                             <Arrow points={[originStage.x, originStage.y, force.components.x, force.components.y]} 
@@ -131,6 +135,41 @@
 
 				</Stage>
 			</div>
+            <div id= 'tao'>
+                <div id='fbd-label' class='mx-auto text-lg font-bold flex flex-row rounded-xl border-1'>
+					<p>TAO Chart</p>
+				</div>
+                {#if forceList.length == 0}
+					<div class='mx-auto my-4 p-2 text-xl font-bold rounded-xl border-1'>
+						<p>No Forces Yet</p>
+						<p class='text-sm'>Add a force by double clicking on the FBD or clicking the button below</p>
+					</div>
+				{:else}
+                    
+
+                <Table class='mx-auto my-4 p-2 text-xl font-bold rounded-xl border-1'>
+                    <TableHead class='p-2.5 m-1 text-sm'>
+                      <TableHeadCell>Symbol</TableHeadCell>
+                      <TableHeadCell>Type</TableHeadCell>
+                      <TableHeadCell>Agent</TableHeadCell>
+                      <TableHeadCell>Object</TableHeadCell>
+                    </TableHead>
+                    <TableBody tableBodyClass="divide-y text-xs m-0 p-0">
+                        {#each forceList as force (force.id)}
+                            <TableBodyRow class={`${colorList[force.id%12].tw} rounded-lg`}>
+                                <TableBodyCell class='text-white' contenteditable="true">{force.symbol}</TableBodyCell>
+                                <TableBodyCell class='text-white' contenteditable="true">{force.type}</TableBodyCell>
+                                <TableBodyCell class='text-white' contenteditable="true">{force.agent}</TableBodyCell>
+                                <TableBodyCell class='text-white ' contenteditable="true">{force.object}</TableBodyCell>
+                              </TableBodyRow>
+                        {/each}
+                      
+                    </TableBody>
+                  </Table>
+
+				{/if}
+               
+            </div>
 		</div>
 	</div>
 
