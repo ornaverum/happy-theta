@@ -70,6 +70,22 @@
         forceList = [...forceList, newForce];
     }
 
+
+    const colorList = [
+        {tw: 'bg-amber-400', cc: '#fb923c'},
+        {tw: 'bg-blue-700', cc: '#1d4ed8'},
+        {tw: 'bg-red-600', cc: '#dc2626'},
+        {tw: 'bg-green-900', cc: '#14532d'},
+        {tw: 'bg-purple-800', cc: '#6d28d9'},
+        {tw: 'bg-orange-800', cc: '#9a3412'},
+        {tw: 'bg-emerald-600', cc: '#059669'},
+        {tw: 'bg-cyan-300', cc: '#6ee7b7'},
+        {tw: 'bg-rose-600', cc: '#ec4899'},
+        {tw: 'bg-violet-600', cc: '#7c3aed'},
+        {tw: 'bg-lime-400', cc: '#a3e635'},
+        {tw: 'bg-fuchsia-600', cc: '#d946ef'},
+    ];
+
 </script>
 
 <!-- {#snippet drawForces(xs:Point[])}
@@ -104,13 +120,12 @@
 
                     <Layer>
                         <Arrow points={[originStage.x, originStage.y, previewForcePoint.x, previewForcePoint.y]} 
-                            {...arrowProps} id={(nextId++)+''} opacity={1}/>
+                            {...arrowProps} id={(nextId++)+''} opacity={0.7} />
                     </Layer>
-
                     <Layer>
-                        {#each forceList as force}
+                        {#each forceList as force, i}
                             <Arrow points={[originStage.x, originStage.y, force.components.x, force.components.y]} 
-                                {...arrowProps} id={force.id+''} opacity={1} stroke='#336699'/>
+                                {...arrowProps} id={force.id+''} opacity={1} stroke={colorList[force.id%12].cc} fill={colorList[force.id%12].cc}/>
                         {/each}
                     </Layer>
 

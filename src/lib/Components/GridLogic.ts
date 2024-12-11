@@ -92,7 +92,7 @@ export default class GridLogic {
     
         // gridlines for y (i.e., parallel to x-axis)
     
-        for (let i = 0; i < numCells.y; i++) {
+        for (let i = 0; i <= numCells.y; i++) {
             let startParallel = i * cellSize;
             let startPerp = 0;
             let endPerp = numCells.x * cellSize;

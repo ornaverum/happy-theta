@@ -33,29 +33,7 @@
 
 	let showControlButtons:boolean = $state(true);
 
-	const colorList = ['red', 'green', 'blue', 'purple', 'orange', 'brown', 'pink', 'cyan', 'magenta', 'yellow'];
-		// brown and magenta need work
-
-
-	const colorVariants: { [key: string]: string } = {
-		red: 'bg-red-500',
-		green: 'bg-green-500',
-		blue: 'bg-blue-500',
-		purple: 'bg-purple-500',
-		orange: 'bg-orange-500',
-		black: 'bg-black-500',
-		brown: 'bg-brown-500',
-		pink: 'bg-pink-500',
-		cyan: 'bg-cyan-500',
-		magenta: 'bg-magenta-500',
-		yellow: 'bg-yellow-200',
-	};
-
-
-    let fontColorList: string[] = [];
-    for (let i = 0; i < colorList.length; i++) {
-        fontColorList.push('bg-' + colorList[i] + '-500');
-    } 
+	 
 
 </script>
 
