@@ -44,6 +44,7 @@
 
 	let toggleChecked:boolean = $state(false);
 	let onStage:boolean = $state(false);
+    let showNetForce:boolean = $state(false);
 
 
     let netForceVector:Point = $state({...originStage});
@@ -51,7 +52,6 @@
 		let pt:Point = gridLogic.getSnappedPointFromStage({x:e.evt.layerX, y:e.evt.layerY});
 		let newPt: Point = gridLogic.getStageFromPoint(pt);
         let OPos:Point = gridLogic.getStageFromPoint(origin);
-        console.log(pt);
 		previewForcePoint = {...pt};
 	}
 
@@ -78,6 +78,7 @@
             netForceVector.x += (force.components.x -originPoint.x);
             netForceVector.y += force.components.y -originPoint.y;
         });
+        console.log(netForceVector, originPoint)
     }
 
 
@@ -153,15 +154,15 @@
                             {@render drawForce(force.components, {id: force.id+'', opacity: 1, color: colorList[force.id%12].cc, strokeWidth: 3})}
                         {/each}
                     </Layer>
-
-                    <Layer>
-                        {#if netForceVector.x == originStage.x && netForceVector.y == originStage.y}
-                            <Circle opacity={0.4} fill='black' {...originStage} radius = {8} id={'net'} />
-                        {:else}
-                            {@render drawForce(netForceVector, {id: 'net', opacity: 0.5, color: 'black', strokeWidth: 6})}
-                        {/if}
-                    </Layer>
-
+                    {#if showNetForce}
+                        <Layer>
+                            {#if netForceVector.x == originPoint.x && netForceVector.y == originPoint.y}
+                                <Circle opacity={0.4} fill='black' {...originStage} radius = {8} id={'net'} />
+                            {:else}
+                                {@render drawForce(netForceVector, {id: 'net', opacity: 0.5, color: 'black', strokeWidth: 6})}
+                            {/if}
+                        </Layer>
+                    {/if}
 				</Stage>
 			</div>
             <div id= 'tao'>
@@ -169,52 +170,44 @@
 					<p>TAO Chart</p>
 				</div>
                 <div class='mx-auto my-4 p-2 text-xl font-bold rounded-xl border-1'>
+                    
                     {#if forceList.length == 0}
                         <div class='mx-auto my-4 p-2 text-xl font-bold rounded-xl border-1'>
                             <p>No Forces Yet</p>
                             <p class='text-sm'>Add a force by double clicking on the FBD or clicking the button below</p>
                         </div>
                     {:else}
-                    <div id='tao-title' class= " p-2.5 m-1 gap-2 font-bold rounded-xl my-auto grid grid-cols-[0.25fr_1fr_2fr_2fr_2fr_0.25fr]">
-                        <p></p>
-                        <p class='justify-center mx-auto'>Symbol</p>
-                        <p class='justify-center mx-auto'>Type</p>
-                        <p class='justify-center mx-auto'>Agent</p>
-                        <p class='justify-center mx-auto'>Object</p>
-                        <p></p>
-                    </div>
-                        <div id='tao-items' class=''>
-                            {#each forceList as force (force.id)}
-                                <div id='tao-item' class= {`${colorList[force.id%12].tw} p-2.5 m-1 gap-2 font-bold rounded-xl grid grid-cols-[0.25fr_1fr_2fr_2fr_2fr_0.25fr] w-full`}>
-                                    <div class='' contenteditable="true">{force.symbol}</div>
-                                    <div class='' contenteditable="true">{force.type}</div>
-                                    <div class='' contenteditable="true">{force.agent}</div>
-                                    <div class='' contenteditable="true">{force.object}</div>
-                                </div>
-                            {/each}
-                        </div>
-                    {/if}
-                        
 
-                    <!-- <Table class='mx-auto my-4 p-2 text-xl font-bold rounded-xl border-1'>
-                        <TableHead class='p-2.5 m-1 text-sm'>
-                        <TableHeadCell>Symbol</TableHeadCell>
-                        <TableHeadCell>Type</TableHeadCell>
-                        <TableHeadCell>Agent</TableHeadCell>
-                        <TableHeadCell>Object</TableHeadCell>
-                        </TableHead>
-                        <TableBody tableBodyClass="divide-y text-xs m-0 p-0">
-                            {#each forceList as force (force.id)}
-                                <TableBodyRow class={`${colorList[force.id%12].tw} rounded-lg`}>
-                                    <TableBodyCell class='text-white' contenteditable="true">{force.symbol}</TableBodyCell>
-                                    <TableBodyCell class='text-white' contenteditable="true">{force.type}</TableBodyCell>
-                                    <TableBodyCell class='text-white' contenteditable="true">{force.agent}</TableBodyCell>
-                                    <TableBodyCell class='text-white ' contenteditable="true">{force.object}</TableBodyCell>
+                        <Table class='mx-auto my-4 p-2 text-xl font-bold rounded-xl border-1'>
+                            <TableHead class='p-2.5 m-1 text-sm'>
+                            <TableHeadCell>Symbol</TableHeadCell>
+                            <TableHeadCell>Type</TableHeadCell>
+                            <TableHeadCell>Agent</TableHeadCell>
+                            <TableHeadCell>Object</TableHeadCell>
+                            </TableHead>
+                            <TableBody tableBodyClass="divide-y text-xs m-0 p-0">
+                                {#each forceList as force (force.id)}
+                                    <TableBodyRow class={`${colorList[force.id%12].tw} rounded-lg `}>
+                                        <TableBodyCell class='text-black font-bold text-lg' contenteditable="true">{force.symbol}</TableBodyCell>
+                                        <TableBodyCell class='text-black font-bold text-lg' contenteditable="true">{force.type}</TableBodyCell>
+                                        <TableBodyCell class='text-black font-bold text-lg' contenteditable="true">{force.agent}</TableBodyCell>
+                                        <TableBodyCell class='text-black font-bold text-lg ' contenteditable="true">{force.object}</TableBodyCell>
+                                    </TableBodyRow>
+                                {/each}
+                                {#if showNetForce}
+                                    <TableBodyRow class={'bg-black-800 text-xl'}>
+                                        Net Force
+                                        <Toggle bind:checked={showNetForce} />
+                                    </TableBodyRow> 
+                                {:else}
+                                <TableBodyRow class={'text-xl'}>
+                                    Show Net Force
+                                    <Toggle bind:checked={showNetForce} />
                                 </TableBodyRow>
-                            {/each}
-                        
-                        </TableBody>
-                    </Table> -->
+                                {/if}
+                            </TableBody>
+                        </Table>
+                    {/if}
 
 				</div>
 
