@@ -35,7 +35,7 @@
 
 	
 
-	let gridLogic = new GridLogic({x:width, y:height}, {...margin}, {...numCells}, {...originPoint});
+	// let gridLogic = new GridLogic({x:width, y:height}, {...margin}, {...numCells}, {...originPoint});
 
 </script>
 
