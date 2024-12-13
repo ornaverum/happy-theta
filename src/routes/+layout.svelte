@@ -26,6 +26,7 @@
 	<NavUl {hidden}>
 	  <NavLi href="{base}/">Home</NavLi>
 	  <NavLi href="{base}/free-body-diagram">Free Body Diagram</NavLi>
+	  <NavLi href="{base}/energy-diagram">Energy Diagram</NavLi>
 	  <NavLi href="{base}/motion-diagram">Motion Diagram</NavLi>
 	  <NavLi href="{base}/graph-maker">Graph Maker</NavLi>
 	  <!-- <NavLi href="{base}/grapher">Grapher</NavLi> -->
