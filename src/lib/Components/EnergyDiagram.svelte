@@ -2,7 +2,7 @@
     import Grid from "./Grid.svelte";
     import GridLogic from "./GridLogic";
     import type {Point} from "../types";
-    import {Stage, Layer, Rect, type KonvaMouseEvent} from "svelte-konva";
+    import {Stage, Layer, Rect, Circle, type KonvaMouseEvent} from "svelte-konva";
 
     interface Props {
         width?: number;
@@ -35,7 +35,7 @@
     }
 
     const handleGridMouseMove:(e: KonvaMouseEvent)=>void = (e: KonvaMouseEvent) => {
-        console.log('move');
+        // console.log('move');
     }
 
     let onStage:boolean = $state(false);
@@ -49,40 +49,59 @@
         color: string,
     }
 
+    const initialPositions:(yPt:number)=>Point = (yPt:number)=>{
+        let pt:Point = {x: gridLogic.getStageFromPoint({x:0, y:0}).x-5, 
+            y: gridLogic.getStageFromPoint({x:0, y:yPt}).y + 0.15*gridLogic.cellSize};
+        return pt;
+    }
+
     let energyBars: EnergyBar[] = $state([
-        {id: 0, name: 'Kinetic Energy', origin: {x:0, y:0}, width: 1, color: 'blue'},
-        {id: 1, name: 'Gravitational Potential Energy', origin: {x:0, y:1}, width: 1, color: 'green'},
-        {id: 2, name: 'Elastic Potential Energy', origin: {x:0, y:2}, width: 2, color: 'yellow'},
-        {id: 3, name: 'Thermal Energy', origin: {x:0, y:3}, width: 3, color: 'red'},
-        {id: 4, name: 'Total Energy', origin: {x:0, y:4}, width: 1, color: 'purple'},
+        {id: 0, name: 'Kinetic Energy', origin: {...initialPositions(0)}, width: 1, color: 'blue'},
+        {id: 1, name: 'Gravitational Potential Energy', origin: {...initialPositions(1)}, width: 1, color: 'green'},
+        {id: 2, name: 'Elastic Potential Energy', origin: {...initialPositions(2)}, width: 2, color: 'yellow'},
+        {id: 3, name: 'Thermal Energy', origin: {...initialPositions(3)}, width: 3, color: 'red'},
+        {id: 4, name: 'Total Energy', origin: {...initialPositions(4)}, width: 1, color: 'purple'},
     ]);
 
     let posX:number = $state(0);
+    let pos:Point = $state({x:200, y:200});
+    $inspect(pos);
+
+    const initalStagePositions:Point[] = [
+        {...gridLogic.getStageFromPoint({x:0-0.15, y:0+0.15})},
+        {...gridLogic.getStageFromPoint({x:0-0.15, y:1+0.15})},
+        {...gridLogic.getStageFromPoint({x:0-0.15, y:2+0.15})},
+        {...gridLogic.getStageFromPoint({x:0-0.15, y:3+0.15})},
+        {...gridLogic.getStageFromPoint({x:0-0.15, y:4+0.15})},
+    ]
+    
+    let stagePositions:Point[] = $state(initalStagePositions);
+    let stageWidths:number[] = $state(Array(5).fill(0.05*gridLogic.cellSize|10));
 </script>
 
 {#snippet drawEnergyBar(bar:EnergyBar)}
-        <Rect x={gridLogic.getStageFromPoint({...bar.origin}).x+2} 
-            y={gridLogic.getStageFromPoint({...bar.origin}).y + 0.15*gridLogic.cellSize} 
-            width={gridLogic.cellSize*bar.width} 
+        <Rect x={bar.origin.x} 
+            y={bar.origin.y} 
+            width={stageWidths[bar.id]} 
             height={0.7*gridLogic.cellSize} 
             fill={bar.color}
             stroke='#445544'
             strokeWidth={1}
             opacity={0.7}
             />
-        <Rect bind:x={posX}
-            y={gridLogic.getStageFromPoint({...bar.origin}).y + 0.15*gridLogic.cellSize} 
-            width={3} 
+        <Rect bind:x={stagePositions[bar.id].x}
+            bind:y={stagePositions[bar.id].y} 
+            width={gridLogic.cellSize/3} 
             height={0.7*gridLogic.cellSize} 
             fill={bar.color}
-            opacity={1}
+            opacity={0.5}
             stroke='#aaaaaa'
             strokeWidth={1}
             draggable={true}
             ondragmove={(e) => {
-                console.log(posX);
-                bar.width= (posX);
-
+                let snap:Point = {x: e.target.x()-gridLogic.cellSize, y:e.target.y()}//;gridLogic.getStageFromPoint(gridLogic.getSnappedPointFromStage(e.target.x(), e.target.y()));
+                stageWidths[bar.id] = snap.x;
+                stagePositions[bar.id] = {x:snap.x, y: initalStagePositions[bar.id].y};
             }}
             />
 {/snippet}
@@ -101,17 +120,22 @@
                     width={width}
                     height={height}
                     id='energy-stage'
-                    onmouseleave={() => {onStage = false; console.log('mouseleave')}}
-                    onmouseenter={() => {onStage = true; console.log('mouseenter')}}
+                    onmouseleave={() => {onStage = false;}}
+                    onmouseenter={() => {onStage = true;}}
                     onclick={handleGridClick}
                     onmousemove={handleGridMouseMove}
 				>
-                    <Grid {gridLogic}/>
                     <Layer>
                         {#each energyBars as bar}
                             {@render drawEnergyBar(bar)}
                         {/each}
+                        <!-- <Circle bind:x={pos.x} bind:y ={pos.y} radius={50} fill='black' draggable ondragmove={(e)=>{
+                            pos = {x: e.evt.layerX, y: 200};
+                        }}/> -->
                     </Layer>
+                    <Grid {gridLogic}/>
+
+                    
 				</Stage>
 			</div>
 		</div>
