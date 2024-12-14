@@ -1,4 +1,4 @@
-import type {Point} from '../kinematicsTypes';
+import type {Point} from '$lib/types';
 
 type GridLine = {
     x0: number,
