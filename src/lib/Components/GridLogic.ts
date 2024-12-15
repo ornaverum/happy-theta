@@ -41,13 +41,6 @@ export default class GridLogic {
 		return {x: -gridCenter.x + stageCenter.x, y: -gridCenter.y + stageCenter.y};
 	}
 
-    // getStageFromPoint:Function = (point: Point, cellSize:number, offSet:Point)=>{
-    //     return {x: point.x*cellSize + offSet.x, y: point.y*cellSize + offSet.y};
-    // }
-
-    // getPointFromStage:Function = (point: Point, cellSize:number, offSet:Point)=>{
-    //     return {x: (point.x - offSet.x)/cellSize, y: (point.y - offSet.y)/cellSize};
-    // }
 
     getPointFromStage:Function = (point: Point)=>{
         return {x: (point.x - this.offSet.x)/this.cellSize, y: (point.y - this.offSet.y)/this.cellSize};
