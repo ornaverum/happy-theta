@@ -23,13 +23,11 @@
         handleDelete = (e: MouseEvent) => {},
     }: Props = $props();
 
-    let numCells: Point = {x: 10, y:5};
+    let numCells: Point = {x: 10, y:1};
     let originPoint:Point = {x:5, y:1};
 
     let gridLogic = new GridLogic({x:width, y:height}, {...margin}, {...numCells}, {...originPoint});
     
-
-
     let onStage:boolean = $state(false);
 
 
@@ -49,20 +47,12 @@
     }
 
     let energyBars: EnergyBar[] = $state([
-        {id: 0, name: 'Kinetic Energy', symbol:'K', origin: {...initialPositions(0)}, width: 1, color: 'blue'},
-        {id: 1, name: 'Gravitational Potential Energy', symbol:'Ug', origin: {...initialPositions(1)}, width: 1, color: 'green'},
-        {id: 2, name: 'Elastic Potential Energy', symbol:'Uel', origin: {...initialPositions(2)}, width: 2, color: 'yellow'},
-        {id: 3, name: 'Thermal Energy', symbol:'Eth', origin: {...initialPositions(3)}, width: 3, color: 'red'},
-        {id: 4, name: 'Total Energy', symbol:'E', origin: {...initialPositions(4)}, width: 1, color: 'purple'},
+        {id: 0, name: 'Work', symbol:'W', origin: {...initialPositions(0)}, width: 1, color: 'orange'},
     ]);
 
 
     const initalStagePositions:Point[] = [
         {...gridLogic.getStageFromPoint({x:0-0.15, y:0+0.15})},
-        {...gridLogic.getStageFromPoint({x:0-0.15, y:1+0.15})},
-        {...gridLogic.getStageFromPoint({x:0-0.15, y:2+0.15})},
-        {...gridLogic.getStageFromPoint({x:0-0.15, y:3+0.15})},
-        {...gridLogic.getStageFromPoint({x:0-0.15, y:4+0.15})},
     ]
     
     let stagePositions:Point[] = $state(initalStagePositions);
@@ -91,18 +81,6 @@
             previewEnergy.color = energyBars[bar].color;
         }
     }
-
-
-    let previewTotalEnergy: EnergyBar = $derived.by(() => {
-        let w = 0;
-        energyBars.forEach((bar:EnergyBar)=>{
-            if(bar.id !== 4)
-                w+=Math.floor(bar.width);
-        });
-        return {id: -1, name: 'Total Energy Preview', symbol:'E', origin: {...initialPositions(4)}, width: w, color: 'purple', opacity: 0.3};
-        // return {id: -1, name: 'Total Energy Preview', symbol:'E', origin: {...initialPositions(4)}, width:3, color: 'purple'};
-    });
-
 
     let previewEnergy: EnergyBar = $state({id: -1, name: 'Preview', origin: {...initialPositions(0)}, width: 0, color: 'purple', opacity: 0.3});
 
@@ -152,7 +130,6 @@
                         <!-- <Circle bind:x={pos.x} bind:y ={pos.y} radius={50} fill='black' draggable ondragmove={(e)=>{
                             pos = {x: e.evt.layerX, y: 200};
                         }}/> -->
-                        {@render drawEnergyBar(previewTotalEnergy)}
                         {@render drawEnergyBar(previewEnergy)}
                     </Layer>
 				</Stage>

@@ -12,6 +12,7 @@
 	import Grid from '$lib/Components/Grid.svelte';
 	import GridLogic from '$lib/Components/GridLogic';
 	import EnergyDiagram from '$lib/Components/EnergyDiagram.svelte';
+	import EnergyDiagramWork from '$lib/Components/EnergyDiagramWork.svelte';
 
 	let name: string = 'Free Body Diagram';
 
@@ -42,5 +43,6 @@
 <main class="flex flex-col justify-center p-4 rounded-xl">
 	<div id='capture' class='mx-auto w-max'>
 		<EnergyDiagram/>
+		<EnergyDiagramWork/>
 	</div>
 </main>
