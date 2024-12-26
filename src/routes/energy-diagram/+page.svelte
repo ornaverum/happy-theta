@@ -16,33 +16,29 @@
 
 	let name: string = 'Free Body Diagram';
 
-	let width = 500;
-    let height = 500;
+	let width = 800;
+    let height = 300;
 
 	let gridPointList: number[] = [];
 	for (let i = -5; i <= 5; i++) {
 		gridPointList.push(i);
 	}
 
-	let gridList: any[] = [];
-	let id_num: number = 0;
 	let gridSize = Math.min(height, width);
-	let cellSize = gridSize/11.0;
-	let gridCenter = gridSize/2.0;
-	let snapToGrid = true;
-	let showNetForce = $state(false);
-
 	let showControlButtons:boolean = $state(true);
 
-	
+	let margin = {x:5, y:5};
+	let numCells = {x: 10, y:5};
+	let originPoint = {x:5, y:1};
 
-	// let gridLogic = new GridLogic({x:width, y:height}, {...margin}, {...numCells}, {...originPoint});
+	let gridLogic = new GridLogic({size:{x:width, y:height}, margin:{...margin}, numCells:{...numCells}, origin:{...originPoint}});
+	let gridLogicW = new GridLogic({size:{x:width, y:height}, margin:{...margin}, numCells:{x:10,y:1}, origin:{...originPoint}});
 
 </script>
 
 <main class="flex flex-col justify-center p-4 rounded-xl">
 	<div id='capture' class='mx-auto w-max'>
-		<EnergyDiagram/>
-		<EnergyDiagramWork/>
+		<EnergyDiagram {gridLogic}/>
+		<EnergyDiagramWork {gridLogicW}/>
 	</div>
 </main>

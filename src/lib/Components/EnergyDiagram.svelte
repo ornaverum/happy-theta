@@ -3,32 +3,26 @@
     import GridLogic from "./GridLogic";
     import type {Point} from "../types";
     import {Stage, Layer, Rect, Circle, Text, type KonvaMouseEvent} from "svelte-konva";
+    import {setContext} from "svelte";
 	import { BarsFromLeftOutline } from "flowbite-svelte-icons";
 
     interface Props {
-        width?: number;
-        height?: number;
         title?: string;
         id?: number;
-        margin?: Point;
         handleDelete?: (e: MouseEvent)=> void;
+        gridLogic?: GridLogic;
     }
 
     let {
-        width = 600,
-        height = 300,
         title = $bindable('Title'),
         id = 0,
-        margin = {x:5, y:5},
         handleDelete = (e: MouseEvent) => {},
+        gridLogic = new GridLogic({})
     }: Props = $props();
 
-    let numCells: Point = {x: 10, y:5};
-    let originPoint:Point = {x:5, y:1};
-
-    let gridLogic = new GridLogic({x:width, y:height}, {...margin}, {...numCells}, {...originPoint});
-    
-
+    let numCells: Point = gridLogic.numCells;
+    let width: number = gridLogic.size.x;
+    let height: number = gridLogic.size.y;
 
     let onStage:boolean = $state(false);
 

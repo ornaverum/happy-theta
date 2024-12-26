@@ -20,16 +20,16 @@ export default class GridLogic {
     offSet?: Point;
     gridList?: GridLine[];
 
-    constructor(size:Point, margin:Point, numCells:Point, origin:Point){
+    constructor({size={x:500, y:500}, margin={x:5, y:5}, numCells={x:5, y:5}, origin={x:0, y:0}, cellSize=undefined, stageCenter=undefined, gridCenter=undefined, offSet=undefined, gridList=undefined}) {
         this.size = size;
         this.margin = margin;
         this.numCells = numCells;
         this.origin = origin;
-        this.cellSize = Math.min((size.x-2*margin.x)/(numCells.x+1), (size.y-2*margin.y)/(numCells.y+1));
-        this.stageCenter = {x: size.x/2.0, y: size.y/2.0};
-        this.gridCenter = {x: origin.x + this.numCells.x*this.cellSize/2.0, y: origin.y + this.numCells.y*this.cellSize/2.0};
-        this.offSet = this.calculateOffset(this.gridCenter, this.stageCenter);
-        this.gridList = this.buildGridLines(this.numCells, this.cellSize, this.origin);
+        this.cellSize = this.cellSize || Math.min((size.x-2*margin.x)/(numCells.x+1), (size.y-2*margin.y)/(numCells.y+1));
+        this.stageCenter = this.stageCenter ||{x: size.x/2.0, y: size.y/2.0};
+        this.gridCenter = this.gridCenter || {x: origin.x + this.numCells.x*this.cellSize/2.0, y: origin.y + this.numCells.y*this.cellSize/2.0};
+        this.offSet = this.offSet || this.calculateOffset(this.gridCenter, this.stageCenter);
+        this.gridList = this.gridList || this.buildGridLines(this.numCells, this.cellSize, this.origin);
     }
 
     range(start:number, end:number, step:number = 1) {
