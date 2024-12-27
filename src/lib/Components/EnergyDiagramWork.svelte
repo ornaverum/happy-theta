@@ -65,11 +65,11 @@
     const handleGridMouseMove:(e: KonvaMouseEvent)=>void = (e: KonvaMouseEvent) => {
         let pt:Point = {x:e.evt.layerX, y:e.evt.layerY};
         let snap:Point = gridLogic.getPointFromStage(pt);
-        if (snap.x >= 0 && snap.x <= numCells.x && snap.y >= 0 && snap.y <= numCells.y) {
+        if (snap.x >= 0 && snap.x <= gridLogic.numCells.x && snap.y >= 0 && snap.y <= gridLogic.numCells.y) {
             let bar:number = Math.floor(snap.y);
             snap = {x: Math.max(Math.round(snap.x),0.2)-5, y: bar};
             pt = gridLogic.getStageFromPoint(snap);
-            previewEnergy.origin.y = initalStagePositions[bar].y;
+            previewEnergy.origin.y = initalStagePositions[0].y;
             // previewEnergy.origin = {x:pt.x-gridLogic.cellSize/3/2, y: initalStagePositions[bar].y};
             previewEnergy.width = snap.x; //- gridLogic.getStageFromPoint(originPoint).x;
             previewEnergy.color = energyBars[bar].color;
@@ -99,9 +99,6 @@
 		
 		<div class='flex flex-row flex-wrap'>
 			<div id='fbd' class='px-4 flex flex-col'>
-				<div id='fbd-label' class='ml-4 text-lg font-bold flex flex-row rounded-xl border-1'>
-					Energy Diagram
-				</div>
 				<Stage 
                     width={width}
                     height={height}

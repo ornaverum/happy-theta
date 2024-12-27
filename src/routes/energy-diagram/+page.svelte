@@ -32,13 +32,18 @@
 	let originPoint = {x:5, y:1};
 
 	let gridLogic = new GridLogic({size:{x:width, y:height}, margin:{...margin}, numCells:{...numCells}, origin:{...originPoint}});
-	let gridLogicW = new GridLogic({size:{x:width, y:height}, margin:{...margin}, numCells:{x:10,y:1}, origin:{...originPoint}});
+	let gridLogicW = new GridLogic({size:{x:width, y:100}, margin:{...margin}, numCells:{x:10,y:1}, origin:{...originPoint},
+		cellSize:gridLogic.cellSize});
+	// Object.assign(gridLogicW, gridLogic, {numCells:{x:10, y:1}, size:{x:width, y:100}, origin:{x:5, y:0}});
+	// gridLogicW.rebuildGridLines();
+	console.log(gridLogic);
+	console.log(gridLogicW);
 
 </script>
 
 <main class="flex flex-col justify-center p-4 rounded-xl">
 	<div id='capture' class='mx-auto w-max'>
 		<EnergyDiagram {gridLogic}/>
-		<EnergyDiagramWork {gridLogicW}/>
+		<EnergyDiagramWork gridLogic={gridLogicW}/>
 	</div>
 </main>
