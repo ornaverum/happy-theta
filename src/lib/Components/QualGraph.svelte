@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { Stage, Layer, Line, Circle, Path, Group} from 'svelte-konva';
-
-
-	import type {Dot, GraphPath, Point} from './kinematicsTypes.js';
+	import { Stage, Layer, Line, Circle, Path, Group, type KonvaMouseEvent} from 'svelte-konva';
+	import type {GraphPath, Point} from './kinematicsTypes.js';
     import { Label, Select, Input, Button} from 'flowbite-svelte';
+	import Grid from './Grid.svelte';
+	import GridLogic from './GridLogic.js';
     import {TrashBinOutline, ChevronDownOutline, ChevronRightOutline, RefreshOutline} from 'flowbite-svelte-icons';
 	import { Dropdown, DropdownItem } from 'flowbite-svelte';
 	import EditLabel from './EditLabel.svelte';
@@ -23,7 +23,7 @@
 		showControlButtons?: boolean;
 		showGrid?: boolean;
 		id?: number;
-		dotList?: Dot[] | null;
+		dotList?: Dot[];
 		pathList?: GraphPath[];
 	}
 
@@ -46,141 +46,55 @@
 		dotList = $bindable([]),
 		pathList = $bindable([])
 	}: Props = $props();
-	let previewDot: Dot | null = $state(null);
-	let previewGraph: GraphPath | null = $state(null);
+
+
+	type Dot = {
+		id: number,
+		pt: Point,
+		radius: number,
+		fill: string,
+		opacity: number,
+	}
+	let previewDot: Dot = $state({
+			id: 0,
+			pt: {x:0, y:0},
+			radius: 6,
+			fill: color,
+			opacity: 1.0,
+		});
+	let previewGraph: GraphPath = $state(null);
 
 	let addingDot: boolean = $state(true); // true if adding dot, false if adding path
 
 	let showYLabelOptions = false;
 	let showAxisOptions = false;
 
-    let margin = 5;
-    let windowSize = Math.min(width, height);
-	let gridSize = windowSize - 2*margin;
-    let cellSize = gridSize/nCells;
-	let gridCenter = windowSize/2.0;
-    let origin = {x:margin, y:gridSize+margin};  // Assuming origin is at bottom left
 
-	
+	let gridLogic = new GridLogic({size:{x:width, y:height}, numCells: {x:6, y:6}, origin:{x:0, y:3}});
 
-	let gridList: any[] = $state([]);
 	let id_num = 0;
 
-	let xAxisTicks = [1, 2, 3, 4, 5, 6];
-	let yAxisTicks = [1, 2, 3, 4, 5, 6];
-    
-	const createGrid = () =>{
-
-		gridList = [];
-		origin = {x:margin, y:gridSize+margin};
-
-	    // Create y-axis
-		xAxisTicks = [1, 2, 3, 4, 5, 6];
-
-		if (showNegativeAxes.x){
-			origin.x = margin + 3*cellSize;
-			xAxisTicks = [-3, -2, -1, 1, 2, 3];
-		}
-
-		gridList.push({
-				id: id_num++,
-				x0: origin.x,
-				y0: margin,
-				x1: origin.x,
-				y1: margin + 6*cellSize,
-				strokeWidth: 4,
-			});
-
-		// Create x-axis
-		
-		yAxisTicks = [1, 2, 3, 4, 5, 6];
-		
-		if (showNegativeAxes.y){
-			origin.y = margin + 3*cellSize;
-			yAxisTicks = [-3, -2, -1, 1, 2, 3];
-
-		}
-
-		gridList.push({
-				id: id_num++,
-				x0: margin,
-				y0: origin.y,
-				x1: margin + 6*cellSize,
-				y1: origin.y,
-				strokeWidth: 4,
-			});
-
-
-
-		// create x grid lines
-		xAxisTicks.forEach((tick) => {
-			let startParallel = tick * cellSize + origin.x;
-			let startPerp = margin+6*cellSize;
-			let endPerp = margin + 0*cellSize;
-			gridList.push({id: id_num++,
-				x0: startParallel,
-				y0: startPerp,
-				x1: startParallel,
-				y1: endPerp,
-				strokeWidth: 1,
-			});
-		});
-
-
-	// create x grid lines
-		yAxisTicks.forEach((tick) => {
-			let startParallel = -tick * cellSize + origin.y;
-			let startPerp = margin + 0*cellSize;
-			let endPerp = margin + 6*cellSize;
-			gridList.push({id: id_num++,
-				x0: startPerp,
-				y0: startParallel,
-				x1: endPerp,
-				y1: startParallel,
-				strokeWidth: 1,
-			});
-		});
-	}
-
-
-
-
-	const getPreviewDot= (pos = {x:gridCenter, y:height/2.0}) => {
-		if (pos.x < 0 || pos.x > width || pos.y < 0 || pos.y > height) {
-			return;
-		} 
-
-		let snappedPos = {...pos};
-		snappedPos.x = Math.round((pos.x - gridCenter) / cellSize) * cellSize + gridCenter;
-		snappedPos.y = Math.round((pos.y - gridCenter) / cellSize) * cellSize + gridCenter;
-
+	const getpreviewDot= (pos = {x:0, y:0}) => {
+		let snappedPos = {...gridLogic.getSnappedPointFromStage(pos)};
 		previewDot = {
 			id: dotList.length,
-			x: snappedPos.x,
-			y: snappedPos.y,
+			pt: {...snappedPos},
 			radius: 6,
 			fill: color,
-			opacity: 1.0,
+			opacity: 0.6,
 		};
 	}
 
-	const addNewDot = (pos = {x:gridCenter, y:height/2.0}) => {
+	const addNewDot = (pos = {x:0, y:0}) => {
 
-		dotList = [...dotList, previewDot];
+		dotList = [...dotList, {...previewDot, opacity:1, radius:4}];
 		if (dotList.length >1){
 			addingDot = false;
 		}
 	}
 
 	const getPathForGraph = (dots: Point[] = [{x:0, y:0}, {x:1,y:0}], curvature: number = 0)=> {
-		// curvature = 0 is straight line
-		// curvature = 1 is speeding up
-		// curvature = -1 is slowing down
 
-
-		// 0 => 0.5
-		// -1 => 0
-		// 1 => 1
 		let ctrl = dots[0].y + (dots[1].y - dots[0].y) * 0.5*( 1 - curvature);
 
 		let pathData = 'M ' + dots[0].x + ' ' + dots[0].y + 
@@ -210,10 +124,9 @@
 		};
 	}
 
-	const handleClickCanvas = (event:CustomEvent) => {
+	const handleClickCanvas: (e: KonvaMouseEvent)=>void = (e: KonvaMouseEvent) =>{
 		if (addingDot){
-			const nd = event.detail.currentTarget;
-			let pos = {x: event.detail.evt.layerX, y: event.detail.evt.layerY};
+			let pos = {x: e.evt.layerX, y: e.evt.layerY};
 			addNewDot(pos);
 			if (dotList.length > 1){
 				addingDot = false;
@@ -240,11 +153,11 @@
 				return 0
 	};
 
-	const handleMoveCanvas = (event:CustomEvent) => {
-		const nd = event.detail.currentTarget;
-		let pos = {x: event.detail.evt.layerX, y: event.detail.evt.layerY};
+	const handleMoveCanvas : (e: KonvaMouseEvent)=>void = (e: KonvaMouseEvent) => {
+		console.log('Move Canvas');
+		let pos = {x: e.evt.layerX, y: e.evt.layerY};
 		if (addingDot){
-			getPreviewDot(pos);
+			getpreviewDot(pos);
 		} else {
 			getPreviewGraphPath(dotList, getCurvature(pos), 0.5);
 		}
@@ -256,7 +169,7 @@
 		addingDot = true;
 	}
 
-	const handleLeaveCanvas = (evt:Event) => {
+	const handleLeaveCanvas : (e: KonvaMouseEvent)=>void = (e: KonvaMouseEvent) =>{
 		if (addingDot){
 			previewDot = null;
 		} else {
@@ -282,34 +195,29 @@
 		{svg: svgPathXnYn, x: true, y: true},
 	];
 
-	const handleAxis = (axes) => {
-		showNegativeAxes = {...axes};
-		createGrid();
-	}
-
-	createGrid();
-
-	const handleDropdown = (evt) => {
-		console.log(evt);
-	}
-
-	let axisLabelDropdown;
-	let axisDropdown;
-
 </script>	
 
+{#snippet drawDot(dot:Dot)}
+	<Circle 
+		x= {gridLogic.getStageFromPoint(dot.pt).x}
+		y= {gridLogic.getStageFromPoint(dot.pt).y}
+		radius= {8}
+		fill= {color}
+		opacity = {dot.opacity}
+	/>
+{/snippet}
 
 <div id='graph-container' class='p-4 flex flex-col border-2'>
 	
 	{#if showControlButtons}
 		<div id='button-header' class="justify-left flex flex-row m-2 p-2">
-			<Button color="red" size="xs" variant="outline" class="mr-2"
+			<Button color="red" size="xs" class="mr-2"
 				on:click={handleDelete}
 				>
 				<RefreshOutline size='xs' class="text-white-500"/>
 			</Button>
-			<Button color="red" size="xs" variant="outline" class="mr-2"
-				on:click={()=>dispatch('deleteMe', {id:id})}
+			<Button color="red" size="xs" class="mr-2"
+				on:click={()=>{console.log('s5-pass callback for delete')}}
 				>
 				<TrashBinOutline size='xs' class="text-white-500"/>
 			</Button>
@@ -345,31 +253,17 @@
 		<div id='graph' class="flex flex-col" >
 
 			<Stage {width} {height} id='main_stage'
-				on:click={handleClickCanvas}
-				on:mousemove={handleMoveCanvas}
-				on:mouseleave={handleLeaveCanvas}
+				onclick={handleClickCanvas}
+				onmousemove={handleMoveCanvas}
+				onmouseleave={handleLeaveCanvas}
 			>
-				<Layer config={{id: 'grid_layer'}}>
-					{#each gridList as item (item.id)}
-						<Line points= {[item.x0, item.y0, item.x1, item.y1]}
-							stroke='gray'
-							strokeWidth= {item.strokeWidth}
-							/>
-					{/each}
-				</Layer>
+				<Grid {gridLogic}/>
 				<Layer id='dot_layer'>
 					{#each dotList as dot (dot.id)}
-						<Circle 
-							x= {dot.x}
-							y= {dot.y}
-							radius= {dot.radius}
-							fill= {dot.fill}
-							opacity = {dot.opacity}
-						/>
+						{@render drawDot(dot)}
 					{/each}
 					{#if addingDot && previewDot}
-						<Circle x={previewDot.x} y={previewDot.y} radius= {previewDot.radius}
-							fill= {previewDot.fill} opacity= {previewDot.opacity} />
+						{@render drawDot(previewDot)}
 					{/if}
 				</Layer>
 				<Layer id= 'path_layer'>
