@@ -45,9 +45,9 @@
     let energyBars: EnergyBar[] = $state([
         {id: 0, name: 'Kinetic Energy', symbol:'K', origin: {...initialPositions(0)}, width: 1, color: 'blue'},
         {id: 1, name: 'Gravitational Potential Energy', symbol:'Ug', origin: {...initialPositions(1)}, width: 1, color: 'green'},
-        {id: 2, name: 'Elastic Potential Energy', symbol:'Uel', origin: {...initialPositions(2)}, width: 2, color: 'yellow'},
-        {id: 3, name: 'Thermal Energy', symbol:'Eth', origin: {...initialPositions(3)}, width: 3, color: 'red'},
-        {id: 4, name: 'Total Energy', symbol:'E', origin: {...initialPositions(4)}, width: 1, color: 'purple'},
+        {id: 2, name: 'Elastic Potential Energy', symbol:'Uel', origin: {...initialPositions(2)}, width: 0, color: 'yellow'},
+        {id: 3, name: 'Thermal Energy', symbol:'Eth', origin: {...initialPositions(3)}, width: 0, color: 'red'},
+        {id: 4, name: 'Total Energy', symbol:'E', origin: {...initialPositions(4)}, width: 2, color: 'purple'},
     ]);
 
 

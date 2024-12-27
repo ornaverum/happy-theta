@@ -41,9 +41,13 @@
 
 </script>
 
-<main class="flex flex-col justify-center p-4 rounded-xl">
-	<div id='capture' class='mx-auto w-max'>
+<main class="flex flex-col justify-center rounded-xl">
+	<div id='capture' class='mx-auto w-full p-0 m-0'>
 		<EnergyDiagram {gridLogic}/>
+		<div class="p-0 my-0 w-max justify-center align-center mx-auto font-bold text-8xl">+</div>
 		<EnergyDiagramWork gridLogic={gridLogicW}/>
+		<div class="p-0 my-0 w-max justify-center align-center mx-auto font-bold text-8xl">=</div>
+		<EnergyDiagram {gridLogic}/>
+
 	</div>
 </main>

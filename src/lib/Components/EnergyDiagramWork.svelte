@@ -121,7 +121,9 @@
                         <!-- <Circle bind:x={pos.x} bind:y ={pos.y} radius={50} fill='black' draggable ondragmove={(e)=>{
                             pos = {x: e.evt.layerX, y: 200};
                         }}/> -->
-                        {@render drawEnergyBar(previewEnergy)}
+                        {#if onStage}
+                            {@render drawEnergyBar(previewEnergy)}
+                        {/if}
                     </Layer>
 				</Stage>
 			</div>

@@ -27,7 +27,6 @@
 		gridLogic = $bindable(),
 	}: Props = $props();
 
-	let label: {x:string, y:string} = $state({x:'x', y:'y'});
     let id_num: number = 0;
 	let cellSize: number = $state(1);  // make aspect ratio of all cells 1:1
 	let gridCenter: Point;
@@ -64,13 +63,5 @@
 				opacity= {1}
 				/>
 		{/each}
-		<Text 
-			x= {gridLogic?.size.x-10}
-			y= {0.5*cellSize}
-			text= {label.x}
-			fontSize={20}
-			fill= 'black'
-			align= 'center'
-		/>
 
 </Layer>
