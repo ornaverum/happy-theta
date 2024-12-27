@@ -34,7 +34,7 @@
     }: Props = $props();
 
     let originPoint:Point = {x:5, y:5};
-    let gridLogic = new GridLogic({x:width, y:height}, {...margin}, {...numCells}, {...originPoint});
+    let gridLogic = new GridLogic({size:{x:width, y:height}, margin:{...margin}, numCells:{...numCells}, origin:{...originPoint}});
 
     let originStage: Point = gridLogic.getStageFromPoint(originPoint);
     let nextId:number = 0;

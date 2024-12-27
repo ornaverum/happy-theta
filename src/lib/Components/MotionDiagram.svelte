@@ -43,7 +43,7 @@
 	let velocityArrowProps = {strokeWidth: 3, stroke: 'green', fill: 'green', opacity: 1}
 	
 	// constructor(size:Point, margin:Point, numCells:Point, origin:Point)
-	let gridLogic = new GridLogic({x:width, y:height}, {x:5, y:5}, {...numCells}, {x: 0, y: 0});
+	let gridLogic = new GridLogic({size:{x:width, y:height}, margin:{x:5, y:5}, numCells:{...numCells}, origin:{x: 0, y: 0}});
 	let editTitle:boolean = $state(false);
 
 	let toggleChecked:boolean = $state(false);
