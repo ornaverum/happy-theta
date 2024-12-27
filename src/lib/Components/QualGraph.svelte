@@ -75,7 +75,7 @@
 	let id_num = 0;
 
 	const getpreviewDot= (pos = {x:0, y:0}) => {
-		let snappedPos = {...gridLogic.getSnappedPointFromStage(pos)};
+		let snappedPos = {...gridLogic.getStageFromPoint(gridLogic.getSnappedPointFromStage(pos))};
 		previewDot = {
 			id: dotList.length,
 			pt: {...snappedPos},
@@ -109,9 +109,9 @@
 			return;
 		}
 
-		let pathData = getPathForGraph(dots, curvature);
+		let pathData = getPathForGraph([dots[0].pt, dots[1].pt], curvature);
 		let points = dots.map((dot) => {
-			return {x: dot.x, y: dot.y};
+			return {x: dot.pt.x, y: dot.pt.y};
 		});
 		previewGraph = {
 			id: ''+pathList.length,
@@ -145,16 +145,15 @@
 		if (dotList.length != 2) 
 			return;
 		
-		if (pos.y > Math.max(dotList[0].y, dotList[1].y)/2 +  (dotList[0].y + dotList[1].y)/4)
-				return -Math.sign(dotList[1].y - dotList[0].y);
-		else if (pos.y < Math.min(dotList[0].y, dotList[1].y)/2 +  (dotList[0].y + dotList[1].y)/4)
-				return  Math.sign(dotList[1].y - dotList[0].y);
+		if (pos.y > Math.max(dotList[0].pt.y, dotList[1].pt.y)/2 +  (dotList[0].pt.y + dotList[1].pt.y)/4)
+				return -Math.sign(dotList[1].pt.y - dotList[0].pt.y);
+		else if (pos.y < Math.min(dotList[0].pt.y, dotList[1].pt.y)/2 +  (dotList[0].pt.y + dotList[1].pt.y)/4)
+				return  Math.sign(dotList[1].pt.y - dotList[0].pt.y);
 		else
 				return 0
 	};
 
 	const handleMoveCanvas : (e: KonvaMouseEvent)=>void = (e: KonvaMouseEvent) => {
-		console.log('Move Canvas');
 		let pos = {x: e.evt.layerX, y: e.evt.layerY};
 		if (addingDot){
 			getpreviewDot(pos);
@@ -199,8 +198,8 @@
 
 {#snippet drawDot(dot:Dot)}
 	<Circle 
-		x= {gridLogic.getStageFromPoint(dot.pt).x}
-		y= {gridLogic.getStageFromPoint(dot.pt).y}
+		x= {dot.pt.x}
+		y= {dot.pt.y}
 		radius= {8}
 		fill= {color}
 		opacity = {dot.opacity}
@@ -268,10 +267,10 @@
 				</Layer>
 				<Layer id= 'path_layer'>
 					{#if !addingDot && previewGraph}
-						<Path {previewGraph} />
+						<Path data={previewGraph.data} stroke='green' strokeWidth={4}/>
 					{/if}
 					{#each pathList as path (path.id)}
-						<Path {path} />
+						<Path data={path.data} stroke='green'strokeWidth={4}/>
 					{/each}
 				</Layer>
 			</Stage>
