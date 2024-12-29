@@ -147,7 +147,9 @@
                             pos = {x: e.evt.layerX, y: 200};
                         }}/> -->
                         {@render drawEnergyBar(previewTotalEnergy)}
-                        {@render drawEnergyBar(previewEnergy)}
+                        {#if onStage}
+                            {@render drawEnergyBar(previewEnergy)}
+                        {/if}
                     </Layer>
 				</Stage>
 			</div>

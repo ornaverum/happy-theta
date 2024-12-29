@@ -9,7 +9,7 @@
 	import EditLabel from './EditLabel.svelte';
 
 	let name: string = 'QualGraph';
-
+	let onStage: boolean = $state(false);
 
     let nCells = 6;
 
@@ -169,6 +169,7 @@
 	}
 
 	const handleLeaveCanvas : (e: KonvaMouseEvent)=>void = (e: KonvaMouseEvent) =>{
+		onStage = false;
 		if (addingDot){
 			previewDot = null;
 		} else {
@@ -254,14 +255,15 @@
 			<Stage {width} {height} id='main_stage'
 				onclick={handleClickCanvas}
 				onmousemove={handleMoveCanvas}
-				onmouseleave={handleLeaveCanvas}
+				onmouseleave={()=>{onStage = false;}}
+				onmouseenter={()=>{onStage = true;}}
 			>
 				<Grid {gridLogic}/>
 				<Layer id='dot_layer'>
 					{#each dotList as dot (dot.id)}
 						{@render drawDot(dot)}
 					{/each}
-					{#if addingDot && previewDot}
+					{#if onStage && addingDot}
 						{@render drawDot(previewDot)}
 					{/if}
 				</Layer>

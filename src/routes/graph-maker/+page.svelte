@@ -170,7 +170,6 @@
 								<Label for="select-y-label" class="">Select y-label for group</Label>
 								<Select on:change={()=>labelGroupYAxis(group, ylabel)} id='select-y-label' class="" size="sm" items={yLabelOptions} bind:value={ylabel} />
 							</div>
-							<!-- <Button class='my-1'>Set axis type for group</Button> -->
 						</div>
 					{/if}
 					{#each graphs as graph (graph.graphID)}

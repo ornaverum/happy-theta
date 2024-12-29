@@ -50,13 +50,10 @@
     let netForceVector:Point = $state({...originStage});
     const handleGridMouseMove:(e: KonvaMouseEvent)=>void = (e: KonvaMouseEvent) => {
 		let pt:Point = gridLogic.getSnappedPointFromStage({x:e.evt.layerX, y:e.evt.layerY});
-		let newPt: Point = gridLogic.getStageFromPoint(pt);
-        let OPos:Point = gridLogic.getStageFromPoint(origin);
 		previewForcePoint = {...pt};
 	}
 
 	const handleGridClick:(e: KonvaMouseEvent)=>void = (e: KonvaMouseEvent) => {
-		// addPosition();
         addForce();
 	}
 
@@ -145,7 +142,7 @@
                     {#if onStage}
                         <Layer>
                             {@render drawForce(previewForcePoint, 
-                                {id: 'preview', opacity: 0.5, color: 'green', strokeWidth: 3})}
+                                {id: 'preview', opacity: 0.5, color: 'black', strokeWidth: 3})}
                         </Layer>
                     {/if}
                     
@@ -157,7 +154,7 @@
                     {#if showNetForce}
                         <Layer>
                             {#if netForceVector.x == originPoint.x && netForceVector.y == originPoint.y}
-                                <Circle opacity={0.4} fill='black' {...originStage} radius = {8} id={'net'} />
+                                <Circle opacity={0.6} fill='black' {...originStage} radius = {8} id={'net'} />
                             {:else}
                                 {@render drawForce(netForceVector, {id: 'net', opacity: 0.5, color: 'black', strokeWidth: 6})}
                             {/if}
@@ -194,21 +191,16 @@
                                         <TableBodyCell class='text-black font-bold text-lg ' contenteditable="true">{force.object}</TableBodyCell>
                                     </TableBodyRow>
                                 {/each}
-                                {#if showNetForce}
-                                    <TableBodyRow class={'bg-black-800 text-xl'}>
-                                        Net Force
-                                        <Toggle bind:checked={showNetForce} />
-                                    </TableBodyRow> 
-                                {:else}
-                                <TableBodyRow class={'text-xl'}>
-                                    Show Net Force
-                                    <Toggle bind:checked={showNetForce} />
-                                </TableBodyRow>
-                                {/if}
                             </TableBody>
                         </Table>
+                        {#if showNetForce}
+                            <div class="text-xl">Hide Net Force</div>
+                        {:else}
+                            <div class="text-xl">Show Net Force</div>
+                        {/if}
+                        <Toggle bind:checked={showNetForce} />
                     {/if}
-
+                   
 				</div>
 
                

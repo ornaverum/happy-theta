@@ -17,7 +17,7 @@
 	let name: string = 'Free Body Diagram';
 
 	let width = 800;
-    let height = 300;
+    let height = 200;
 
 	let gridPointList: number[] = [];
 	for (let i = -5; i <= 5; i++) {
@@ -44,9 +44,9 @@
 <main class="flex flex-col justify-center rounded-xl">
 	<div id='capture' class='mx-auto w-full p-0 m-0'>
 		<EnergyDiagram {gridLogic}/>
-		<div class="p-0 my-0 w-max justify-center align-center mx-auto font-bold text-8xl">+</div>
+		<div class="p-0 my-0 w-max justify-center align-center mx-auto font-bold text-4xl">+</div>
 		<EnergyDiagramWork gridLogic={gridLogicW}/>
-		<div class="p-0 my-0 w-max justify-center align-center mx-auto font-bold text-8xl">=</div>
+		<div class="p-0 my-0 w-max justify-center align-center mx-auto font-bold text-4xl">=</div>
 		<EnergyDiagram {gridLogic}/>
 
 	</div>
