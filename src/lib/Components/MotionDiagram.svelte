@@ -52,31 +52,45 @@
 	
 	// let divToCapture: HTMLDivElement = document.querySelector('#capture');
 
-	let previewPos:Point = $state({x:-100, y:-100});
+	let previewPos:Point = $state({x:400, y:100});
 
 
 	// in case of 1D, shift points to avoid overlap
 	const shiftPoint:Function = (pt:Point, prior:Point, prePrior:Point) => {
-		if ( (numCells.y>0 && numCells.x>0) || !prior)
+		console.log(pt, prior, prePrior);
+		if (prior)
+			console.log(prior.x, prior.y);
+
+		// If it's 2D, don't need shift
+		if ( numCells.y>0 && numCells.x>0)
 			return pt;
-		
+
+		// If this is the first dot, don't need shift
+		if (Object.keys(prior).length == 0)
+			return pt;
+
+		let newPt:Point = {...pt};
 		let dV:Point = {x: pt.x - prior.x, y: pt.y - prior.y};
-		let shift:Point = {x:0, y:0};
+		newPt.y = prior.y;
 
+
+		// if horizontal and the x value is the same, shift down
 		if (numCells.y == 0 && dV.x == 0)
-			shift.y = 10;
+			newPt.y += 10;
+		// else if vertical and the y value is the same, shift right
 		else if (numCells.x == 0 && dV.y == 0)
-			shift.x = 10;
+			newPt.x += 10;
 
+		// if there is a prePrior point, check if the direction is reversed
 		if (prePrior){
 			let dV2:Point = {x: prior.x - prePrior.x, y: prior.y - prePrior.y};
 			if (numCells.y==0 && (Math.sign(dV.x) == -Math.sign(dV2.x))){
-				shift.y = 10;
+				newPt.y += 10;
 			} else if (numCells.x==0 && (Math.sign(dV.y) == -Math.sign(dV2.y))){
-				shift.x = 10;
+				newPt.x += 10;
 			}
-		}
-		return {x:pt.x + shift.x, y:pt.y + shift.y};
+		} 
+		return {...newPt};
 	}
 
 	const handleGridMouseMove:(e: KonvaMouseEvent)=>void = (e: KonvaMouseEvent) => {
