@@ -4,7 +4,7 @@
     let divToCapture: HTMLDivElement;
 
     import { Button, Toggle } from 'flowbite-svelte';
-    import {TrashBinOutline, FileExportOutline, FileCopyOutline, FloppyDiskOutline, FolderOpenOutline} from 'flowbite-svelte-icons';
+    import {TrashBinOutline, FileExportOutline, FileCopyOutline, FloppyDiskOutline, FolderOpenOutline, RefreshOutline} from 'flowbite-svelte-icons';
 
     
 	const saveDivAsImage = async () => {
@@ -37,9 +37,9 @@
     <div id='controls' class = 'mx-auto w-max my-4'>
         <Button color='dark' onclick={saveDivAsImage}><FileExportOutline/></Button>
         <Button color='dark' onclick={copyDivAsImageToClipboard}><FileCopyOutline/></Button>
-        <Button color='dark' onclick={saveDivAsImage}><FloppyDiskOutline/></Button>
-        <Button color='dark' onclick={saveDivAsImage}><FolderOpenOutline/></Button>
-        <Button color='dark' onclick={()=>{}}><TrashBinOutline/></Button>
+        <Button color='dark' onclick={()=>{}}><FloppyDiskOutline/></Button>
+        <Button color='dark' onclick={()=>{}}><FolderOpenOutline/></Button>
+        <Button color='dark' onclick={()=>{}}><RefreshOutline/></Button>
     </div>
 	<div id='capture' class='w-max mx-auto'>
 		{@render children?.()}
