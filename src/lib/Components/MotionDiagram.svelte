@@ -13,12 +13,9 @@
 	interface Props {
 		width?: number;
 		height?: number;
-		label?: string;
 		title?: string;
 		numCells?: Point;
 		showControlButtons?: boolean;
-		id?: number;
-		marginY?: number;
 		posList?: Point[];
 		accList?: Vector[];
 		handleDelete?: (e: MouseEvent)=> void;
@@ -27,12 +24,9 @@
 	let {
 		width = 800,
 		height = 200,
-		label = 'x',
 		title = $bindable('Title'),
 		numCells = {x: 30, y:0},
 		showControlButtons = true,
-		id = 0,
-		marginY = 5,
 		posList = $bindable([]),
 		accList = $bindable([]),
 		handleDelete = (e: MouseEvent) => {},
@@ -56,9 +50,6 @@
 
 	// in case of 1D, shift points to avoid overlap
 	const shiftPoint:Function = (pt:Point, prior:Point, prePrior:Point) => {
-		console.log(pt, prior, prePrior);
-		if (prior)
-			console.log(prior.x, prior.y);
 
 		// If it's 2D, don't need shift
 		if ( numCells.y>0 && numCells.x>0)
@@ -155,27 +146,24 @@
 	<div class="flex flex-row">
 		{#if (showControlButtons)}
 			<div id='button-container flex flex-row m-4 p-4'>
-				<!-- <Button class='bg-accent hover:bg-red-800' on:click={handleDelete}
-					><TrashBinOutline/></Button> -->
-				<!-- <Button class='bg-accent hover:bg-secondary-600' on:click={()=>{
+				<Button color='alternative' class='bg-accent hover:bg-red-800' on:click={handleDelete}
+					><TrashBinOutline/></Button>
+				<Button color='alternative' class='bg-accent hover:bg-red-800' on:click={()=>{
 					posList = [];
-					velList = [];
 					accList = [];
-					yValue = cellSize;
-					params.yValue = yValue;
-				}}><RefreshOutline/></Button> -->
-				<!-- <div class='flex flex-row text-sm'>
+				}}><RefreshOutline/></Button>
+				<div class='flex flex-row text-sm my-3'>
 					Position
 					<Toggle bind:checked={toggleChecked} class='ml-2'/>
 					Acceleration
-				</div> -->
+				</div>
 			</div>
 		{/if}
 		<div id='capture'>
 			<div id='fbd' class='bg-gray-50 p-4'>
 				<Stage {width} {height} id='main_stage'
-					onmouseleave={() => {onStage = false; console.log('mouseleave')}}
-					onmouseenter={() => {onStage = true; console.log('mouseenter')}}
+					onmouseleave={() => {onStage = false;}}
+					onmouseenter={() => {onStage = true;}}
 					onclick={handleGridClick}
 					onmousemove={handleGridMouseMove}
 					>

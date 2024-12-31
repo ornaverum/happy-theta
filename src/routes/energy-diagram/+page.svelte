@@ -24,9 +24,15 @@
 	let gridLogicW = new GridLogic({size:{x:width, y:100}, margin:{...margin}, numCells:{x:10,y:1}, origin:{...originPoint},
 		cellSize:gridLogic.cellSize});
 
+	const refreshAll = () => {
+		gridLogic = new GridLogic({size:{x:width, y:height}, margin:{...margin}, numCells:{...numCells}, origin:{...originPoint}});
+		gridLogicW = new GridLogic({size:{x:width, y:100}, margin:{...margin}, numCells:{x:10,y:1}, origin:{...originPoint},
+			cellSize:gridLogic.cellSize});
+	}
+
 </script>
 
-<CaptureDiv>
+<CaptureDiv {refreshAll}>
 	<main class="flex flex-col justify-center rounded-xl">
 		<div id='capture' class='mx-auto w-full p-0 m-0'>
 			<EnergyDiagram {gridLogic}/>

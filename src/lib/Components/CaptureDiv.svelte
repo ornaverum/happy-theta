@@ -1,6 +1,19 @@
 <script lang='ts'>
 	import html2canvas from 'html2canvas';
-    let { children } = $props();
+
+	interface Props {
+		children?;
+		saveData?: ()=> void;
+		loadData?: ()=> void;
+		refreshAll?: ()=> void;
+	}
+
+	let { 
+		children, 
+		saveData=()=>{}, 
+		loadData=()=>{}, 
+		refreshAll=()=>{} }: Props = $props();
+
     let divToCapture: HTMLDivElement;
 
     import { Button, Toggle } from 'flowbite-svelte';
@@ -39,7 +52,7 @@
         <Button color='dark' onclick={copyDivAsImageToClipboard}><FileCopyOutline/></Button>
         <Button color='dark' onclick={()=>{}}><FloppyDiskOutline/></Button>
         <Button color='dark' onclick={()=>{}}><FolderOpenOutline/></Button>
-        <Button color='dark' onclick={()=>{}}><RefreshOutline/></Button>
+        <Button color='dark' onclick={refreshAll}><RefreshOutline/></Button>
     </div>
 	<div id='capture' class='w-max mx-auto'>
 		{@render children?.()}

@@ -27,7 +27,6 @@
 		gridNum: 30,
 		marginY: 5,
 		posList: [],
-		velList: [],
 		accList: [],
 	};
 
@@ -52,11 +51,16 @@
 		mdArray = [...mdArray];
 	}
 
+	const refreshAll = () => {
+		mdArray = [];
+		addNewMD();
+	}
+
 	addNewMD();
 
 </script>
 
-<CaptureDiv>
+<CaptureDiv {refreshAll}>
 	<div id='button-group' class = 'flex flex-row p-4 w-1/3 justify-around'>
 		<Button color='dark' class='my-1' on:click={()=>labelTitle()}>Autolabel</Button>
 		<Toggle bind:checked={showControlButtons}>Show Control Buttons</Toggle>

@@ -110,20 +110,8 @@
         strokeWidth={params.strokeWidth} id={params.id} />    
 {/snippet}
 
-<!-- {#snippet drawForces(xs:Point[])}
-	<Layer>
-		{#each xs as x}
-			<Circle {...positionCircleProps} {...x} id={(nextId++)+''} />
-		{/each}
-	</Layer>
-{/snippet} -->
-
-
 <main class="flex flex-col bg-gray-50 justify-center">
-
 	<div id='capture'  class='mx-auto w-max'>
-
-		
 		<div class='flex flex-row flex-wrap'>
 			<div id='fbd' class='px-4 flex flex-col'>
 				<div id='fbd-label' class='ml-4 text-lg font-bold flex flex-row rounded-xl border-1'>
@@ -162,20 +150,20 @@
                     {/if}
 				</Stage>
 			</div>
-            <div id= 'tao'>
+            <div id= 'tao w-1/2'>
                 <div id='fbd-label' class='mx-auto text-lg font-bold flex flex-row rounded-xl border-1'>
 					<p>TAO Chart</p>
 				</div>
-                <div class='mx-auto my-4 p-2 text-xl font-bold rounded-xl border-1'>
+                <div class='mx-auto w-full my-4 p-2 text-xl font-bold rounded-xl border-1'>
                     
                     {#if forceList.length == 0}
-                        <div class='mx-auto my-4 p-2 text-xl font-bold rounded-xl border-1'>
+                        <div class=''>
                             <p>No Forces Yet</p>
                             <p class='text-sm'>Add a force by double clicking on the FBD or clicking the button below</p>
                         </div>
                     {:else}
 
-                        <Table class='mx-auto my-4 p-2 text-xl font-bold rounded-xl border-1'>
+                        <Table class=''>
                             <TableHead class='p-2.5 m-1 text-sm'>
                             <TableHeadCell>Symbol</TableHeadCell>
                             <TableHeadCell>Type</TableHeadCell>
@@ -202,12 +190,7 @@
                     {/if}
                    
 				</div>
-
-               
             </div>
 		</div>
 	</div>
-
-	
-
 </main>
