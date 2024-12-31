@@ -1,9 +1,7 @@
 <script lang="ts">
 	import MotionDiagram from '$lib/Components/MotionDiagram.svelte';
+	import CaptureDiv from '$lib/Components/CaptureDiv.svelte';
 	import type { MD } from '$lib/types';
-
-	import { Stage, Layer, Line, Circle, Arrow} from 'svelte-konva';
-	import html2canvas from 'html2canvas';
 
     import { Label, Select, Input, Button, Toggle } from 'flowbite-svelte';
     import {TrashBinOutline, FileExportOutline, CirclePlusOutline} from 'flowbite-svelte-icons';
@@ -39,22 +37,6 @@
 		mdArray = [...mdArray, md];
 	}
 
-	let divToCapture: HTMLDivElement = $state(null);
-
-	const saveDivAsImage = async () => {
-		let tempCtrl = showControlButtons;
-		await setControlButtons(false);
-		const canvas = await html2canvas(divToCapture);
-		const dataUrl = canvas.toDataURL('image/png');
-		const link = document.createElement('a');
-		link.href = dataUrl;
-		link.download = 'div-image.png';
-		document.body.appendChild(link);
-		link.click();
-		document.body.removeChild(link);
-		await setControlButtons(tempCtrl);
-	};
-
 	async function setControlButtons(ctrl:boolean){
 		showControlButtons = ctrl;
 	} 
@@ -74,13 +56,12 @@
 
 </script>
 
-<main class="flex flex-col justify-center p-4 rounded-xl">
+<CaptureDiv>
 	<div id='button-group' class = 'flex flex-row p-4 w-1/3 justify-around'>
-		<Button on:click={saveDivAsImage}><FileExportOutline/></Button>
-		<Button class='my-1' on:click={()=>labelTitle()}>Autolabel</Button>
+		<Button color='dark' class='my-1' on:click={()=>labelTitle()}>Autolabel</Button>
 		<Toggle bind:checked={showControlButtons}>Show Control Buttons</Toggle>
 	</div>
-	<div id='capture' bind:this={divToCapture} class='w-max mx-auto'>
+	<div id='capture' class='w-max mx-auto'>
 		<ul class='list-none'>
 			{#each mdArray as md}
 				<li>
@@ -89,6 +70,5 @@
 			{/each}
 		</ul>
 	</div>
-	<Button on:click={()=>addNewMD()}><CirclePlusOutline/>Add New Diagram</Button>	
-
-</main>
+	<Button color='alternative' onclick={()=>addNewMD()}><CirclePlusOutline/>Add New Diagram</Button>	
+</CaptureDiv>

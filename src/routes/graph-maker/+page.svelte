@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Stage, Layer, Line, Circle, Path} from 'svelte-konva';
+
 	import {page} from '$app/stores';
-  	import DragArrow from '$lib/Components/QualGraph.svelte';
 	import EditLabel from '$lib/Components/EditLabel.svelte';
 	import type {GraphPath, Point} from '$lib/Components/kinematicsTypes';
 
@@ -11,7 +11,7 @@
 
 	import QualGraph from '$lib/Components/QualGraph.svelte';
 
-	import html2canvas from 'html2canvas';
+	import CaptureDiv from '$lib/Components/CaptureDiv.svelte';
 
 
 	const url = $page.url;
@@ -19,28 +19,10 @@
 
 	let name: string = 'graph-maker';
 
-	let divToCapture: HTMLDivElement = $state();
 	let showControlButtons:boolean = $state(true);
 
 	let idIncrement = 0;
 
-	const saveDivAsImage = async () => {
-		let tempCtrl = showControlButtons;
-		await setControlButtons(false);
-		const canvas = await html2canvas(divToCapture);
-		const dataUrl = canvas.toDataURL('image/png');
-		const link = document.createElement('a');
-		link.href = dataUrl;
-		link.download = 'div-image.png';
-		document.body.appendChild(link);
-		link.click();
-		document.body.removeChild(link);
-		await setControlButtons(tempCtrl);
-	};
-
-	async function setControlButtons(ctrl:boolean){
-		showControlButtons = ctrl;
-	} 
 
 	let groupIDIncrement = $state(0);
 	let graphIDIncrement = 0;
@@ -147,16 +129,8 @@
 	// addNewGraph(0);
 
 </script>
-
-<main class="flex flex-col justify-center" >
-	<div id='button-group' class = 'flex flex-row p-4'>
-		<Button on:click={saveDivAsImage} class='mx-1'><FileExportOutline/></Button>
-		<Button on:click={resetAll} class='mx-1'><RefreshOutline/></Button>
-		<Toggle bind:checked={showControlButtons}>Show Control Buttons</Toggle>
-	</div>
-
-	<div id="capture" bind:this={divToCapture} class='w-fit mx-8'>
-
+<CaptureDiv>
+	<div id="capture" class='w-fit mx-8'>
 			<!-- <EditLabel text='Graph Group' size='xl2' {showControlButtons}/> -->
 			<div class="flex flex-col flex-wrap">
 				{#each groupIDs as group (group)}
@@ -186,12 +160,12 @@
 				
 				
 			{#if showControlButtons}
-			<Button on:click={()=>{groupIDs=[...groupIDs, ++groupIDIncrement]}}>
-				<CirclePlusOutline class='mx-2'/> Add New Group
-			</Button>
+				<Button on:click={()=>{groupIDs=[...groupIDs, ++groupIDIncrement]}}>
+					<CirclePlusOutline class='mx-2'/> Add New Group
+				</Button>
 			{/if}
 		<div id='given' class='justify-center'>
 		</div>
 
 	</div>
-</main>
+</CaptureDiv>

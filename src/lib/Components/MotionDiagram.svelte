@@ -7,7 +7,6 @@
 
     import { Label, Select, Input, Button, Toggle } from 'flowbite-svelte';
     import {TrashBinOutline, FileExportOutline, EditOutline, ArrowRightOutline, RefreshOutline} from 'flowbite-svelte-icons';
-	import { on } from 'svelte/events';
 
 	let name: string = 'Motion Diagram Component';
 

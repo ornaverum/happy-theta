@@ -1,5 +1,5 @@
 <script lang="ts">
-	import html2canvas from 'html2canvas';
+	import CaptureDiv from '$lib/Components/CaptureDiv.svelte';
 
     import { Button, Toggle, Label, Select, Input, Hr } from 'flowbite-svelte';
     import {TrashBinOutline, CirclePlusOutline, FileExportOutline, EditOutline, RefreshOutline} from 'flowbite-svelte-icons';
@@ -24,17 +24,19 @@
 
 </script>
 
-<main class="flex flex-col justify-center p-4 rounded-xl">
-	<div id='capture' class='mx-auto w-max'>
-		<FreeBodyDiagram
-			width={width}
-			height={height}
-			title='Free Body Diagram'
-			numCells={{x: 10, y:10}}
-			showControlButtons={showControlButtons}
-			id={id_num}
-			margin={{x:5, y:5}}
-			forceList={forceList}
-			handleDelete={(e: MouseEvent) => {}}/>
-	</div>
-</main>
+<CaptureDiv>
+	<main class="flex flex-col justify-center p-4 rounded-xl">
+		<div id='capture' class='mx-auto w-max'>
+			<FreeBodyDiagram
+				width={width}
+				height={height}
+				title='Free Body Diagram'
+				numCells={{x: 10, y:10}}
+				showControlButtons={showControlButtons}
+				id={id_num}
+				margin={{x:5, y:5}}
+				forceList={forceList}
+				handleDelete={(e: MouseEvent) => {}}/>
+		</div>
+	</main>
+</CaptureDiv>
