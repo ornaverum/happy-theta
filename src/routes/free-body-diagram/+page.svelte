@@ -24,19 +24,17 @@
 
 </script>
 
-<CaptureDiv>
-	<main class="flex flex-col justify-center p-4 rounded-xl">
-		<div id='capture' class='mx-auto w-max'>
-			<FreeBodyDiagram
-				width={width}
-				height={height}
-				title='Free Body Diagram'
-				numCells={{x: 10, y:10}}
-				showControlButtons={showControlButtons}
-				id={id_num}
-				margin={{x:5, y:5}}
-				forceList={forceList}
-				handleDelete={(e: MouseEvent) => {}}/>
-		</div>
-	</main>
-</CaptureDiv>
+<div class="w-max mx-auto">
+	<CaptureDiv>
+				<FreeBodyDiagram
+					width={width}
+					height={height}
+					title='Free Body Diagram'
+					numCells={{x: 10, y:10}}
+					showControlButtons={showControlButtons}
+					id={id_num}
+					margin={{x:5, y:5}}
+					forceList={forceList}
+					handleDelete={(e: MouseEvent) => {}}/>
+	</CaptureDiv>
+</div>

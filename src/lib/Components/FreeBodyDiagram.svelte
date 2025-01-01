@@ -22,8 +22,8 @@
     }
 
     let {
-        width = 600,
-        height = 600,
+        width = 400,
+        height = 400,
         title = $bindable('Title'),
         numCells = {x: 10, y:10},
         showControlButtons = true,
@@ -110,87 +110,85 @@
         strokeWidth={params.strokeWidth} id={params.id} />    
 {/snippet}
 
-<main class="flex flex-col bg-gray-50 justify-center">
-	<div id='capture'  class='mx-auto w-max'>
-		<div class='flex flex-row flex-wrap'>
-			<div id='fbd' class='px-4 flex flex-col'>
-				<div id='fbd-label' class='ml-4 text-lg font-bold flex flex-row rounded-xl border-1'>
-					Free Body Diagram
-				</div>
-				<Stage 
-                    width={width}
-                    height={height}
-                    id='fbd-stage'
-                    onmouseleave={() => {onStage = false; console.log('mouseleave')}}
-                    onmouseenter={() => {onStage = true; console.log('mouseenter')}}
-                    onclick={handleGridClick}
-                    onmousemove={handleGridMouseMove}
-				>
-                    <Grid {gridLogic}/>
-                    {#if onStage}
-                        <Layer>
-                            {@render drawForce(previewForcePoint, 
-                                {id: 'preview', opacity: 0.5, color: 'black', strokeWidth: 3})}
-                        </Layer>
-                    {/if}
-                    
-                    <Layer>
-                        {#each forceList as force, i}
-                            {@render drawForce(force.components, {id: force.id+'', opacity: 1, color: colorList[force.id%12].cc, strokeWidth: 3})}
-                        {/each}
-                    </Layer>
-                    {#if showNetForce}
-                        <Layer>
-                            {#if netForceVector.x == originPoint.x && netForceVector.y == originPoint.y}
-                                <Circle opacity={0.6} fill='black' {...originStage} radius = {8} id={'net'} />
-                            {:else}
-                                {@render drawForce(netForceVector, {id: 'net', opacity: 0.5, color: 'black', strokeWidth: 6})}
-                            {/if}
-                        </Layer>
-                    {/if}
-				</Stage>
-			</div>
-            <div id= 'tao w-1/2'>
-                <div id='fbd-label' class='mx-auto text-lg font-bold flex flex-row rounded-xl border-1'>
-					<p>TAO Chart</p>
-				</div>
-                <div class='mx-auto w-full my-4 p-2 text-xl font-bold rounded-xl border-1'>
-                    
-                    {#if forceList.length == 0}
-                        <div class=''>
-                            <p>No Forces Yet</p>
-                            <p class='text-sm'>Add a force by double clicking on the FBD or clicking the button below</p>
-                        </div>
-                    {:else}
-
-                        <Table class=''>
-                            <TableHead class='p-2.5 m-1 text-sm'>
-                            <TableHeadCell>Symbol</TableHeadCell>
-                            <TableHeadCell>Type</TableHeadCell>
-                            <TableHeadCell>Agent</TableHeadCell>
-                            <TableHeadCell>Object</TableHeadCell>
-                            </TableHead>
-                            <TableBody tableBodyClass="divide-y text-xs m-0 p-0">
-                                {#each forceList as force (force.id)}
-                                    <TableBodyRow class={`${colorList[force.id%12].tw} rounded-lg `}>
-                                        <TableBodyCell class='text-black font-bold text-lg' contenteditable="true">{force.symbol}</TableBodyCell>
-                                        <TableBodyCell class='text-black font-bold text-lg' contenteditable="true">{force.type}</TableBodyCell>
-                                        <TableBodyCell class='text-black font-bold text-lg' contenteditable="true">{force.agent}</TableBodyCell>
-                                        <TableBodyCell class='text-black font-bold text-lg ' contenteditable="true">{force.object}</TableBodyCell>
-                                    </TableBodyRow>
-                                {/each}
-                            </TableBody>
-                        </Table>
-                        {#if showNetForce}
-                            <div class="text-xl">Hide Net Force</div>
-                        {:else}
-                            <div class="text-xl">Show Net Force</div>
-                        {/if}
-                        <Toggle bind:checked={showNetForce} />
-                    {/if}
-                   
-				</div>
+<main class="flex flex-col bg-gray-100 w-max rounded-xl shadow-lg p-4">
+    <div class='flex flex-row flex-wrap'>
+        <div id='fbd' class='px-4 flex flex-col'>
+            <div id='fbd-label' class='ml-4 text-lg font-bold flex flex-row rounded-xl border-1'>
+                Free Body Diagram
             </div>
-		</div>
-	</div>
+            <Stage 
+                width={width}
+                height={height}
+                id='fbd-stage'
+                onmouseleave={() => {onStage = false; console.log('mouseleave')}}
+                onmouseenter={() => {onStage = true; console.log('mouseenter')}}
+                onclick={handleGridClick}
+                onmousemove={handleGridMouseMove}
+            >
+                <Grid {gridLogic}/>
+                {#if onStage}
+                    <Layer>
+                        {@render drawForce(previewForcePoint, 
+                            {id: 'preview', opacity: 0.5, color: 'black', strokeWidth: 3})}
+                    </Layer>
+                {/if}
+                
+                <Layer>
+                    {#each forceList as force, i}
+                        {@render drawForce(force.components, {id: force.id+'', opacity: 1, color: colorList[force.id%12].cc, strokeWidth: 3})}
+                    {/each}
+                </Layer>
+                {#if showNetForce}
+                    <Layer>
+                        {#if netForceVector.x == originPoint.x && netForceVector.y == originPoint.y}
+                            <Circle opacity={0.6} fill='black' {...originStage} radius = {8} id={'net'} />
+                        {:else}
+                            {@render drawForce(netForceVector, {id: 'net', opacity: 0.5, color: 'black', strokeWidth: 6})}
+                        {/if}
+                    </Layer>
+                {/if}
+            </Stage>
+        </div>
+        <div id= 'tao w-min-1/2'>
+            <div id='fbd-label' class='mx-auto text-lg font-bold flex flex-row rounded-xl border-1'>
+                <p>TAO Chart</p>
+            </div>
+            <div class='mx-auto w-full my-4 p-2 text-xl font-bold rounded-xl border-1'>
+                
+                {#if forceList.length == 0}
+                    <div class=''>
+                        <p>No Forces Yet</p>
+                        <p class='text-sm'>Add a force by double clicking on the FBD or clicking the button below</p>
+                    </div>
+                {:else}
+
+                    <Table class=''>
+                        <TableHead class='p-2.5 m-1 text-sm'>
+                        <TableHeadCell>Symbol</TableHeadCell>
+                        <TableHeadCell>Type</TableHeadCell>
+                        <TableHeadCell>Agent</TableHeadCell>
+                        <TableHeadCell>Object</TableHeadCell>
+                        </TableHead>
+                        <TableBody tableBodyClass="divide-y text-xs m-0 p-0">
+                            {#each forceList as force (force.id)}
+                                <TableBodyRow class={`${colorList[force.id%12].tw} rounded-lg `}>
+                                    <TableBodyCell class='text-black font-bold text-lg' contenteditable="true">{force.symbol}</TableBodyCell>
+                                    <TableBodyCell class='text-black font-bold text-lg' contenteditable="true">{force.type}</TableBodyCell>
+                                    <TableBodyCell class='text-black font-bold text-lg' contenteditable="true">{force.agent}</TableBodyCell>
+                                    <TableBodyCell class='text-black font-bold text-lg ' contenteditable="true">{force.object}</TableBodyCell>
+                                </TableBodyRow>
+                            {/each}
+                        </TableBody>
+                    </Table>
+                    {#if showNetForce}
+                        <div class="text-xl">Hide Net Force</div>
+                    {:else}
+                        <div class="text-xl">Show Net Force</div>
+                    {/if}
+                    <Toggle bind:checked={showNetForce} />
+                {/if}
+                
+            </div>
+        </div>
+    </div>
 </main>

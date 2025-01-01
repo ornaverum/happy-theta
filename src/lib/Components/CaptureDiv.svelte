@@ -46,15 +46,15 @@
 	
 </script>
 
-<div class="flex flex-col justify-center p-4 rounded-xl">
-    <div id='controls' class = 'mx-auto w-max my-4'>
+<div class="">
+    <div id='controls' class = 'my-4'>
         <Button color='dark' onclick={saveDivAsImage}><FileExportOutline/></Button>
         <Button color='dark' onclick={copyDivAsImageToClipboard}><FileCopyOutline/></Button>
         <Button color='dark' onclick={()=>{}}><FloppyDiskOutline/></Button>
         <Button color='dark' onclick={()=>{}}><FolderOpenOutline/></Button>
         <Button color='dark' onclick={refreshAll}><RefreshOutline/></Button>
     </div>
-	<div id='capture' class='w-max mx-auto'>
+	<div id='capture'>
 		{@render children?.()}
 	</div>	
 </div>

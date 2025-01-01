@@ -19,7 +19,7 @@
 
 	let name: string = 'graph-maker';
 
-	let showControlButtons:boolean = $state(true);
+	let showControlButtons:boolean = $state(false);
 
 	let idIncrement = 0;
 
@@ -125,18 +125,18 @@
 				{title: '', graphID: 2, groupID: 0, pathList: [{points: [], color: 'red'}], labels: {x:'Time', y:'Acceleration'}},
 			];
 
-	showControlButtons = false;
 	// addNewGraph(0);
 
 </script>
-<CaptureDiv>
-	<div id="capture" class='w-fit mx-8'>
-			<!-- <EditLabel text='Graph Group' size='xl2' {showControlButtons}/> -->
+
+
+<div class="w-max mx-auto">
+	<CaptureDiv>
+				<!-- <EditLabel text='Graph Group' size='xl2' {showControlButtons}/> -->
 			<div class="flex flex-col flex-wrap">
 				{#each groupIDs as group (group)}
-				<div class="flex flex-row flex-wrap p-2">
+				<div class="flex flex-row flex-wrap shadow-lg">
 					{#if showControlButtons && groupIDs.length > 0}
-
 						<div class='flex flex-col m-1'>
 							<Button class='my-1' on:click={()=>{groupIDs = groupIDs.filter(g => g !== group)}}><TrashBinOutline/></Button>
 							<Button class='my-1' on:click={()=>labelGroupTitle(group)}>Autotitle</Button>
@@ -152,20 +152,17 @@
 						{/if}
 					{/each}
 					{#if showControlButtons}
-						<Button on:click={()=>addNewGraph(group)}><CirclePlusOutline/></Button>
+						<Button color='alternative' onclick={()=>addNewGraph(group)}><CirclePlusOutline/></Button>
 					{/if}
 					</div>
 
 				{/each}
-				
-				
+
+
 			{#if showControlButtons}
-				<Button on:click={()=>{groupIDs=[...groupIDs, ++groupIDIncrement]}}>
+				<Button color='alternative' onclick={()=>{groupIDs=[...groupIDs, ++groupIDIncrement]}}>
 					<CirclePlusOutline class='mx-2'/> Add New Group
 				</Button>
 			{/if}
-		<div id='given' class='justify-center'>
-		</div>
-
-	</div>
-</CaptureDiv>
+	</CaptureDiv>
+</div>

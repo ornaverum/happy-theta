@@ -13,7 +13,7 @@
 
 	let name: string = 'Free Body Diagram';
 
-	let width = 800;
+	let width = 500;
     let height = 200;
 
 	let margin = {x:5, y:5};
@@ -32,15 +32,14 @@
 
 </script>
 
-<CaptureDiv {refreshAll}>
-	<main class="flex flex-col justify-center rounded-xl">
-		<div id='capture' class='mx-auto w-full p-0 m-0'>
+<div class="w-max mx-auto">
+	<CaptureDiv {refreshAll}>
+		<main class="my-4">
 			<EnergyDiagram {gridLogic}/>
 			<div class="p-0 my-0 w-max justify-center align-center mx-auto font-bold text-4xl">+</div>
-			<EnergyDiagramWork gridLogic={gridLogicW}/>
+			<EnergyDiagram gridLogic={gridLogicW} workFlag={true}/>
 			<div class="p-0 my-0 w-max justify-center align-center mx-auto font-bold text-4xl">=</div>
 			<EnergyDiagram {gridLogic}/>
-	
-		</div>
-	</main>
-</CaptureDiv>
+		</main>
+	</CaptureDiv>
+</div>

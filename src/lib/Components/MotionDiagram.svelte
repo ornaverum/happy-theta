@@ -129,8 +129,8 @@
 	</Layer>
 {/snippet}
 
-<main class="flex flex-col justify-center p-4 items-center">
-	<div id='Title' class='m-4 p-2 text-2xl font-bold flex flex-row rounded-xl border-1'>
+<main class="flex flex-col p-4 items-center">
+	<div id='Title' class='text-2xl font-bold'>
 		<Button color='alternative' class='mr-3' size='xs' on:click={()=>{editTitle = !editTitle}}>
 			<EditOutline/>
 		</Button>
@@ -152,38 +152,35 @@
 					posList = [];
 					accList = [];
 				}}><RefreshOutline/></Button>
-				<div class='flex flex-row text-sm my-3'>
+				<div class='flex flex-row text-sm m-3'>
 					Position
 					<Toggle bind:checked={toggleChecked} class='ml-2'/>
 					Acceleration
 				</div>
 			</div>
 		{/if}
-		<div id='capture'>
-			<div id='fbd' class='bg-gray-50 p-4'>
-				<Stage {width} {height} id='main_stage'
-					onmouseleave={() => {onStage = false;}}
-					onmouseenter={() => {onStage = true;}}
-					onclick={handleGridClick}
-					onmousemove={handleGridMouseMove}
-					>
-					<Grid {gridLogic} active={onStage}/>
-					<!-- <Velocity bind:velList={velList} {posList}/>
-					<Acceleration active={toggleChecked && onStage} bind:accList={accList} {...params} {posList}/> -->
+		<div id='fbd' class='bg-gray-100 p-4 shadow-lg'>
+			<Stage {width} {height} id='main_stage'
+				onmouseleave={() => {onStage = false;}}
+				onmouseenter={() => {onStage = true;}}
+				onclick={handleGridClick}
+				onmousemove={handleGridMouseMove}
+				>
+				<Grid {gridLogic} active={onStage}/>
+				<!-- <Velocity bind:velList={velList} {posList}/>
+				<Acceleration active={toggleChecked && onStage} bind:accList={accList} {...params} {posList}/> -->
 
-					{@render drawPositions(posList)}
+				{@render drawPositions(posList)}
 
-					{@render drawVelocities(posList)}
+				{@render drawVelocities(posList)}
 
-					{#if onStage}
-						<Layer>
-							<Circle {...previewPos} {...positionCircleProps} opacity={0.5} id={'preview'}/>
-						</Layer>
-					{/if}
+				{#if onStage}
+					<Layer>
+						<Circle {...previewPos} {...positionCircleProps} opacity={0.5} id={'preview'}/>
+					</Layer>
+				{/if}
 
-				</Stage>
-			</div>
+			</Stage>
 		</div>
 	</div>
-
 </main>

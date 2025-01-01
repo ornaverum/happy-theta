@@ -14,7 +14,7 @@
 	let showControlButtons: boolean = $state(true);
 
 	let width = 800;
-    let height = 200;
+    let height = 100;
 
 	let mdArray: MD[] = $state([]);
 	let id_ind = 0;
@@ -24,7 +24,7 @@
 		width: width,
 		height: height,
 		title: 'Title',
-		gridNum: 30,
+		gridNum: 20,
 		marginY: 5,
 		posList: [],
 		accList: [],
@@ -59,13 +59,12 @@
 	addNewMD();
 
 </script>
-
-<CaptureDiv {refreshAll}>
-	<div id='button-group' class = 'flex flex-row p-4 w-1/3 justify-around'>
-		<Button color='dark' class='my-1' on:click={()=>labelTitle()}>Autolabel</Button>
-		<Toggle bind:checked={showControlButtons}>Show Control Buttons</Toggle>
-	</div>
-	<div id='capture' class='w-max mx-auto'>
+<div class='w-max mx-auto'>
+	<CaptureDiv {refreshAll}>
+		<div id='button-group' class = 'flex flex-row p-4 w-1/3 justify-around'>
+			<Button color='dark' class='my-1' on:click={()=>labelTitle()}>Autolabel</Button>
+			<Toggle bind:checked={showControlButtons}>Show Control Buttons</Toggle>
+		</div>
 		<ul class='list-none'>
 			{#each mdArray as md}
 				<li>
@@ -73,6 +72,6 @@
 				</li>
 			{/each}
 		</ul>
-	</div>
-	<Button color='alternative' onclick={()=>addNewMD()}><CirclePlusOutline/>Add New Diagram</Button>	
-</CaptureDiv>
+		<Button color='alternative' onclick={()=>addNewMD()}><CirclePlusOutline/>Add New Diagram</Button>
+	</CaptureDiv>
+</div>
