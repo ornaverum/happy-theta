@@ -112,8 +112,8 @@
 
 <main class="flex flex-col bg-gray-100 w-max rounded-xl shadow-lg p-4">
     <div class='flex flex-row flex-wrap'>
-        <div id='fbd' class='px-4 flex flex-col'>
-            <div id='fbd-label' class='ml-4 text-lg font-bold flex flex-row rounded-xl border-1'>
+        <div id='fbd' class='px-4 flex flex-col flex-wrap'>
+            <div id='fbd-label' class='ml-4 text-lg font-bold select-none'>
                 Free Body Diagram
             </div>
             <Stage 
@@ -149,45 +149,81 @@
                 {/if}
             </Stage>
         </div>
-        <div id= 'tao w-min-1/2'>
-            <div id='fbd-label' class='mx-auto text-lg font-bold flex flex-row rounded-xl border-1'>
+        <div id= 'tao' class='px-4 flex flex-col flex-wrap'>
+            <div id='tao-label' class='mx-auto text-lg font-bold select-none'>
                 <p>TAO Chart</p>
             </div>
-            <div class='mx-auto w-full my-4 p-2 text-xl font-bold rounded-xl border-1'>
-                
-                {#if forceList.length == 0}
-                    <div class=''>
-                        <p>No Forces Yet</p>
-                        <p class='text-sm'>Add a force by double clicking on the FBD or clicking the button below</p>
-                    </div>
-                {:else}
+            <div class='mx-auto w-full my-4 p-2 text-sm font-bold gap-4'>
+                <table>
+                    <thead>
+                        <tr class='bg-gray-200'>
+                            <th class='px-4'>Symbol</th>
+                            <th>Type</th>
+                            <th>Agent</th>
+                            <th>Object</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {#each forceList as force (force.id)}
+                            <tr class= {`${colorList[force.id%12].tw} p-2.5 m-1 gap-2 font-bold rounded-xl overflow-hidden`}>
+                                <td contenteditable="true">{force.symbol}</td>
+                                <td contenteditable="true">{force.type}</td>
+                                <td contenteditable="true">{force.agent}</td>
+                                <td contenteditable="true">{force.object}</td>
+                            </tr>
+                        {/each}
+                    </tbody>
+                </table>
+                <!-- <ul class='list-none flex flex-row gap-4 text-md'>
+                    <li>Symbol</li>
+                    <li>Type</li>
+                    <li>Agent</li>
+                    <li>Object</li>
+                </ul>
+                    <ul id='tao-items' class='list-none flex flex-col gap-2'>
+                        {#each forceList as force (force.id)}
+                            <li class= {`${colorList[force.id%12].tw} p-2.5 m-1 gap-2 font-bold rounded-xl`}>
+                                <ul class='list-none flex flex-row gap-4 text-md'>
+                                    <li contenteditable="true">{force.symbol}</li>
+                                    <li>{force.type}</li>
+                                    <li>{force.agent}</li>
+                                    <li>{force.object}</li>
+                                </ul>
+                            </li> -->
+                            <!-- <div id='tao-item' class= {`${colorList[force.id%12].tw} p-2.5 m-1 gap-2 font-bold rounded-xl grid grid-cols-[0.25fr_1fr_2fr_2fr_2fr_0.25fr] w-full`}>
+                                <div class='' contenteditable="true">{force.symbol}</div>
+                                <div class='' contenteditable="true">{force.type}</div>
+                                <div class='' contenteditable="true">{force.agent}</div>
+                                <div class='' contenteditable="true">{force.object}</div>
+                            </div> -->
+                        <!-- {/each} -->
+                    <!-- </ul> -->
+                <!-- <Table class=''>
+                    <TableHead class='p-2.5 m-1 text-sm select-none'>
+                    <TableHeadCell>Symbol</TableHeadCell>
+                    <TableHeadCell>Type</TableHeadCell>
+                    <TableHeadCell>Agent</TableHeadCell>
+                    <TableHeadCell>Object</TableHeadCell>
+                    </TableHead>
+                    <TableBody tableBodyClass="divide-y text-xs m-0 p-0">
+                        {#each forceList as force (force.id)}
+                            <TableBodyRow >
+                                <TableBodyCell class='text-black font-bold text-lg' contenteditable="true">{force.symbol}</TableBodyCell>
+                                <TableBodyCell class='text-black font-bold text-lg' contenteditable="true">{force.type}</TableBodyCell>
+                                <TableBodyCell class='text-black font-bold text-lg' contenteditable="true">{force.agent}</TableBodyCell>
+                                <TableBodyCell class='text-black font-bold text-lg ' contenteditable="true">{force.object}</TableBodyCell>
+                            </TableBodyRow>
+                        {/each}
+                    </TableBody>
+                </Table> -->
 
-                    <Table class=''>
-                        <TableHead class='p-2.5 m-1 text-sm'>
-                        <TableHeadCell>Symbol</TableHeadCell>
-                        <TableHeadCell>Type</TableHeadCell>
-                        <TableHeadCell>Agent</TableHeadCell>
-                        <TableHeadCell>Object</TableHeadCell>
-                        </TableHead>
-                        <TableBody tableBodyClass="divide-y text-xs m-0 p-0">
-                            {#each forceList as force (force.id)}
-                                <TableBodyRow class={`${colorList[force.id%12].tw} rounded-lg `}>
-                                    <TableBodyCell class='text-black font-bold text-lg' contenteditable="true">{force.symbol}</TableBodyCell>
-                                    <TableBodyCell class='text-black font-bold text-lg' contenteditable="true">{force.type}</TableBodyCell>
-                                    <TableBodyCell class='text-black font-bold text-lg' contenteditable="true">{force.agent}</TableBodyCell>
-                                    <TableBodyCell class='text-black font-bold text-lg ' contenteditable="true">{force.object}</TableBodyCell>
-                                </TableBodyRow>
-                            {/each}
-                        </TableBody>
-                    </Table>
-                    {#if showNetForce}
-                        <div class="text-xl">Hide Net Force</div>
-                    {:else}
-                        <div class="text-xl">Show Net Force</div>
-                    {/if}
-                    <Toggle bind:checked={showNetForce} />
+                {#if showNetForce}
+                    <div class="text-xl select-none">Hide Net Force</div>
+                {:else}
+                    <div class="text-xl select-none">Show Net Force</div>
                 {/if}
-                
+                <Toggle bind:checked={showNetForce} />
+            
             </div>
         </div>
     </div>
