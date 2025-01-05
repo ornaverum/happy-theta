@@ -54,6 +54,7 @@
 		"@techstark/opencv-js": "^4.10.0-release.1",
 		"flowbite-svelte": "^0.47.4",
 		"flowbite-svelte-icons": "^2.0.2",
+		"gif-encoder-2": "^1.0.5",
 		"gifshot": "^0.4.5",
 		"html2canvas": "^1.4.1",
 		"svelte-konva": "^1.0.0-next.0"

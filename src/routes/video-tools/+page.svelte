@@ -1,7 +1,9 @@
 <script lang='ts'>
     import { Fileupload, Helper, Button, Gallery, type ImgType } from 'flowbite-svelte';
+    import cv from '@techstark/opencv-js'
     import {Stage, Layer} from 'svelte-konva';
     import gifshot from 'gifshot';
+	import { scale } from 'svelte/transition';
 
     let selectedFiles: FileList | undefined = $state(null);
     let fileNames: string[] | string = $derived(
@@ -12,19 +14,148 @@
         dataURLs.map((dataURL) => ({ src: dataURL, alt: "Image" }))
     );
 
+    let imageSrcMats: cv.Mat[] = $state([]);
+    let imageDstMats: cv.Mat[] = $state([]);
+
     let cans: HTMLCanvasElement[] = $state([]);
 
-    const rotateCanvas90 = (canvas: HTMLCanvasElement) => {
-        const ctx = canvas.getContext('2d');
-        const img = new Image();
-        img.src = canvas.toDataURL();
-        img.onload = () => {
-            ctx?.clearRect(0, 0, canvas.width, canvas.height);
-            ctx?.translate(canvas.width / 2, canvas.height / 2);
-            ctx?.rotate(Math.PI / 2);
-            ctx?.drawImage(img, -img.width / 2, -img.height / 2);
-        };
+    let canvasHelper: HTMLCanvasElement;
+    let canvasOutput: HTMLCanvasElement;
+
+    let currentImageIndex: number = $state(0);
+
+    const scaleMat = (src: cv.Mat, dst: cv.Mat, scale: number) => {
+        let dsize = new cv.Size(src.cols * scale, src.rows * scale);
+        cv.resize(src, dst, dsize, 0, 0, cv.INTER_AREA);
     };
+
+    const rotateAll = ()=>{
+        document.querySelectorAll('#image-canvases canvas').forEach((canvas, i) => {
+            const ctx = canvas.getContext('2d');
+            let src = cv.imread(canvas);
+            let dst = new cv.Mat();
+            rotateMat(src, dst, 90);
+            cv.imshow(canvas, dst);
+            src.delete(); dst.delete();
+        });
+    }
+    const rotateMat = (src: cv.Mat, dst:cv.Mat, angle: number) => {
+        let dsize = new cv.Size(src.rows, src.cols);
+        let center = new cv.Point(src.cols / 2, src.cols / 2);
+        let M = cv.getRotationMatrix2D(center, angle, 1);
+        cv.warpAffine(src, dst, M, dsize, cv.INTER_LINEAR, cv.BORDER_CONSTANT, new cv.Scalar());
+        M.delete();
+    };
+
+    const showMainView = () => {
+        const can = document.querySelectorAll('#image-canvases canvas')[currentImageIndex];
+        const ctx = can.getContext('2d');
+        const canMain = document.querySelector('#main-view') as HTMLCanvasElement;
+        const ctxMain = canMain.getContext('2d');
+
+        ctxMain?.putImageData(ctx.getImageData(0, 0, ctx.width, ctx.height) , 0, 0);
+       
+    };
+
+    const testHandleImg = async () =>{
+        const img = new Image();
+        img.src = '/small-2025-01-04 19.11.43.jpg';
+        img.onload = () => {
+            const canvas = document.querySelector('#canvasHelper') as HTMLCanvasElement;
+            canvas.width = img.width;
+            canvas.height = img.height;
+            const ctx = canvas.getContext('2d');
+            ctx?.drawImage(img, 0, 0);
+            let src = cv.imread('canvasHelper');
+            let dst = new cv.Mat();
+
+            let dsize = new cv.Size(src.rows, src.cols);
+            let center = new cv.Point(src.cols/2, src.cols/2);
+            // You can try more different parameters
+            let M = cv.getRotationMatrix2D(center, 90, 1);
+            cv.warpAffine(src, dst, M, dsize, cv.INTER_LINEAR);
+
+            cv.imshow('canvasHelper', src);
+            cv.imshow('canvasOutput', dst);
+            src.delete(); dst.delete(); M.delete();
+
+        };
+    }
+
+
+    const showImageFiles = async ()=>{
+        if (!selectedFiles) {
+            console.error("No files selected!");
+            return;
+        }
+
+        // Convert files to dataURLs
+        const readFileAsDataURL = (file: File): Promise<string> => {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result as string);
+                reader.onerror = () => reject(reader.error);
+                reader.readAsDataURL(file);
+            });
+        };
+
+        dataURLs = await Promise.all(
+                Array.from(selectedFiles).map((file) => readFileAsDataURL(file))
+            );
+        
+    }
+    const handleImg = async ()=>{
+        if (!selectedFiles) {
+            console.error("No files selected!");
+            return;
+        }
+
+        // Convert files to dataURLs
+        const readFileAsDataURL = (file: File): Promise<string> => {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result as string);
+                reader.onerror = () => reject(reader.error);
+                reader.readAsDataURL(file);
+            });
+        };
+
+        dataURLs = await Promise.all(
+                Array.from(selectedFiles).map((file) => readFileAsDataURL(file))
+            );
+
+        const rotateMat = (src: cv.Mat, dst:cv.Mat, angle: number) => {
+            let dsize = new cv.Size(src.rows, src.cols);
+            let center = new cv.Point(src.cols / 2, src.cols / 2);
+            let M = cv.getRotationMatrix2D(center, angle, 1);
+            cv.warpAffine(src, dst, M, dsize, cv.INTER_LINEAR, cv.BORDER_CONSTANT, new cv.Scalar());
+            M.delete();
+        };
+        
+        const img = new Image();
+        img.src = await readFileAsDataURL(selectedFiles[0]) as unknown as string;
+        img.onload = () => {
+            const canvas = document.querySelector('#canvasHelper') as HTMLCanvasElement;
+            canvas.width = img.width;
+            canvas.height = img.height;
+            const ctx = canvas.getContext('2d');
+            ctx?.drawImage(img, 0, 0);
+            let src = cv.imread('canvasHelper');
+            let dst = new cv.Mat();
+            // To distinguish the input and output, we graying the image.
+            // You can try different conversions.
+
+            rotateMat(src, dst, 90);
+
+            let dsize = new cv.Size(src.rows/5, src.cols/5);
+            
+            canvasOutput.width = dst.cols;
+            canvasOutput.height = dst.rows;
+
+            cv.imshow('canvasOutput', dst);
+            src.delete(); dst.delete();
+        };
+    }
 
     const handleMakeGif = async () => {
         if (!selectedFiles) {
@@ -58,36 +189,14 @@
                     canvas.height = img.height;
                     const ctx = canvas.getContext('2d');
                     ctx?.drawImage(img, 0, 0);
-                    // cans.push(canvas);
-                    rotateCanvas(canvas);
                     cans = [...cans, canvas];
-                    console.log("Canvas:", canvas); // Debugging
-                    console.log("ctx:", ctx); // Debugging
                     document.querySelector('#image-canvases').appendChild(canvas);
                 };
             });
             console.log(cans); // Debugging
             // Create GIF using gifshot
-            gifshot.createGIF(
-                {
-                    images: dataURLs, // Pass dataURLs to gifshot
-                    gifWidth: 500,    // Adjust as needed
-                    gifHeight: 500,   // Adjust as needed
-                    interval: 0.5,    // Frame interval in seconds
-                },
-                (obj) => {
-                    if (!obj.error) {
-                        const image = obj.image;
-                        const animatedImage = document.querySelector('#gif-target');
-                        animatedImage.src = image;
-                        animatedImage.classList.remove('hidden');
-
-                        // Append the GIF to the body (you can customize this)
-                    } else {
-                        console.error("Error creating GIF:", obj.errorMsg);
-                    }
-                }
-            );
+           
+            showMainView();
         } catch (error) {
             console.error("Error reading files:", error);
         }
@@ -96,32 +205,25 @@
 </script>
 
 <main>
+    <!-- <Fileupload clearable bind:files={selectedFiles} multiple accept='.jpg, .jpeg, .heic, .png'/> -->
     <Fileupload clearable bind:files={selectedFiles} multiple accept='.jpg, .jpeg, .heic, .png'/>
     <Helper color="green" class="mt-2">Selected files: {fileNames}</Helper>
     <Button color='alternative' onclick={handleMakeGif}>Create Gif</Button>
+    <Button color='alternative' onclick={rotateAll}>Rotate</Button>
 
-    <div id='image-canvases' class='flex flex-col gap-4 max-w-lg'>
-        <!-- {#each cans as can, i}
-            <canvas bind:this={cans[i]} />
-        {/each} -->
-    </div>
-    <!-- <Gallery items={images} class="gap-4 grid-cols-2 md:grid-cols-3 max-w-xl rotate-270" /> -->
-    <img id='gif-target' src="https://via.placeholder.com/500" alt="Image" class='hidden max-w-sm'/>
-
-    <!-- {#if images.length > 0}
-        <div class='flex flex-row gap-4 border border-gray-300 rounded-lg p-4 rotate-270    '>
-            <div>
-                <img src={images[0].src} alt={images[0].alt} class="max-w-96" />
-            </div>
-            <div class='grid grid-rows-3 grid-flow-col gap-4'>
-                {#each images as image}
-                    <div class='max-w-24 max-h-24'>
-                        <img src={image.src} alt={image.alt} />
-                    </div>
-                {/each}
-               
-            </div>
+    <div class='flex flex-row gap-4'>
+        <div>
+            <canvas id='main-view' class='max-w-96' />
         </div>
-    {/if} -->
+        <div id='image-canvases' class='flex flex-col gap-4 max-w-24'>
+            <!-- {#each cans as can, i}
+                <canvas bind:this={cans[i]} class='max-w-96 flex'/>
+            {/each} -->
+        </div>    
+    </div>
+    
+    <canvas id='canvasHelper' class='max-w-96' bind:this={canvasHelper} />
+    <canvas id='canvasOutput' class='max-w-96' bind:this={canvasOutput} />
+
 
 </main>
