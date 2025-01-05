@@ -1,7 +1,6 @@
 <script lang="ts">
 	import CaptureDiv from '$lib/Components/CaptureDiv.svelte';
 
-
     import { Button, Toggle, Label, Select, Input, Hr } from 'flowbite-svelte';
     import {TrashBinOutline, CirclePlusOutline, FileExportOutline, EditOutline, RefreshOutline} from 'flowbite-svelte-icons';
 	import EditLabel from '$lib/Components/EditLabel.svelte';
@@ -9,7 +8,6 @@
 	import Grid from '$lib/Components/Grid.svelte';
 	import GridLogic from '$lib/Components/GridLogic';
 	import EnergyDiagram from '$lib/Components/EnergyDiagram.svelte';
-	import EnergyDiagramWork from '$lib/Components/EnergyDiagramWork.svelte';
 
 	let name: string = 'Free Body Diagram';
 

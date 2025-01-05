@@ -53,6 +53,7 @@
 		"@tailwindcss/typography": "^0.5.15",
 		"flowbite-svelte": "^0.47.4",
 		"flowbite-svelte-icons": "^2.0.2",
+		"gifshot": "^0.4.5",
 		"html2canvas": "^1.4.1",
 		"svelte-konva": "^1.0.0-next.0"
 	}

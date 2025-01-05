@@ -25,6 +25,7 @@
 	<NavHamburger class='ml-16' />
 	<NavUl {hidden}>
 	  <NavLi href="{base}/">Home</NavLi>
+	  <NavLi href="{base}/video-tools">Video Tools</NavLi>
 	  <NavLi href="{base}/free-body-diagram">Free Body Diagram</NavLi>
 	  <NavLi href="{base}/energy-diagram">Energy Diagram</NavLi>
 	  <NavLi href="{base}/motion-diagram">Motion Diagram</NavLi>
@@ -35,7 +36,10 @@
 	</NavUl>
   </Navbar>
 
-{@render children?.()}
+<main class="w-max mx-auto">
+	{@render children?.()}
+
+</main>
 
 <!-- 
 <Footer class="fixed bottom-0 z-20 w-full p-4 bg-white border-t border-gray-200 shadow md:flex md:items-center md:justify-between md:p-6 dark:bg-gray-800 dark:border-gray-600">
