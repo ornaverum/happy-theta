@@ -47,14 +47,17 @@
         M.delete();
     };
 
-    const showMainView = () => {
-        const can = document.querySelectorAll('#image-canvases canvas')[currentImageIndex];
-        const ctx = can.getContext('2d');
-        const canMain = document.querySelector('#main-view') as HTMLCanvasElement;
-        const ctxMain = canMain.getContext('2d');
+    const showMainView = (dataURL:string) => {
 
-        ctxMain?.putImageData(ctx.getImageData(0, 0, ctx.width, ctx.height) , 0, 0);
-       
+        const img = new Image();
+        img.src = dataURL;
+        img.onload = () => {
+            const canvas:HTMLCanvasElement = document.querySelector('#main-view');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            const ctx:CanvasRenderingContext2D = canvas?.getContext('2d');
+            ctx?.drawImage(img, 0, 0);  
+        };
     };
 
     const testHandleImg = async () =>{
@@ -180,23 +183,23 @@
 
             console.log("Data URLs:", dataURLs); // Debuggin    g
 
-            dataURLs.forEach((dataURL) => {
+            dataURLs.forEach((dataURL,i) => {
                 const img = new Image();
                 img.src = dataURL;
                 img.onload = () => {
                     const canvas = document.createElement('canvas');
+                    canvas.id = `canvas-${i}`;
                     canvas.width = img.width;
                     canvas.height = img.height;
                     const ctx = canvas.getContext('2d');
                     ctx?.drawImage(img, 0, 0);
                     cans = [...cans, canvas];
-                    document.querySelector('#image-canvases').appendChild(canvas);
+                    document.querySelector('#image-canvases')?.appendChild(canvas);
                 };
             });
-            console.log(cans); // Debugging
-            // Create GIF using gifshot
            
-            showMainView();
+            console.log(cans);
+            showMainView(dataURLs[0]);
         } catch (error) {
             console.error("Error reading files:", error);
         }
@@ -215,10 +218,10 @@
         <div>
             <canvas id='main-view' class='max-w-96' />
         </div>
-        <div id='image-canvases' class='flex flex-col gap-4 max-w-24'>
-            <!-- {#each cans as can, i}
+        <div id='image-canvases' class='flex flex-col gap-1 max-w-24'>
+            {#each cans as can, i}
                 <canvas bind:this={cans[i]} class='max-w-96 flex'/>
-            {/each} -->
+            {/each}
         </div>    
     </div>
     
