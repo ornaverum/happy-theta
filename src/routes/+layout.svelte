@@ -15,28 +15,28 @@
 
 <!-- <DarkMode btnClass={darkmodebtn} /> -->
  <!-- <DarkMode></DarkMode> -->
+ <main class="flex flex-col w-full min-h-screen bg-gray-100 dark:bg-gray-900">
 
-<Navbar let:hidden let:toggle >
-	<NavBrand href="/">
-		<object data="/IALogo.svg" class="me-3 h-6 sm:h-9" title="Inertial Apple Logo"></object>
-		<span class="self-center whitespace-nowrap text-xl font-semibold dark:text-white">Inertial Apple</span>
+	<Navbar let:hidden let:toggle >
+		<NavBrand href="/">
+			<object data="/IALogo.svg" class="me-3 h-6 sm:h-9" title="Inertial Apple Logo"></object>
+			<span class="self-center whitespace-nowrap text-xl font-semibold dark:text-white">Inertial Apple</span>
 
-	</NavBrand>
-	<NavHamburger class='ml-16' />
-	<NavUl {hidden}>
-	  <NavLi href="{base}/">Home</NavLi>
-	  <NavLi href="{base}/video-tools">Video Tools</NavLi>
-	  <NavLi href="{base}/free-body-diagram">Free Body Diagram</NavLi>
-	  <NavLi href="{base}/energy-diagram">Energy Diagram</NavLi>
-	  <NavLi href="{base}/motion-diagram">Motion Diagram</NavLi>
-	  <NavLi href="{base}/graph-maker">Graph Maker</NavLi>
-	  <!-- <NavLi href="{base}/grapher">Grapher</NavLi> -->
-	  <!-- <NavLi href="{base}/vid-analysis">Video Analysis</NavLi> -->
-	  <!-- <NavLi href="{base}/equation-editor">Equation Editor</NavLi> -->
-	</NavUl>
-  </Navbar>
+		</NavBrand>
+		<NavHamburger class='ml-16' />
+		<NavUl {hidden}>
+		<NavLi href="{base}/">Home</NavLi>
+		<NavLi href="{base}/video-tools">Video Tools</NavLi>
+		<NavLi href="{base}/free-body-diagram">Free Body Diagram</NavLi>
+		<NavLi href="{base}/energy-diagram">Energy Diagram</NavLi>
+		<NavLi href="{base}/motion-diagram">Motion Diagram</NavLi>
+		<NavLi href="{base}/graph-maker">Graph Maker</NavLi>
+		<!-- <NavLi href="{base}/grapher">Grapher</NavLi> -->
+		<!-- <NavLi href="{base}/vid-analysis">Video Analysis</NavLi> -->
+		<!-- <NavLi href="{base}/equation-editor">Equation Editor</NavLi> -->
+		</NavUl>
+	</Navbar>
 
-<main class="w-max mx-auto">
 	{@render children?.()}
 
 </main>
