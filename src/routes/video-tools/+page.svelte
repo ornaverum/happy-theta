@@ -4,6 +4,8 @@
     const render = ({ context, width, height }) => {
       context.font = `${width / 10}px sans-serif`;
       context.fillStyle = 'tomato';
+      context.textAlign = 'center';
+      context.textBaseline = 'top';
       context.fillText('hello world', width / 2, height / 2);
     };
   </script>
