@@ -157,21 +157,25 @@
   <Fileupload clearable bind:files={selectedFiles} multiple accept='.jpg, .jpeg, .heic, .png'/>
   <Helper color="green" class="mt-2">Selected files: {fileNames}</Helper>
   <Button color='alternative' onclick={handleMakeGif}>Create Gif</Button>
-  <Button color='alternative' onclick={rotateAll}>Rotate</Button>
+  <Button color='alternative' onclick={()=>{}}>Rotate</Button>
 
   <div class='flex flex-row gap-4'>
       <div>
-          <canvas id='main-view' class='max-w-96' />
+          <Canvas class='max-w-96'>
+                <Layer>
+                    <img src={images[currentImageIndex].src} alt={images[currentImageIndex].alt} />
+                </Layer>
+          </Canvas>
       </div>
       <div id='image-canvases' class='flex flex-col gap-1 max-w-24'>
           {#each cans as can, i}
-              <canvas bind:this={cans[i]} class='max-w-96 flex'/>
+              <Canvas bind:this={cans[i]} class='max-w-96 flex'/>
           {/each}
       </div>    
   </div>
   
-  <canvas id='canvasHelper' class='max-w-96' bind:this={canvasHelper} />
-  <canvas id='canvasOutput' class='max-w-96' bind:this={canvasOutput} />
+  <Canvas class='max-w-96' bind:this={canvasHelper} />
+  <Canvas class='max-w-96' bind:this={canvasOutput} />
 
 
 </main>
