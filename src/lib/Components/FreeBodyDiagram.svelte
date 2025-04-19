@@ -4,9 +4,8 @@
 	import GridLogic from './GridLogic';
     let name: string = 'Free Body Diagram';
     import type { Point, Vector, Force } from '$lib/types';
-    import { Label, Select, Input, Button, Toggle } from 'flowbite-svelte';
+    import { Label, Select, Input, Button, Toggle, Hr } from 'flowbite-svelte';
     import {TrashBinOutline, FileExportOutline, EditOutline, ArrowRightOutline, RefreshOutline, CirclePlusOutline, TagOutline} from 'flowbite-svelte-icons';
-    import { Table, TableBody, TableBodyCell, TableBodyRow, TableHead, TableHeadCell, Checkbox, TableSearch } from 'flowbite-svelte';
 
 
     interface Props {
@@ -44,7 +43,7 @@
 
 	let toggleChecked:boolean = $state(false);
 	let onStage:boolean = $state(false);
-    let showNetForce:boolean = $state(false);
+    let showNetForce:boolean = $state(true);
 
 
     let netForceVector:Point = $state({...originStage});
@@ -67,7 +66,8 @@
             color: 'green',
             draggable: true,
             editText: false,
-        }
+        };
+        console.log(newForce);
         forceList = [...forceList, newForce];
 
         netForceVector = {...originPoint};
@@ -78,6 +78,9 @@
         console.log(netForceVector, originPoint)
     }
 
+    const deleteForce:Function = (id:number) => {
+        forceList = forceList.filter((force:Force) => force.id !== id);
+    };
 
     const colorList = [
         {tw: 'bg-amber-400', cc: '#fb923c'},
@@ -140,7 +143,7 @@
                 </Layer>
                 {#if showNetForce}
                     <Layer>
-                        {#if netForceVector.x == originPoint.x && netForceVector.y == originPoint.y}
+                        {#if forceList.length == 0 || (netForceVector.x == originPoint.x && netForceVector.y == originPoint.y)}
                             <Circle opacity={0.6} fill='black' {...originStage} radius = {8} id={'net'} />
                         {:else}
                             {@render drawForce(netForceVector, {id: 'net', opacity: 0.5, color: 'black', strokeWidth: 6})}
@@ -149,81 +152,81 @@
                 {/if}
             </Stage>
         </div>
-        <div id= 'tao' class='px-4 flex flex-col flex-wrap'>
-            <div id='tao-label' class='mx-auto text-lg font-bold select-none'>
+        <div id="tao-chart" class='max-w-lg px-4 top-0 flex-auto'>
+            <div id='fbd-label' class='mx-auto text-lg font-bold flex flex-row rounded-xl border-1'>
                 <p>TAO Chart</p>
             </div>
-            <div class='mx-auto w-full my-4 p-2 text-sm font-bold gap-4'>
-                <table>
-                    <thead>
-                        <tr class='bg-gray-200'>
-                            <th class='px-4'>Symbol</th>
-                            <th>Type</th>
-                            <th>Agent</th>
-                            <th>Object</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {#each forceList as force (force.id)}
-                            <tr class= {`${colorList[force.id%12].tw} p-2.5 m-1 gap-2 font-bold rounded-xl overflow-hidden`}>
-                                <td contenteditable="true">{force.symbol}</td>
-                                <td contenteditable="true">{force.type}</td>
-                                <td contenteditable="true">{force.agent}</td>
-                                <td contenteditable="true">{force.object}</td>
-                            </tr>
-                        {/each}
-                    </tbody>
-                </table>
-                <!-- <ul class='list-none flex flex-row gap-4 text-md'>
-                    <li>Symbol</li>
-                    <li>Type</li>
-                    <li>Agent</li>
-                    <li>Object</li>
-                </ul>
-                    <ul id='tao-items' class='list-none flex flex-col gap-2'>
-                        {#each forceList as force (force.id)}
-                            <li class= {`${colorList[force.id%12].tw} p-2.5 m-1 gap-2 font-bold rounded-xl`}>
-                                <ul class='list-none flex flex-row gap-4 text-md'>
-                                    <li contenteditable="true">{force.symbol}</li>
-                                    <li>{force.type}</li>
-                                    <li>{force.agent}</li>
-                                    <li>{force.object}</li>
-                                </ul>
-                            </li> -->
-                            <!-- <div id='tao-item' class= {`${colorList[force.id%12].tw} p-2.5 m-1 gap-2 font-bold rounded-xl grid grid-cols-[0.25fr_1fr_2fr_2fr_2fr_0.25fr] w-full`}>
-                                <div class='' contenteditable="true">{force.symbol}</div>
-                                <div class='' contenteditable="true">{force.type}</div>
-                                <div class='' contenteditable="true">{force.agent}</div>
-                                <div class='' contenteditable="true">{force.object}</div>
-                            </div> -->
-                        <!-- {/each} -->
-                    <!-- </ul> -->
-                <!-- <Table class=''>
-                    <TableHead class='p-2.5 m-1 text-sm select-none'>
-                    <TableHeadCell>Symbol</TableHeadCell>
-                    <TableHeadCell>Type</TableHeadCell>
-                    <TableHeadCell>Agent</TableHeadCell>
-                    <TableHeadCell>Object</TableHeadCell>
-                    </TableHead>
-                    <TableBody tableBodyClass="divide-y text-xs m-0 p-0">
-                        {#each forceList as force (force.id)}
-                            <TableBodyRow >
-                                <TableBodyCell class='text-black font-bold text-lg' contenteditable="true">{force.symbol}</TableBodyCell>
-                                <TableBodyCell class='text-black font-bold text-lg' contenteditable="true">{force.type}</TableBodyCell>
-                                <TableBodyCell class='text-black font-bold text-lg' contenteditable="true">{force.agent}</TableBodyCell>
-                                <TableBodyCell class='text-black font-bold text-lg ' contenteditable="true">{force.object}</TableBodyCell>
-                            </TableBodyRow>
-                        {/each}
-                    </TableBody>
-                </Table> -->
-
+            {#if forceList.length == 0}
+                <div class='mx-auto my-4 p-2 text-xl font-bold rounded-xl border-1'>
+                    <p>No Forces Yet</p>
+                    <p class='text-sm'>Add a force by clicking on the FBD</p>
+                </div>
+            {:else}
+            <div id='tao-title' class= " p-2.5 m-1 gap-2 font-bold rounded-xl my-auto grid grid-cols-[0.25fr_1fr_2fr_2fr_2fr_0.25fr]">
+                <p></p>
+                <p class='justify-center mx-auto'>Symbol</p>
+                <p class='justify-center mx-auto'>Type</p>
+                <p class='justify-center mx-auto'>Agent</p>
+                <p class='justify-center mx-auto'>Object</p>
+                <p></p>
+            </div>
+            {/if}
+            <div id='tao-items' class=''>
+                {#each forceList as force (force.id)}
+                <div id='tao-item' class= {`${colorList[force.id].tw} p-2.5 m-1 gap-2 font-bold rounded-xl grid grid-cols-[0.25fr_1fr_2fr_2fr_2fr_0.25fr] w-full`}>
+                    <Button color="red" class="mb-0 p-0 w-0"
+                            on:click={() => {
+                                force.editText = !force.editText;
+                            }}
+                            size="xs"
+                        >
+                            <EditOutline/>
+                        </Button>
+                        {#if force.editText}
+                            <Input id='tao-symbol' bind:value={force.symbol} placeholder="Symbol" class='my-auto'
+                                on:keydown={(evt) => { if (evt.key == 'Enter') { force.editText = false;}}}
+                            />
+                            <Input id='tao-type' bind:value={force.type} class='my-auto'
+                                on:keydown={(evt) => { if (evt.key == 'Enter') { force.editText = false;}}}
+                            />
+    
+                            <Input id='tao-agent' bind:value={force.agent} class='my-auto'
+                                on:keydown={(evt) => { if (evt.key == 'Enter') { force.editText = false;}}}
+    
+                            />
+                            <Input id='tao-object' bind:value={force.object} class='my-auto'
+                                on:keydown={(evt) => { if (evt.key == 'Enter') { force.editText = false;}}}
+                            />
+                        {:else}
+                            <div class='mx-auto' ondblclick={()=>{force.editText = true}}>{force.symbol}</div>
+                            <div class='mx-auto' ondblclick={()=>{force.editText = true}}>{force.type}</div>
+                            <div class='mx-auto' ondblclick={()=>{force.editText = true}}>{force.agent}</div>
+                            <div class='mx-auto' ondblclick={()=>{force.editText = true}}>{force.object}</div>
+                            
+                        {/if}
+                        <Button color="red" class="mb-0 p-0 w-0"
+                            on:click={() => deleteForce(force.id)}
+                        >
+                            <TrashBinOutline/>
+                        </Button>
+                    </div>
+                {/each}
+                <!-- <Button outline class='w-full'
+                    on:click={() => {
+                        addForce({x:1, y:1});
+                    }}>
+                    <CirclePlusOutline/> Add New Force
+                </Button> -->
                 {#if showNetForce}
-                    <div class="text-xl select-none">Hide Net Force</div>
-                {:else}
-                    <div class="text-xl select-none">Show Net Force</div>
+                <Hr classHr="w-48 h-1 mx-auto my-7 rounded md:my-10"> = </Hr>
+                <div id='netForce-item' class='mt-4 p-4 w-full inline-flex flex-row justify-center font-bold text-xl mx-auto bg-gray-500 text-white rounded-xl'>
+                        <div>Net Force
+                            {#if forceList.length == 0 || (netForceVector.x == originPoint.x && netForceVector.y == originPoint.y)}
+                                = 0
+                            {/if}
+                        </div>
+                    </div>
                 {/if}
-                <Toggle bind:checked={showNetForce} />
-            
             </div>
         </div>
     </div>
