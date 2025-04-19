@@ -70,17 +70,23 @@
         console.log(newForce);
         forceList = [...forceList, newForce];
 
-        netForceVector = {...originPoint};
-        forceList.forEach((force:Force) => {
-            netForceVector.x += (force.components.x -originPoint.x);
-            netForceVector.y += force.components.y -originPoint.y;
-        });
+        updateNetForce();
         console.log(netForceVector, originPoint)
     }
 
     const deleteForce:Function = (id:number) => {
         forceList = forceList.filter((force:Force) => force.id !== id);
+        updateNetForce();
+
     };
+
+    const updateNetForce:Function = () => {
+        netForceVector = {...originPoint};
+        forceList.forEach((force:Force) => {
+            netForceVector.x += (force.components.x -originPoint.x);
+            netForceVector.y += force.components.y -originPoint.y;
+        });
+    }
 
     const colorList = [
         {tw: 'bg-amber-400', cc: '#fb923c'},
@@ -174,7 +180,7 @@
             <div id='tao-items' class=''>
                 {#each forceList as force (force.id)}
                 <div id='tao-item' class= {`${colorList[force.id].tw} p-2.5 m-1 gap-2 font-bold rounded-xl grid grid-cols-[0.25fr_1fr_2fr_2fr_2fr_0.25fr] w-full`}>
-                    <Button color="red" class="mb-0 p-0 w-0"
+                    <Button color="red" class="ml-2 mb-0 p-0 w-0"
                             on:click={() => {
                                 force.editText = !force.editText;
                             }}

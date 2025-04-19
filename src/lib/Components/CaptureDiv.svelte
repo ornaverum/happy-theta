@@ -2,7 +2,7 @@
 	import html2canvas from 'html2canvas';
 
 	interface Props {
-		children?;
+		children? : any;
 		saveData?: ()=> void;
 		loadData?: ()=> void;
 		refreshAll?: ()=> void;
@@ -14,7 +14,7 @@
 		loadData=()=>{}, 
 		refreshAll=()=>{} }: Props = $props();
 
-    let divToCapture: HTMLDivElement;
+    let divToCapture: HTMLDivElement | null = null;
 
     import { Button, Toggle } from 'flowbite-svelte';
     import {TrashBinOutline, FileExportOutline, FileCopyOutline, FloppyDiskOutline, FolderOpenOutline, RefreshOutline} from 'flowbite-svelte-icons';
