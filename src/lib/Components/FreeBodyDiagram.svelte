@@ -2,7 +2,12 @@
 	import { Stage, Layer, Line, Circle, Arrow, Text, Rect, type KonvaMouseEvent} from 'svelte-konva';
 	import Grid from './Grid.svelte';
 	import GridLogic from './GridLogic';
+
+    import {EditLabel} from './EditLabel.svelte';
+
     let name: string = 'Free Body Diagram';
+
+
     import type { Point, Vector, Force } from '$lib/types';
     import { Label, Select, Input, Button, Toggle, Hr } from 'flowbite-svelte';
     import {TrashBinOutline, FileExportOutline, EditOutline, ArrowRightOutline, RefreshOutline, CirclePlusOutline, TagOutline} from 'flowbite-svelte-icons';
@@ -25,7 +30,7 @@
         height = 400,
         title = $bindable('Title'),
         numCells = {x: 10, y:10},
-        showControlButtons = true,
+        showControlButtons,
         id = 0,
         margin = {x:5, y:5},
         forceList = $bindable([]),
@@ -102,7 +107,6 @@
         {tw: 'bg-lime-400', cc: '#a3e635'},
         {tw: 'bg-fuchsia-600', cc: '#d946ef'},
     ];
-
 </script>
 
 
@@ -120,6 +124,7 @@
 {/snippet}
 
 <main class="flex flex-col bg-gray-100 w-max rounded-xl shadow-lg p-4">
+    <EditLabel bind:title/>
     <div class='flex flex-row flex-wrap'>
         <div id='fbd' class='px-4 flex flex-col flex-wrap'>
             <div id='fbd-label' class='ml-4 text-lg font-bold select-none'>
@@ -233,6 +238,7 @@
                         </div>
                     </div>
                 {/if}
+
             </div>
         </div>
     </div>

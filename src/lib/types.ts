@@ -29,6 +29,15 @@ export type Force = {
     editText: boolean;
 };
 
+export type FBD = {
+    id: number,
+    title: string,
+    width: number,
+    height: number,
+    marginY: number,
+    forceList: Force[],
+}
+
 export type MD = {
     id: number,
     title: string,

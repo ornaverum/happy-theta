@@ -6,13 +6,16 @@
 		saveData?: ()=> void;
 		loadData?: ()=> void;
 		refreshAll?: ()=> void;
+		showControlButtons?: boolean;
 	}
 
 	let { 
 		children, 
 		saveData=()=>{}, 
 		loadData=()=>{}, 
-		refreshAll=()=>{} }: Props = $props();
+		refreshAll=()=>{},
+		showControlButtons=$bindable(true)
+	}: Props = $props();
 
     let divToCapture: HTMLDivElement | null = null;
 
@@ -54,6 +57,9 @@
         <Button color='dark' onclick={()=>{}}><FolderOpenOutline/></Button>
         <Button color='dark' onclick={refreshAll}><RefreshOutline/></Button>
     </div>
+	<div class='my-4'>
+		<Toggle bind:checked={showControlButtons} > Show Control Buttons</Toggle>
+	</div>
 	<div id='capture'>
 		{@render children?.()}
 	</div>	
