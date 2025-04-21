@@ -6,7 +6,7 @@
 
     import { Button, Toggle, Label, Select, Input, Hr } from 'flowbite-svelte';
     import {TrashBinOutline, CirclePlusOutline, FileExportOutline, EditOutline, RefreshOutline} from 'flowbite-svelte-icons';
-	import EditLabel from '$lib/Components/EditLabel.svelte';
+	// import EditLabel from '$lib/Components/EditLabel.svelte';
 
 	import FreeBodyDiagram from '$lib/Components/FreeBodyDiagram.svelte';
 

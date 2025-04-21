@@ -11,7 +11,6 @@
 
 	import QualGraph from '$lib/Components/QualGraph.svelte';
 
-	import CaptureDiv from '$lib/Components/CaptureDiv.svelte';
 
 
 	const url = $page.url;
@@ -130,8 +129,6 @@
 </script>
 
 
-<div class="w-max mx-auto">
-	<CaptureDiv>
 				<!-- <EditLabel text='Graph Group' size='xl2' {showControlButtons}/> -->
 			<div class="flex flex-col flex-wrap">
 				{#each groupIDs as group (group)}
@@ -164,5 +161,4 @@
 					<CirclePlusOutline class='mx-2'/> Add New Group
 				</Button>
 			{/if}
-	</CaptureDiv>
-</div>
+			</div>

@@ -50,7 +50,7 @@
 </script>
 
 <div class="">
-    <div id='controls' class = 'my-4'>
+    <div id='controls' class = 'w-full flex flex-row justify-end space-x-2'>
         <Button color='dark' onclick={saveDivAsImage}><FileExportOutline/></Button>
         <Button color='dark' onclick={copyDivAsImageToClipboard}><FileCopyOutline/></Button>
         <Button color='dark' onclick={()=>{}}><FloppyDiskOutline/></Button>
@@ -58,7 +58,7 @@
         <Button color='dark' onclick={refreshAll}><RefreshOutline/></Button>
     </div>
 	<div class='my-4'>
-		<Toggle bind:checked={showControlButtons} > Show Control Buttons</Toggle>
+		<Toggle bind:checked={showControlButtons} class='w-full flex flex-row justify-end'> Show Control Buttons</Toggle>
 	</div>
 	<div id='capture'>
 		{@render children?.()}

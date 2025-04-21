@@ -1,5 +1,4 @@
 <script lang="ts">
-	import CaptureDiv from '$lib/Components/CaptureDiv.svelte';
 
 
     import { Button, Toggle, Label, Select, Input, Hr } from 'flowbite-svelte';
@@ -32,14 +31,10 @@
 
 </script>
 
-<div class="w-max mx-auto">
-	<CaptureDiv {refreshAll}>
-		<main class="my-4">
-			<EnergyDiagram {gridLogic}/>
-			<div class="p-0 my-0 w-max justify-center align-center mx-auto font-bold text-4xl">+</div>
-			<EnergyDiagram gridLogic={gridLogicW} workFlag={true}/>
-			<div class="p-0 my-0 w-max justify-center align-center mx-auto font-bold text-4xl">=</div>
-			<EnergyDiagram {gridLogic}/>
-		</main>
-	</CaptureDiv>
-</div>
+<main class="my-4">
+	<EnergyDiagram {gridLogic}/>
+	<div class="p-0 my-0 w-max justify-center align-center mx-auto font-bold text-4xl">+</div>
+	<EnergyDiagram gridLogic={gridLogicW} workFlag={true}/>
+	<div class="p-0 my-0 w-max justify-center align-center mx-auto font-bold text-4xl">=</div>
+	<EnergyDiagram {gridLogic}/>
+</main>

@@ -1,6 +1,5 @@
 <script lang="ts">
 	import MotionDiagram from '$lib/Components/MotionDiagram.svelte';
-	import CaptureDiv from '$lib/Components/CaptureDiv.svelte';
 	import type { MD } from '$lib/types';
 
     import { Label, Select, Input, Button, Toggle } from 'flowbite-svelte';
@@ -59,19 +58,15 @@
 	addNewMD();
 
 </script>
-<div class='w-max mx-auto'>
-	<CaptureDiv {refreshAll}>
-		<div id='button-group' class = 'flex flex-row p-4 w-1/3 justify-around'>
-			<Button color='dark' class='my-1' on:click={()=>labelTitle()}>Autolabel</Button>
-			<Toggle bind:checked={showControlButtons}>Show Control Buttons</Toggle>
-		</div>
-		<ul class='list-none'>
-			{#each mdArray as md}
-				<li>
-					<MotionDiagram {...md} bind:posList={md.posList} bind:accList={md.accList} bind:title={md.title} {showControlButtons}/>
-				</li>
-			{/each}
-		</ul>
-		<Button color='alternative' onclick={()=>addNewMD()}><CirclePlusOutline/>Add New Diagram</Button>
-	</CaptureDiv>
+
+<div id='button-group' class = 'p-4 pr-4 ml-4 w-max'>
+	<Button color='dark' class='my-1' on:click={()=>labelTitle()}>Autolabel</Button>
 </div>
+<ul class='list-none'>
+	{#each mdArray as md}
+		<li>
+			<MotionDiagram {...md} bind:posList={md.posList} bind:accList={md.accList} bind:title={md.title} {showControlButtons}/>
+		</li>
+	{/each}
+</ul>
+<Button color='alternative' onclick={()=>addNewMD()}><CirclePlusOutline/>Add New Diagram</Button>
