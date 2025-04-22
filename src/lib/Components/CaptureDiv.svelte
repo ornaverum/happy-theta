@@ -1,11 +1,12 @@
 <script lang='ts'>
 	import html2canvas from 'html2canvas';
+	import { getContext, setContext } from 'svelte';
 
 	interface Props {
 		children? : any;
 		saveData?: ()=> void;
 		loadData?: ()=> void;
-		refreshAll?: ()=> void;
+		refreshAction?: ()=> void;
 		showControlButtons?: boolean;
 	}
 
@@ -13,7 +14,7 @@
 		children, 
 		saveData=()=>{}, 
 		loadData=()=>{}, 
-		refreshAll=()=>{},
+		refreshAction=()=>{console.log('refreshAction def in CaptureDiv')},
 		showControlButtons=$bindable(true)
 	}: Props = $props();
 
@@ -46,7 +47,14 @@
 		canvas.toBlob(blob => navigator.clipboard.write([new ClipboardItem({'image/png': blob})]))
 	};
 
-	
+
+	const testContextFunction = getContext('testContextFromLayout');
+	console.log('in CaptureDiv, testContextFunction');
+	testContextFunction();
+
+	const testContextFunctionFromCapDiv = ()=>{console.log('testContextFunctionFromCapDiv')};
+	setContext('testContextFromCapDiv', testContextFunctionFromCapDiv);
+
 </script>
 
 <div class="">
@@ -55,7 +63,7 @@
         <Button color='dark' onclick={copyDivAsImageToClipboard}><FileCopyOutline/></Button>
         <Button color='dark' onclick={()=>{}}><FloppyDiskOutline/></Button>
         <Button color='dark' onclick={()=>{}}><FolderOpenOutline/></Button>
-        <Button color='dark' onclick={refreshAll}><RefreshOutline/></Button>
+        <Button color='dark' onclick={refreshAction}><RefreshOutline/></Button>
     </div>
 	<div class='my-4'>
 		<Toggle bind:checked={showControlButtons} class='w-full flex flex-row justify-end'> Show Control Buttons</Toggle>

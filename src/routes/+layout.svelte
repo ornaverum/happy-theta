@@ -1,16 +1,18 @@
-<script>
+<script lang="ts">
 	import '../app.css';
 	import { page } from '$app/stores';
 	import { base } from '$app/paths';
 	import { DarkMode } from 'flowbite-svelte';
 	import { Navbar, NavBrand, NavLi, NavUl, NavHamburger } from 'flowbite-svelte';
+	import { setContext, getContext } from 'svelte';
+	import CaptureDiv from '$lib/Components/CaptureDiv.svelte';
 	let darkmodebtn =
 		'text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-lg p-2.5 fixed right-4 top-2 z-50';
 	import { Footer, FooterBrand, FooterCopyright, FooterIcon, FooterLink, FooterLinkGroup } from 'flowbite-svelte';
-	/** @type {{children?: import('svelte').Snippet}} */
 	let { children } = $props();
 
-	let activeURL = $state($page.url.pathname)
+
+
 </script>
 
 <!-- <DarkMode btnClass={darkmodebtn} /> -->
@@ -45,5 +47,6 @@
 	</FooterLinkGroup>
 	</div>
   </Footer> -->
+
 
 
