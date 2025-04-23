@@ -1,5 +1,15 @@
 <script lang="ts">
 
+
+	interface Props {
+        test?: string;
+    }
+
+    let {
+        test = 'test from page'
+    }: Props = $props();
+
+
 	import { getContext, setContext } from 'svelte';
 
     import { Button, Toggle, Label, Select, Input, Hr } from 'flowbite-svelte';
@@ -49,7 +59,12 @@
 	console.log('in energy-diagram, testContextFunction');
 	testContextFunction();
 
-
+	console.log(test);
+	
+	// let testContextFromPage = ()=>{console.log('           testContextFromPage from page')};
+	// setContext('testContextFromPage', testContextFromPage);
+	// console.log('in energy-diagram, testContextFromPage');
+	// testContextFromPage();
 
 </script>
 
@@ -60,15 +75,3 @@
 	<!-- <div class="p-0 my-0 w-max justify-center align-center mx-auto font-bold text-4xl">=</div> -->
 	<EnergyDiagram {gridLogic}/>
 </main>
-
-<ItemContainer>
-	<EnergyDiagram
-		width={400}
-		height={400}
-		title='Energy Diagram'
-		numCells={{x: 10, y:10}}
-		showControlButtons={showControlButtons}
-		id={0}
-		margin={{x:5, y:5}}
-		handleDelete={(e: MouseEvent) => {}}/>
-</ItemContainer>

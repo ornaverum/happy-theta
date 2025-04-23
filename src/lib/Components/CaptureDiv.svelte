@@ -48,12 +48,16 @@
 	};
 
 
-	const testContextFunction = getContext('testContextFromLayout');
-	console.log('in CaptureDiv, testContextFunction');
-	testContextFunction();
-
 	const testContextFunctionFromCapDiv = ()=>{console.log('testContextFunctionFromCapDiv')};
 	setContext('testContextFromCapDiv', testContextFunctionFromCapDiv);
+
+	// let testContextFromPage = async ()=>{
+	// 	await getContext('testContextFromPage');
+	// 	testContextFromPage = getContext('testContextFromPage');
+	// 	console.log('testContextFromPage from CapDiv', testContextFromPage);
+	// } 
+	// testContextFromPage();
+
 
 </script>
 
@@ -69,6 +73,6 @@
 		<Toggle bind:checked={showControlButtons} class='w-full flex flex-row justify-end'> Show Control Buttons</Toggle>
 	</div>
 	<div id='capture'>
-		{@render children?.()}
+		{@render children?.({test: 'test'})}
 	</div>	
 </div>
