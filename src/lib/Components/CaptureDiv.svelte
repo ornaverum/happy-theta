@@ -6,7 +6,7 @@
 		children? : any;
 		saveData?: ()=> void;
 		loadData?: ()=> void;
-		refreshAction?: ()=> void;
+		refreshAllData?: ()=> void;
 		showControlButtons?: boolean;
 	}
 
@@ -14,7 +14,7 @@
 		children, 
 		saveData=()=>{}, 
 		loadData=()=>{}, 
-		refreshAction=()=>{console.log('refreshAction def in CaptureDiv')},
+		refreshAllData=()=>{console.log('refreshData def in CaptureDiv')},
 		showControlButtons=$bindable(true)
 	}: Props = $props();
 
@@ -48,26 +48,15 @@
 	};
 
 
-	const testContextFunctionFromCapDiv = ()=>{console.log('testContextFunctionFromCapDiv')};
-	setContext('testContextFromCapDiv', testContextFunctionFromCapDiv);
-
-	// let testContextFromPage = async ()=>{
-	// 	await getContext('testContextFromPage');
-	// 	testContextFromPage = getContext('testContextFromPage');
-	// 	console.log('testContextFromPage from CapDiv', testContextFromPage);
-	// } 
-	// testContextFromPage();
-
-
 </script>
 
 <div class="">
     <div id='controls' class = 'w-full flex flex-row justify-end space-x-2'>
         <Button color='dark' onclick={saveDivAsImage}><FileExportOutline/></Button>
         <Button color='dark' onclick={copyDivAsImageToClipboard}><FileCopyOutline/></Button>
-        <Button color='dark' onclick={()=>{}}><FloppyDiskOutline/></Button>
-        <Button color='dark' onclick={()=>{}}><FolderOpenOutline/></Button>
-        <Button color='dark' onclick={refreshAction}><RefreshOutline/></Button>
+        <Button color='dark' onclick={saveData}><FloppyDiskOutline/></Button>
+        <Button color='dark' onclick={loadData}><FolderOpenOutline/></Button>
+        <Button color='dark' onclick={refreshAllData}><RefreshOutline/></Button>
     </div>
 	<div class='my-4'>
 		<Toggle bind:checked={showControlButtons} class='w-full flex flex-row justify-end'> Show Control Buttons</Toggle>

@@ -3,7 +3,7 @@
 	import Grid from './Grid.svelte';
 	import GridLogic from './GridLogic';
 
-    import {EditLabel} from './EditLabel.svelte';
+    import EditLabel from './EditLabel.svelte';
 
     let name: string = 'Free Body Diagram';
 
@@ -124,7 +124,7 @@
 {/snippet}
 
 <main class="flex flex-col bg-gray-100 w-max rounded-xl shadow-lg p-4">
-    <EditLabel bind:title/>
+    <!-- <EditLabel bind:title/> -->
     <div class='flex flex-row flex-wrap'>
         <div id='fbd' class='px-4 flex flex-col flex-wrap'>
             <div id='fbd-label' class='ml-4 text-lg font-bold select-none'>

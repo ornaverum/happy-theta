@@ -6,7 +6,6 @@
 
     import { Button, Toggle, Label, Select, Input, Hr } from 'flowbite-svelte';
     import {TrashBinOutline, CirclePlusOutline, FileExportOutline, EditOutline, RefreshOutline} from 'flowbite-svelte-icons';
-	// import EditLabel from '$lib/Components/EditLabel.svelte';
 
 	import FreeBodyDiagram from '$lib/Components/FreeBodyDiagram.svelte';
 
@@ -34,28 +33,37 @@
 		fbdArray = [...fbdArray, fbd];
 	}
 
-	let showControlButtons:boolean = $state(false);
 	let forceList = $state([]);
 
 	addNewFBD();
 
+	let showControlButtons = $state(false);
+	
+	const saveData = () => {
+		console.log('saveData from page');
+	}
+	const loadData = () => {
+		console.log('loadData from page');
+	}
+	const refreshAllData = () => {
+		console.log('refreshDiv from page');
+	}
+
 </script>
 
-<div class="w-max mx-auto">
-	<CaptureDiv bind:showControlButtons>		
-		<ul class='list-none'>
-			{#each fbdArray as fbd}
-				<li class='p-4'>
-					<ItemContainer>
-						<FreeBodyDiagram {...fbd} bind:forceList={fbd.forceList} bind:title={fbd.title} {showControlButtons}/>
-					</ItemContainer>
-				</li>
-			{/each}
-		</ul>
-		{#if showControlButtons	}
-			<div class='flex flex-row p-4 w-1/3 justify-around'>
-				<Button color='alternative' on:click={addNewFBD}><CirclePlusOutline/>Add New Diagram</Button>
-			</div>
-		{/if}
-	</CaptureDiv>
-</div>
+<CaptureDiv bind:showControlButtons {saveData} {loadData} {refreshAllData}>		
+	<ul class='list-none'>
+		{#each fbdArray as fbd}
+			<li class='p-4'>
+				<ItemContainer>
+					<FreeBodyDiagram {...fbd} bind:forceList={fbd.forceList} bind:title={fbd.title} {showControlButtons}/>
+				</ItemContainer>
+			</li>
+		{/each}
+	</ul>
+	{#if showControlButtons	}
+		<div class='flex flex-row p-4 w-1/3 justify-around'>
+			<Button color='alternative' on:click={addNewFBD}><CirclePlusOutline/>Add New Diagram</Button>
+		</div>
+	{/if}
+</CaptureDiv>

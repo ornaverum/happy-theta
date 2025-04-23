@@ -17,8 +17,6 @@
 </script>
 
 <div class="w-max mx-auto w-7/12">
-    <CaptureDiv bind:showControlButtons>
-        {@render children?.()}
-    </CaptureDiv>
+	{@render children?.()}
 </div>
 

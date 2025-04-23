@@ -1,4 +1,6 @@
 <script lang="ts">
+	import CaptureDiv from '$lib/Components/CaptureDiv.svelte';
+
 	import { Stage, Layer, Line, Circle, Path} from 'svelte-konva';
 
 	import {page} from '$app/stores';
@@ -125,40 +127,50 @@
 			];
 
 	// addNewGraph(0);
+	const saveData = () => {
+		console.log('saveData from page');
+	}
+	const loadData = () => {
+		console.log('loadData from page');
+	}
+	const refreshAllData = () => {
+		console.log('refreshDiv from page');
+	}
 
 </script>
 
-
+<CaptureDiv bind:showControlButtons {saveData} {loadData} {refreshAllData}>	
 				<!-- <EditLabel text='Graph Group' size='xl2' {showControlButtons}/> -->
-			<div class="flex flex-col flex-wrap">
-				{#each groupIDs as group (group)}
-				<div class="flex flex-row flex-wrap shadow-lg">
-					{#if showControlButtons && groupIDs.length > 0}
-						<div class='flex flex-col m-1'>
-							<Button class='my-1' on:click={()=>{groupIDs = groupIDs.filter(g => g !== group)}}><TrashBinOutline/></Button>
-							<Button class='my-1' on:click={()=>labelGroupTitle(group)}>Autotitle</Button>
-							<div class='flex flex-col mr-2 mt-3'>
-								<Label for="select-y-label" class="">Select y-label for group</Label>
-								<Select on:change={()=>labelGroupYAxis(group, ylabel)} id='select-y-label' class="" size="sm" items={yLabelOptions} bind:value={ylabel} />
-							</div>
+		<div class="flex flex-col flex-wrap">
+			{#each groupIDs as group (group)}
+			<div class="flex flex-row flex-wrap shadow-lg">
+				{#if showControlButtons && groupIDs.length > 0}
+					<div class='flex flex-col m-1'>
+						<Button class='my-1' on:click={()=>{groupIDs = groupIDs.filter(g => g !== group)}}><TrashBinOutline/></Button>
+						<Button class='my-1' on:click={()=>labelGroupTitle(group)}>Autotitle</Button>
+						<div class='flex flex-col mr-2 mt-3'>
+							<Label for="select-y-label" class="">Select y-label for group</Label>
+							<Select on:change={()=>labelGroupYAxis(group, ylabel)} id='select-y-label' class="" size="sm" items={yLabelOptions} bind:value={ylabel} />
 						</div>
-					{/if}
-					{#each graphs as graph (graph.graphID)}
-						{#if graph.groupID == group}
-							<QualGraph bind:title={graph.title} id={graph.graphID} on:deleteMe={handleDelete} bind:pathList={graph.pathList} width={200} height={200} bind:labels={graph.labels} color='green' {showControlButtons}/>
-						{/if}
-					{/each}
-					{#if showControlButtons}
-						<Button color='alternative' onclick={()=>addNewGraph(group)}><CirclePlusOutline/></Button>
-					{/if}
 					</div>
-
+				{/if}
+				{#each graphs as graph (graph.graphID)}
+					{#if graph.groupID == group}
+						<QualGraph bind:title={graph.title} id={graph.graphID} on:deleteMe={handleDelete} bind:pathList={graph.pathList} width={200} height={200} bind:labels={graph.labels} color='green' {showControlButtons}/>
+					{/if}
 				{/each}
+				{#if showControlButtons}
+					<Button color='alternative' onclick={()=>addNewGraph(group)}><CirclePlusOutline/></Button>
+				{/if}
+				</div>
+
+			{/each}
 
 
-			{#if showControlButtons}
-				<Button color='alternative' onclick={()=>{groupIDs=[...groupIDs, ++groupIDIncrement]}}>
-					<CirclePlusOutline class='mx-2'/> Add New Group
-				</Button>
-			{/if}
-			</div>
+		{#if showControlButtons}
+			<Button color='alternative' onclick={()=>{groupIDs=[...groupIDs, ++groupIDIncrement]}}>
+				<CirclePlusOutline class='mx-2'/> Add New Group
+			</Button>
+		{/if}
+	</div>
+</CaptureDiv>

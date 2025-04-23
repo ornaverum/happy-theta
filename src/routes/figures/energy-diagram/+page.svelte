@@ -9,8 +9,7 @@
         test = 'test from page'
     }: Props = $props();
 
-
-	import { getContext, setContext } from 'svelte';
+	import CaptureDiv from '$lib/Components/CaptureDiv.svelte';
 
     import { Button, Toggle, Label, Select, Input, Hr } from 'flowbite-svelte';
     import {TrashBinOutline, CirclePlusOutline, FileExportOutline, EditOutline, RefreshOutline} from 'flowbite-svelte-icons';
@@ -41,37 +40,23 @@
 			cellSize:gridLogic.cellSize});
 	}
 
-	const saveDiv = setContext('saveDiv', () => {console.log('saveDiv')});
-	const loadDiv = setContext('loadDiv', () => {console.log('loadDiv')});
-	const refreshDiv = setContext('refreshDiv', () => {console.log('refreshDiv')});
-
 	let showControlButtons = $state(false);
 	
-	function handleRefresh() {
-		// Your refresh logic here
-		console.log('Refreshing energy diagram...');
+	const saveData = () => {
+		console.log('saveData from page');
 	}
-
-	// Make the refresh handler available to parent components
-	setContext('refreshAction', handleRefresh);
-
-	const testContextFunction = getContext('testContextFromLayout');
-	console.log('in energy-diagram, testContextFunction');
-	testContextFunction();
-
-	console.log(test);
-	
-	// let testContextFromPage = ()=>{console.log('           testContextFromPage from page')};
-	// setContext('testContextFromPage', testContextFromPage);
-	// console.log('in energy-diagram, testContextFromPage');
-	// testContextFromPage();
-
+	const loadData = () => {
+		console.log('loadData from page');
+	}
+	const refreshAllData = () => {
+		console.log('refreshDiv from page');
+	}
 </script>
 
-<main class="my-4">
+<CaptureDiv bind:showControlButtons {saveData} {loadData} {refreshAllData}>
 	<EnergyDiagram {gridLogic}/>
 	<!-- <div class="p-0 my-0 w-max justify-center align-center mx-auto font-bold text-4xl">+</div> -->
 	<EnergyDiagram gridLogic={gridLogicW} workFlag={true}/>
 	<!-- <div class="p-0 my-0 w-max justify-center align-center mx-auto font-bold text-4xl">=</div> -->
 	<EnergyDiagram {gridLogic}/>
-</main>
+</CaptureDiv>
