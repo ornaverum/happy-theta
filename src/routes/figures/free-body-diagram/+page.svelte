@@ -47,6 +47,8 @@
 	}
 	const refreshAllData = () => {
 		console.log('refreshDiv from page');
+		fbdArray = [];
+		addNewFBD();
 	}
 
 </script>
