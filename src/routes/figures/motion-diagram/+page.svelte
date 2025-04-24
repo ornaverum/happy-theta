@@ -1,9 +1,10 @@
 <script lang="ts">
 	import CaptureDiv from '$lib/Components/CaptureDiv.svelte';
-import MotionDiagram from '$lib/Components/MotionDiagram.svelte';
+	import MotionDiagram from '$lib/Components/MotionDiagram.svelte';
 	import type { MD } from '$lib/types';
+	import type { KonvaMouseEvent } from 'svelte-konva';
 
-    import { Label, Select, Input, Button, Toggle } from 'flowbite-svelte';
+    import { Label, Select, Input, Button, Toggle} from 'flowbite-svelte';
     import {TrashBinOutline, FileExportOutline, CirclePlusOutline} from 'flowbite-svelte-icons';
 
 	interface Props {
@@ -40,8 +41,13 @@ import MotionDiagram from '$lib/Components/MotionDiagram.svelte';
 		showControlButtons = ctrl;
 	} 
 
-	const handleDelete = (e:CustomEvent) => {
-		mdArray = mdArray.filter(md => md.id !== e.detail.id);
+	const handleDelete = (e: KonvaMouseEvent) => {
+		const target = e.target;
+		const id = target.attrs()['data-id'];
+		if (id) {
+			console.log('handleDelete from page ', id);
+			mdArray = mdArray.filter(md => md.id !== Number(id));
+		}
 	}
 
 	const labelTitle = ()=>{
@@ -62,6 +68,7 @@ import MotionDiagram from '$lib/Components/MotionDiagram.svelte';
 		mdArray = [];
 		addNewMD();
 	}
+	
 
 	addNewMD();
 
@@ -76,7 +83,7 @@ import MotionDiagram from '$lib/Components/MotionDiagram.svelte';
 	<ul class='list-none'>
 		{#each mdArray as md}
 			<li>
-				<MotionDiagram {...md} bind:posList={md.posList} bind:accList={md.accList} bind:title={md.title} {showControlButtons}/>
+				<MotionDiagram {...md} bind:posList={md.posList} bind:accList={md.accList} bind:title={md.title} {showControlButtons} {handleDelete}/>
 			</li>
 		{/each}
 	</ul>

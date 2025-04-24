@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Stage, Layer, Line, Circle, Arrow, Text, Rect, type KonvaMouseEvent} from 'svelte-konva';
+	import { Stage, Layer, Line, Circle, Arrow, Text, Rect, type KonvaMouseEvent, Group } from 'svelte-konva';
 	import Grid from './Grid.svelte';
 	import GridLogic from './GridLogic';
 
@@ -18,7 +18,7 @@
 		showControlButtons?: boolean;
 		posList?: Point[];
 		accList?: Vector[];
-		handleDelete?: (e: MouseEvent)=> void;
+		handleDelete?: (e: KonvaMouseEvent)=> void;
 	}
 
 	let {
@@ -29,7 +29,7 @@
 		showControlButtons = true,
 		posList = $bindable([]),
 		accList = $bindable([]),
-		handleDelete = (e: MouseEvent) => {},
+		handleDelete = (e: KonvaMouseEvent) => {},
 	}: Props = $props();
 
 	let nextId:number = 0;
@@ -108,7 +108,9 @@
 {#snippet drawPositions(xs:Point[])}
 	<Layer>
 		{#each xs as x}
-			<Circle {...positionCircleProps} {...x} id={(nextId++)+''} />
+			<Group data-id={(nextId++)+''} on:click={(e) => handleDelete(e)}>
+				<Circle {...positionCircleProps} {...x} />
+			</Group>
 		{/each}
 	</Layer>
 {/snippet}
@@ -117,12 +119,10 @@
 	<Layer>
 		{#if xs.length > 1}
 			{#each xs as x, i}
-				{#if i > 0}
-					{#if (numCells.y==0 && (xs[i-1].x == x.x))}
-					{:else if (numCells.x==0 && (xs[i-1].y == x.y))}
-					{:else}
-						<Arrow {...velocityArrowProps} points={[xs[i-1].x, xs[i-1].y, x.x, x.y]} id={(nextId++)+''} />
-					{/if}
+				{#if i > 0 && !(numCells.y==0 && xs[i-1].x == x.x) && !(numCells.x==0 && xs[i-1].y == x.y)}
+					<Group data-id={(nextId++)+''} on:click={(e) => handleDelete(e)}>
+						<Arrow {...velocityArrowProps} points={[xs[i-1].x, xs[i-1].y, x.x, x.y]} />
+					</Group>
 				{/if}
 			{/each}
 		{/if}

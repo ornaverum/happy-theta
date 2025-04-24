@@ -59,7 +59,7 @@
         <Button color='dark' onclick={refreshAllData}><RefreshOutline/></Button>
     </div>
 	<div class='my-4'>
-		<Toggle bind:checked={showControlButtons} class='w-full flex flex-row justify-end'> Show Control Buttons</Toggle>
+		<Toggle bind:checked={showControlButtons} class='w-full flex flex-row justify-end'> {showControlButtons ? 'Hide' : 'Show'} Control Buttons</Toggle>
 	</div>
 	<div id='capture'>
 		{@render children?.({test: 'test'})}
