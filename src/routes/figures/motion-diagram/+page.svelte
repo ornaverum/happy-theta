@@ -1,8 +1,10 @@
 <script lang="ts">
-	import CaptureDiv from '$lib/Components/CaptureDiv.svelte';
 	import MotionDiagram from '$lib/Components/MotionDiagram.svelte';
 	import type { MD } from '$lib/types';
 	import type { KonvaMouseEvent } from 'svelte-konva';
+	import {setContext, getContext} from 'svelte';
+
+	import {onMount} from 'svelte';
 
     import { Label, Select, Input, Button, Toggle} from 'flowbite-svelte';
     import {TrashBinOutline, FileExportOutline, CirclePlusOutline} from 'flowbite-svelte-icons';
@@ -12,7 +14,7 @@
 	}
 
 	let { name = 'Motion Diagram' }: Props = $props();
-	let showControlButtons: boolean = $state(true);
+	let showControlButtons: boolean;
 
 	let width = 800;
     let height = 100;
@@ -36,10 +38,6 @@
 		let md = {...defaultMD, id: id_ind++};
 		mdArray = [...mdArray, md];
 	}
-
-	async function setControlButtons(ctrl:boolean){
-		showControlButtons = ctrl;
-	} 
 
 	const handleDelete = (e: KonvaMouseEvent) => {
 		const target = e.target;
@@ -69,17 +67,21 @@
 		addNewMD();
 	}
 	
+	onMount( ()=>{
+			console.log(document.querySelector('#savedata'));
+			document.querySelector('#savedata')?.addEventListener('click', saveData);
+			document.querySelector('#loaddata')?.addEventListener('click', loadData);
+			document.querySelector('#refreshalldata')?.addEventListener('click', refreshAllData);
+			document.querySelector('#autolabel')?.addEventListener('click', labelTitle);
+		}
+	);
 
 	addNewMD();
 
 </script>
 
 
-
-<CaptureDiv bind:showControlButtons {saveData} {loadData} {refreshAllData}>
-	<div id='button-group' class = 'p-4 pr-4 ml-4 w-max'>
-		<Button color='dark' class='my-1' on:click={()=>labelTitle()}>Autolabel</Button>
-	</div>
+<div id="capture">
 	<ul class='list-none'>
 		{#each mdArray as md}
 			<li>
@@ -87,5 +89,5 @@
 			</li>
 		{/each}
 	</ul>
-	<Button color='alternative' onclick={()=>addNewMD()}><CirclePlusOutline/>Add New Diagram</Button>
-</CaptureDiv>
+</div>
+<Button color='alternative' onclick={()=>addNewMD()}><CirclePlusOutline/>Add New Diagram</Button>
