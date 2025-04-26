@@ -4,7 +4,7 @@
 
 	import CaptureDiv from '$lib/Components/CaptureDiv.svelte';
 	import ItemContainer from '$lib/Components/ItemContainer.svelte';
-	import type { FBD } from '$lib/types';
+	import type { FBD, DataSets, TaoItem } from '$lib/types';
 
 
     import { Button, Toggle, Label, Select, Input, Hr } from 'flowbite-svelte';
@@ -19,24 +19,26 @@
 
 	let id_num: number = 0;
 
-	let dataSets: FBD[] = $state([]);
+	let fbdSets: DataSets = $state({
+		title: 'Title',
+		type: 'motion-diagram',
+		id: 0,
+		instances: []}
+	);
 	let id_ind = 0;
 
 	const defaultFBD: FBD = {
 		id: id_ind,
 		title: 'Title',
-		width: width,
-		height: height,
-		marginY: 5,
-		forceList: [],
-	}
+		data: {
+			forceList: [],
+		}
+	};
 
 	const addNewFBD = () => {
 		let fbd = {...defaultFBD, id: id_ind++};
-		dataSets = [...dataSets, fbd];
+		fbdSets.instances.push(fbd);
 	}
-
-	let forceList = $state([]);
 
 	addNewFBD();
 
@@ -50,7 +52,7 @@
 	}
 	const refreshAllData = () => {
 		console.log('refreshAllData from free-body-diagram page');
-		dataSets = [];
+		fbdSets.instances = [];
 		addNewFBD();
 	}
 	
@@ -61,13 +63,21 @@
 		btnActions.refreshAllData = refreshAllData;
 	}
 	);
+
+	let defaulParams = {
+		width: width,
+		height: height,
+		showControlButtons: true,
+		marginY: 5,
+
+	}
 </script>
 
 <ul class='list-none'>
-	{#each dataSets as fbd}
+	{#each fbdSets.instances as fbd}
 		<li class='p-4'>
 			<ItemContainer>
-				<FreeBodyDiagram {...fbd} bind:forceList={fbd.forceList} bind:title={fbd.title} {showControlButtons}/>
+				<FreeBodyDiagram {...defaulParams} bind:forceList={fbd.data.forceList} bind:title={fbd.title} {showControlButtons}/>
 			</ItemContainer>
 		</li>
 	{/each}
