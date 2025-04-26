@@ -19,32 +19,29 @@ export type TaoItem = {
 
 export type Force = {
     id: number,
-    symbol: string,
-    type: string,
-    agent: string,
-    object: string,
+    taoItem: TaoItem,
     components: Point,
     color: string;
-    draggable: boolean;
-    editText: boolean;
 };
 
-export type FBD = {
+export type BaseData<T> = {
     id: number,
     title: string,
-    width: number,
-    height: number,
-    marginY: number,
-    forceList: Force[],
+    data: T
 }
 
-export type MD = {
+export type DataSets = {
+    type: string,
     id: number,
     title: string,
-    width: number,
-    height: number,
-    gridNum: number,
-    marginY: number,
+    instances: BaseData<any>[]
+}
+
+export type FBD = BaseData<{
+    forceList: Force[],
+}>
+
+export type MD = BaseData<{
     posList: Point[],
     accList: Vector[],
-}
+}>

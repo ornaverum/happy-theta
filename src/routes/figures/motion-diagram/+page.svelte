@@ -1,6 +1,6 @@
 <script lang="ts">
 	import MotionDiagram from '$lib/Components/MotionDiagram.svelte';
-	import type { MD } from '$lib/types';
+	import type { MD, DataSets } from '$lib/types';
 	import type { KonvaMouseEvent } from 'svelte-konva';
 	import {setContext, getContext} from 'svelte';
 	import EditLabel from '$lib/Components/EditLabel.svelte';
@@ -24,40 +24,43 @@
 	let width = 800;
     let height = 100;
 
-	let mdArray: MD[] = $state([]);
+	let mdSets: DataSets = $state({
+		title: 'Title',
+		type: 'motion-diagram',
+		id: 0,
+		instances: []}
+	);
+
 	let id_ind = 0;
 
 	const defaultMD: MD = {
-		id: id_ind,
-		width: width,
-		height: height,
+		id: id_ind,	
 		title: 'Title',
-		gridNum: 20,
-		marginY: 5,
-		posList: [],
-		accList: [],
+		data: {
+			posList: [],
+			accList: [],
+		}
 	};
-
 
 	const addNewMD = () => {
 		let md = {...defaultMD, id: id_ind++};
-		mdArray = [...mdArray, md];
+		mdSets.instances = [...mdSets.instances, md];
 	}
 
 	const handleDelete = (e: KonvaMouseEvent) => {
-		const target = e.target;
-		const id = target.attrs()['data-id'];
-		if (id) {
-			console.log('handleDelete from page ', id);
-			mdArray = mdArray.filter(md => md.id !== Number(id));
-		}
+		// const target = e.target;
+		// const id = target.attrs()['data-id'];
+		// if (id) {
+		// 	console.log('handleDelete from page ', id);
+		// 	mdArray = mdArray.filter(md => md.id !== Number(id));
+		// }
 	}
 
 	const labelTitle = ()=>{
-		mdArray.forEach((md,i) => {
+		mdSets.instances.forEach((md,i) => {
 			md.title = String.fromCharCode(65 + i);;
 		});
-		mdArray = [...mdArray];
+		// mdSets.instances = [...mdArray];
 	}
 
 	const saveData = () => {
@@ -68,7 +71,7 @@
 	}
 
 	const refreshAllData = () => {
-		mdArray = [];
+		mdSets.instances = [];
 		addNewMD();
 	}
 	
@@ -86,17 +89,23 @@
 	);
 
 	addNewMD();
-
+	
+	let defaulParams = {
+		width: 800,
+		height: 100,
+		showControlButtons: true
+	}
 </script>
 
 
 
 <ul class='list-none'>
-	{#each mdArray as md}
+	{#each mdSets.instances as md}
 		<li>
-			<MotionDiagram {...md} bind:posList={md.posList} bind:accList={md.accList} bind:title={md.title} {showControlButtons} {handleDelete}/>
+			<MotionDiagram {...defaulParams} bind:posList={md.data.posList} bind:accList={md.data.accList} bind:title={md.title} {handleDelete}/>
 		</li>
 	{/each}
 </ul>
+
 <Button color='alternative' onclick={()=>addNewMD()}><CirclePlusOutline/>Add New Diagram</Button>
 
