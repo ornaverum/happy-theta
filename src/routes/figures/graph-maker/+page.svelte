@@ -1,7 +1,8 @@
 <script lang="ts">
-	import CaptureDiv from '$lib/Components/CaptureDiv.svelte';
-
+	import {getContext, setContext} from 'svelte';
+	import {onMount} from 'svelte';
 	import { Stage, Layer, Line, Circle, Path} from 'svelte-konva';
+
 
 	import {page} from '$app/stores';
 	import EditLabel from '$lib/Components/EditLabel.svelte';
@@ -109,16 +110,18 @@
 
 	let ylabel:string = $state('Position');
 	
-	// if (url.searchParams.has('preset')) {
-	// 	let preset = url.searchParams.get('preset');
-	// 	if(preset === 'kinematics'){
-	// 		graphs = [
-	// 			{title: 'x', graphID: 0, groupID: 0, pathList: [{points: [], color: 'blue'}], labels: {x:'Time', y:'Position'}},
-	// 			{title: 'v', graphID: 1, groupID: 0, pathList: [{points: [], color: 'green'}], labels: {x:'Time', y:'Velocity'}},
-	// 			{title: 'a', graphID: 2, groupID: 0, pathList: [{points: [], color: 'red'}], labels: {x:'Time', y:'Acceleration'}},
-	// 		];
-	// 	}
-	// }
+	let btnActions = getContext('btnActions');
+	onMount( ()=>{
+		btnActions.saveData = saveData;
+		btnActions.loadData = loadData;
+		btnActions.refreshAllData = refreshAllData;
+			// console.log(document.querySelector('#savedata'));
+			// document.querySelector('#savedata')?.addEventListener('click', saveData);
+			// document.querySelector('#loaddata')?.addEventListener('click', loadData);
+			// document.querySelector('#refreshalldata')?.addEventListener('click', refreshAllData);
+			// document.querySelector('#autolabel')?.addEventListener('click', labelTitle);
+		}
+	);
 
 	graphs = [
 				{title: '', graphID: 0, groupID: 0, pathList: [{points: [], color: 'blue'}], labels: {x:'Time', y:'Position'}},
@@ -128,49 +131,45 @@
 
 	// addNewGraph(0);
 	const saveData = () => {
-		console.log('saveData from page');
+		console.log('saveData from graph-maker page');
 	}
 	const loadData = () => {
-		console.log('loadData from page');
+		console.log('loadData from graph-maker page');
 	}
 	const refreshAllData = () => {
-		console.log('refreshDiv from page');
+		console.log('refreshAllData from graph-maker page');
 	}
 
 </script>
 
-<CaptureDiv bind:showControlButtons {saveData} {loadData} {refreshAllData}>	
-				<!-- <EditLabel text='Graph Group' size='xl2' {showControlButtons}/> -->
-		<div class="flex flex-col flex-wrap">
-			{#each groupIDs as group (group)}
-			<div class="flex flex-row flex-wrap shadow-lg">
-				{#if showControlButtons && groupIDs.length > 0}
-					<div class='flex flex-col m-1'>
-						<Button class='my-1' on:click={()=>{groupIDs = groupIDs.filter(g => g !== group)}}><TrashBinOutline/></Button>
-						<Button class='my-1' on:click={()=>labelGroupTitle(group)}>Autotitle</Button>
-						<div class='flex flex-col mr-2 mt-3'>
-							<Label for="select-y-label" class="">Select y-label for group</Label>
-							<Select on:change={()=>labelGroupYAxis(group, ylabel)} id='select-y-label' class="" size="sm" items={yLabelOptions} bind:value={ylabel} />
-						</div>
-					</div>
-				{/if}
-				{#each graphs as graph (graph.graphID)}
-					{#if graph.groupID == group}
-						<QualGraph bind:title={graph.title} id={graph.graphID} on:deleteMe={handleDelete} bind:pathList={graph.pathList} width={200} height={200} bind:labels={graph.labels} color='green' {showControlButtons}/>
-					{/if}
-				{/each}
-				{#if showControlButtons}
-					<Button color='alternative' onclick={()=>addNewGraph(group)}><CirclePlusOutline/></Button>
-				{/if}
+<div class="flex flex-col flex-wrap">
+	{#each groupIDs as group (group)}
+	<div class="flex flex-row flex-wrap shadow-lg">
+		{#if showControlButtons && groupIDs.length > 0}
+			<div class='flex flex-col m-1'>
+				<Button class='my-1' on:click={()=>{groupIDs = groupIDs.filter(g => g !== group)}}><TrashBinOutline/></Button>
+				<Button class='my-1' on:click={()=>labelGroupTitle(group)}>Autotitle</Button>
+				<div class='flex flex-col mr-2 mt-3'>
+					<Label for="select-y-label" class="">Select y-label for group</Label>
+					<Select on:change={()=>labelGroupYAxis(group, ylabel)} id='select-y-label' class="" size="sm" items={yLabelOptions} bind:value={ylabel} />
 				</div>
-
-			{/each}
-
-
-		{#if showControlButtons}
-			<Button color='alternative' onclick={()=>{groupIDs=[...groupIDs, ++groupIDIncrement]}}>
-				<CirclePlusOutline class='mx-2'/> Add New Group
-			</Button>
+			</div>
 		{/if}
-	</div>
-</CaptureDiv>
+		{#each graphs as graph (graph.graphID)}
+			{#if graph.groupID == group}
+				<QualGraph bind:title={graph.title} id={graph.graphID} on:deleteMe={handleDelete} bind:pathList={graph.pathList} width={200} height={200} bind:labels={graph.labels} color='green' {showControlButtons}/>
+			{/if}
+		{/each}
+		{#if showControlButtons}
+			<Button color='alternative' onclick={()=>addNewGraph(group)}><CirclePlusOutline/></Button>
+		{/if}
+		</div>
+
+	{/each}
+</div>
+
+{#if showControlButtons}
+	<Button color='alternative' onclick={()=>{groupIDs=[...groupIDs, ++groupIDIncrement]}}>
+		<CirclePlusOutline class='mx-2'/> Add New Group
+	</Button>
+{/if}

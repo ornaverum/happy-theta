@@ -11,6 +11,10 @@
 
 	interface Props {
 		name?: string;
+		showControlButtons?: boolean;
+		saveData?: () => void;
+		loadData?: () => void;
+		refreshAllData?: () => void;
 	}
 
 	let { name = 'Motion Diagram' }: Props = $props();
@@ -56,10 +60,10 @@
 	}
 
 	const saveData = () => {
-		console.log('saveData from page');
+		console.log('saveData from motion-diagram page');
 	}
 	const loadData = () => {
-		console.log('loadData from page');
+		console.log('loadData from motion-diagram page');
 	}
 
 	const refreshAllData = () => {
@@ -67,12 +71,16 @@
 		addNewMD();
 	}
 	
+	let btnActions = getContext('btnActions');
 	onMount( ()=>{
-			console.log(document.querySelector('#savedata'));
-			document.querySelector('#savedata')?.addEventListener('click', saveData);
-			document.querySelector('#loaddata')?.addEventListener('click', loadData);
-			document.querySelector('#refreshalldata')?.addEventListener('click', refreshAllData);
-			document.querySelector('#autolabel')?.addEventListener('click', labelTitle);
+		btnActions.saveData = saveData;
+		btnActions.loadData = loadData;
+		btnActions.refreshAllData = refreshAllData;
+			// console.log(document.querySelector('#savedata'));
+			// document.querySelector('#savedata')?.addEventListener('click', saveData);
+			// document.querySelector('#loaddata')?.addEventListener('click', loadData);
+			// document.querySelector('#refreshalldata')?.addEventListener('click', refreshAllData);
+			// document.querySelector('#autolabel')?.addEventListener('click', labelTitle);
 		}
 	);
 
@@ -81,13 +89,13 @@
 </script>
 
 
-<div id="capture">
-	<ul class='list-none'>
-		{#each mdArray as md}
-			<li>
-				<MotionDiagram {...md} bind:posList={md.posList} bind:accList={md.accList} bind:title={md.title} {showControlButtons} {handleDelete}/>
-			</li>
-		{/each}
-	</ul>
-</div>
+
+<ul class='list-none'>
+	{#each mdArray as md}
+		<li>
+			<MotionDiagram {...md} bind:posList={md.posList} bind:accList={md.accList} bind:title={md.title} {showControlButtons} {handleDelete}/>
+		</li>
+	{/each}
+</ul>
 <Button color='alternative' onclick={()=>addNewMD()}><CirclePlusOutline/>Add New Diagram</Button>
+

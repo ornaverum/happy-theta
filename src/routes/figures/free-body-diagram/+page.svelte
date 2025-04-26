@@ -1,4 +1,7 @@
 <script lang="ts">
+	import {getContext, setContext} from 'svelte';
+	import {onMount} from 'svelte';
+
 	import CaptureDiv from '$lib/Components/CaptureDiv.svelte';
 	import ItemContainer from '$lib/Components/ItemContainer.svelte';
 	import type { FBD } from '$lib/types';
@@ -40,32 +43,37 @@
 	let showControlButtons = $state(false);
 	
 	const saveData = () => {
-		console.log('saveData from page');
+		console.log('saveData from free-body-diagram page');
 	}
 	const loadData = () => {
-		console.log('loadData from page');
+		console.log('loadData from free-body-diagram page');
 	}
 	const refreshAllData = () => {
-		console.log('refreshDiv from page');
+		console.log('refreshAllData from free-body-diagram page');
 		fbdArray = [];
 		addNewFBD();
 	}
-
+	
+	let btnActions = getContext('btnActions');
+	onMount( ()=>{
+		btnActions.saveData = saveData;
+		btnActions.loadData = loadData;
+		btnActions.refreshAllData = refreshAllData;
+	}
+	);
 </script>
 
-<CaptureDiv bind:showControlButtons {saveData} {loadData} {refreshAllData}>		
-	<ul class='list-none'>
-		{#each fbdArray as fbd}
-			<li class='p-4'>
-				<ItemContainer>
-					<FreeBodyDiagram {...fbd} bind:forceList={fbd.forceList} bind:title={fbd.title} {showControlButtons}/>
-				</ItemContainer>
-			</li>
-		{/each}
-	</ul>
-	{#if showControlButtons	}
-		<div class='flex flex-row p-4 w-1/3 justify-around'>
-			<Button color='alternative' on:click={addNewFBD}><CirclePlusOutline/>Add New Diagram</Button>
-		</div>
-	{/if}
-</CaptureDiv>
+<ul class='list-none'>
+	{#each fbdArray as fbd}
+		<li class='p-4'>
+			<ItemContainer>
+				<FreeBodyDiagram {...fbd} bind:forceList={fbd.forceList} bind:title={fbd.title} {showControlButtons}/>
+			</ItemContainer>
+		</li>
+	{/each}
+</ul>
+{#if showControlButtons	}
+	<div class='flex flex-row p-4 w-1/3 justify-around'>
+		<Button color='alternative' on:click={addNewFBD}><CirclePlusOutline/>Add New Diagram</Button>
+	</div>
+{/if}

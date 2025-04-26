@@ -1,5 +1,6 @@
 <script lang="ts">
-
+	import {getContext, setContext} from 'svelte';
+	import {onMount} from 'svelte';
 
 	interface Props {
         test?: string;
@@ -43,20 +44,32 @@
 	let showControlButtons = $state(false);
 	
 	const saveData = () => {
-		console.log('saveData from page');
+		console.log('saveData from energy-diagram page');
 	}
 	const loadData = () => {
-		console.log('loadData from page');
+		console.log('loadData from energy-diagram page');
 	}
 	const refreshAllData = () => {
-		console.log('refreshDiv from page');
+		console.log('refreshAllData from energy-diagram page');	
 	}
+
+
+	let btnActions = getContext('btnActions');
+	onMount( ()=>{
+		btnActions.saveData = saveData;
+		btnActions.loadData = loadData;
+		btnActions.refreshAllData = refreshAllData;
+			// console.log(document.querySelector('#savedata'));
+			// document.querySelector('#savedata')?.addEventListener('click', saveData);
+			// document.querySelector('#loaddata')?.addEventListener('click', loadData);
+			// document.querySelector('#refreshalldata')?.addEventListener('click', refreshAllData);
+			// document.querySelector('#autolabel')?.addEventListener('click', labelTitle);
+		}
+	);
 </script>
 
-<CaptureDiv bind:showControlButtons {saveData} {loadData} {refreshAllData}>
 	<EnergyDiagram {gridLogic}/>
 	<!-- <div class="p-0 my-0 w-max justify-center align-center mx-auto font-bold text-4xl">+</div> -->
 	<EnergyDiagram gridLogic={gridLogicW} workFlag={true}/>
 	<!-- <div class="p-0 my-0 w-max justify-center align-center mx-auto font-bold text-4xl">=</div> -->
 	<EnergyDiagram {gridLogic}/>
-</CaptureDiv>
