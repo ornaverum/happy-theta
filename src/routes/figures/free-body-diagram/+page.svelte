@@ -21,7 +21,7 @@
 
 	let fbdSets: DataSets = $state({
 		title: 'Title',
-		type: 'motion-diagram',
+		type: 'free-body-diagram',
 		id: 0,
 		instances: []}
 	);
@@ -58,13 +58,15 @@
 	
 	let btnActions = getContext('btnActions');
 	onMount( ()=>{
-		btnActions.saveData = saveData;
-		btnActions.loadData = loadData;
-		btnActions.refreshAllData = refreshAllData;
+		if (btnActions) {
+			btnActions.saveData = saveData;
+			btnActions.loadData = loadData;
+			btnActions.refreshAllData = refreshAllData;
+		}
 	}
 	);
 
-	let defaulParams = {
+	let defaultParams = {
 		width: width,
 		height: height,
 		showControlButtons: true,
@@ -77,7 +79,7 @@
 	{#each fbdSets.instances as fbd}
 		<li class='p-4'>
 			<ItemContainer>
-				<FreeBodyDiagram {...defaulParams} bind:forceList={fbd.data.forceList} bind:title={fbd.title} {showControlButtons}/>
+				<FreeBodyDiagram {...defaultParams} bind:forceList={fbd.data.forceList} bind:title={fbd.title} {showControlButtons}/>
 			</ItemContainer>
 		</li>
 	{/each}

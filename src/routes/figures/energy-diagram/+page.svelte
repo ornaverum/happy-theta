@@ -56,17 +56,29 @@
 
 	let btnActions = getContext('btnActions');
 	onMount( ()=>{
-		btnActions.saveData = saveData;
-		btnActions.loadData = loadData;
-		btnActions.refreshAllData = refreshAllData;
-			// console.log(document.querySelector('#savedata'));
-			// document.querySelector('#savedata')?.addEventListener('click', saveData);
-			// document.querySelector('#loaddata')?.addEventListener('click', loadData);
-			// document.querySelector('#refreshalldata')?.addEventListener('click', refreshAllData);
-			// document.querySelector('#autolabel')?.addEventListener('click', labelTitle);
+			if (btnActions) {
+				btnActions.saveData = saveData;
+				btnActions.loadData = loadData;
+				btnActions.refreshAllData = refreshAllData;
+			}
 		}
 	);
 </script>
+
+<ul class='list-none'>
+	{#each engSets.instances as fbd}
+		<li class='p-4'>
+			<ItemContainer>
+				<EnergyDiagram {...defaultParams} bind:forceList={fbd.data.forceList} bind:title={fbd.title} {showControlButtons}/>
+			</ItemContainer>
+		</li>
+	{/each}
+</ul>
+{#if showControlButtons	}
+	<div class='flex flex-row p-4 w-1/3 justify-around'>
+		<Button color='alternative' on:click={addNewFBD}><CirclePlusOutline/>Add New Diagram</Button>
+	</div>
+{/if}
 
 	<EnergyDiagram {gridLogic}/>
 	<!-- <div class="p-0 my-0 w-max justify-center align-center mx-auto font-bold text-4xl">+</div> -->

@@ -77,16 +77,13 @@
 	
 	let btnActions = getContext('btnActions');
 	onMount( ()=>{
-		btnActions.saveData = saveData;
-		btnActions.loadData = loadData;
-		btnActions.refreshAllData = refreshAllData;
-			// console.log(document.querySelector('#savedata'));
-			// document.querySelector('#savedata')?.addEventListener('click', saveData);
-			// document.querySelector('#loaddata')?.addEventListener('click', loadData);
-			// document.querySelector('#refreshalldata')?.addEventListener('click', refreshAllData);
+		if (btnActions) {
+			btnActions.saveData = saveData;
+			btnActions.loadData = loadData;
+			btnActions.refreshAllData = refreshAllData;
 			// document.querySelector('#autolabel')?.addEventListener('click', labelTitle);
 		}
-	);
+	});
 
 	addNewMD();
 	
