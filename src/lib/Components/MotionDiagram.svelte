@@ -2,6 +2,7 @@
 	import { Stage, Layer, Line, Circle, Arrow, Text, Rect, type KonvaMouseEvent, Group } from 'svelte-konva';
 	import Grid from './Grid.svelte';
 	import GridLogic from './GridLogic';
+	import EditLabel from './EditLabel.svelte';
 
 	import type { Point, Vector } from '$lib/types';
 
@@ -130,7 +131,7 @@
 {/snippet}
 
 <main class="flex flex-col p-4 items-center">
-	<div id='Title' class='text-2xl font-bold'>
+	<!-- <div id='Title' class='text-2xl font-bold'>
 		<Button color='alternative' class='mr-3' size='xs' on:click={()=>{editTitle = !editTitle}}>
 			<EditOutline/>
 		</Button>
@@ -141,8 +142,8 @@
 		{:else}
 			{title}
 		{/if}
-		<!-- <div contenteditable="true">{title}</div> -->
-	</div>
+	</div> -->
+	<EditLabel bind:text={title} {showControlButtons} size={'xl2'} />
 	<div class="flex flex-row">
 		{#if (showControlButtons)}
 			<div id='button-container flex flex-row m-4 p-4'>

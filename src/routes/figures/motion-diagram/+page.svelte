@@ -3,6 +3,7 @@
 	import type { MD } from '$lib/types';
 	import type { KonvaMouseEvent } from 'svelte-konva';
 	import {setContext, getContext} from 'svelte';
+	import EditLabel from '$lib/Components/EditLabel.svelte';
 
 	import {onMount} from 'svelte';
 

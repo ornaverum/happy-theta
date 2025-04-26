@@ -19,7 +19,7 @@
 
 	let id_num: number = 0;
 
-	let fbdArray: FBD[] = $state([]);
+	let dataSets: FBD[] = $state([]);
 	let id_ind = 0;
 
 	const defaultFBD: FBD = {
@@ -33,14 +33,14 @@
 
 	const addNewFBD = () => {
 		let fbd = {...defaultFBD, id: id_ind++};
-		fbdArray = [...fbdArray, fbd];
+		dataSets = [...dataSets, fbd];
 	}
 
 	let forceList = $state([]);
 
 	addNewFBD();
 
-	let showControlButtons = $state(false);
+	let showControlButtons = $state(true);
 	
 	const saveData = () => {
 		console.log('saveData from free-body-diagram page');
@@ -50,7 +50,7 @@
 	}
 	const refreshAllData = () => {
 		console.log('refreshAllData from free-body-diagram page');
-		fbdArray = [];
+		dataSets = [];
 		addNewFBD();
 	}
 	
@@ -64,7 +64,7 @@
 </script>
 
 <ul class='list-none'>
-	{#each fbdArray as fbd}
+	{#each dataSets as fbd}
 		<li class='p-4'>
 			<ItemContainer>
 				<FreeBodyDiagram {...fbd} bind:forceList={fbd.forceList} bind:title={fbd.title} {showControlButtons}/>

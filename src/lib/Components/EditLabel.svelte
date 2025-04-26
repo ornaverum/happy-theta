@@ -35,9 +35,7 @@
 
 </script>
 
-<div id='fbd-label' class='{fontSize} font-bold flex flex-row rounded-xl border-1'
-
-    >
+<div class='flex flex-row'>
     {#if showControlButtons}
         <Button color='light' class='p-0 mx-1' size='xs' on:click={()=>{editing = !editing}}>
             <EditOutline size='xs'/>
@@ -46,8 +44,9 @@
     {#if editing && showControlButtons}
         <Input bind:value={text} placeholder="Free Body Diagram" size={fontSize}
             on:keydown={(evt) => { if (evt.key == 'Enter') { editing = false;}}}
+            on:blur={()=>{editing = false;}}
         />
     {:else}
-        <p ondblclick={()=>{editing = true;}}>{text}</p>
+        <p ondblclick={()=>{editing = true;}} class='{fontSize} font-bold'>{text}</p>
     {/if}
 </div>

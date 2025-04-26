@@ -125,6 +125,7 @@
 
 <main class="flex flex-col bg-gray-100 w-max rounded-xl shadow-lg p-4">
     <!-- <EditLabel bind:title/> -->
+    <EditLabel bind:text={title} {showControlButtons} size={'xl2'} />
     <div class='flex flex-row flex-wrap'>
         <div id='fbd' class='px-4 flex flex-col flex-wrap'>
             <div id='fbd-label' class='ml-4 text-lg font-bold select-none'>
@@ -184,7 +185,7 @@
             {/if}
             <div id='tao-items' class=''>
                 {#each forceList as force (force.id)}
-                <div id='tao-item' class= {`${colorList[force.id].tw} p-2.5 m-1 gap-2 font-bold rounded-xl grid grid-cols-[0.25fr_1fr_2fr_2fr_2fr_0.25fr] w-full`}>
+                <div id='tao-item' class= {`${colorList[force.id].tw} p-2.5 m-1 gap-2 font-bold rounded-xl grid grid-cols-[0.25fr_1fr_2fr_2fr_2fr_0.25fr] w-full`} >
                     <Button color="red" class="ml-2 mb-0 p-0 w-0"
                             on:click={() => {
                                 force.editText = !force.editText;
