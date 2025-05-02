@@ -1,7 +1,7 @@
 <script lang='ts'>
     import Grid from "./Grid.svelte";
     import GridLogic from "./GridLogic";
-    import type {Point} from "../types";
+    import type {Point, EnergyBar} from "../types";
     import {Stage, Layer, Rect, Circle, Text, type KonvaMouseEvent} from "svelte-konva";
     import {setContext} from "svelte";
 	import { BarsFromLeftOutline } from "flowbite-svelte-icons";
@@ -9,36 +9,37 @@
 
     interface Props {
         title?: string;
+        showControlButtons?: boolean;
         id?: number;
+        height?: number;
+        width?: number;
+        numCells?: Point;
         handleDelete?: (e: MouseEvent)=> void;
-        gridLogic?: GridLogic;
         workFlag?: boolean;
+        margin?: Point;
+        energyBars: EnergyBar[];
     }
 
     let {
         title = $bindable('Title'),
+        showControlButtons = $bindable(false),
         id = 0,
+        height = 200,
+        width = 500,
+        numCells = {x: 10, y:5},
+        margin = {x:5, y:5},
         handleDelete = (e: MouseEvent) => {},
-        gridLogic = new GridLogic({}),
-        workFlag = false
+        workFlag = false,
+        energyBars = $bindable([])
     }: Props = $props();
 
-    let numCells: Point = gridLogic.numCells;
-    let width: number = gridLogic.size.x;
-    let height: number = gridLogic.size.y;
-
     let onStage:boolean = $state(false);
+	let originPoint = {x:5, y:1};
 
+    numCells.y = energyBars.length;
+    height = 40*(energyBars.length);
 
-    interface EnergyBar {
-        id: number,
-        name: string,
-        symbol: string,
-        origin: Point,
-        width: number,
-        color: string,
-        opacity?: number,
-    }
+	let gridLogic = new GridLogic({size:{x:width, y:height }, margin:{...margin}, numCells:{...numCells}, origin:{...originPoint}});
 
     const initialPositions:(yPt:number)=>Point = (yPt:number)=>{
         let pt:Point = {x: gridLogic.getStageFromPoint({x:5, y:0}).x, 
@@ -46,21 +47,6 @@
         return pt;
     }
 
-    let energyBars: EnergyBar[] = $state([]);
-
-    onMount(()=>{
-        if (workFlag){
-            energyBars = [{id: 0, name: 'Work', symbol:'W', origin: {...initialPositions(0)}, width: 1, color: 'orange'},]
-        } else {
-            energyBars = [{id: 0, name: 'Kinetic Energy', symbol:'K', origin: {...initialPositions(0)}, width: 1, color: 'blue'},
-            {id: 1, name: 'Gravitational Potential Energy', symbol:'Ug', origin: {...initialPositions(1)}, width: 1, color: 'green'},
-            {id: 2, name: 'Elastic Potential Energy', symbol:'Uel', origin: {...initialPositions(2)}, width: 0, color: 'yellow'},
-            {id: 3, name: 'Thermal Energy', symbol:'Eth', origin: {...initialPositions(3)}, width: 0, color: 'red'},
-            {id: 4, name: 'Total Energy', symbol:'E', origin: {...initialPositions(4)}, width: 2, color: 'purple'},
-            ];
-        }
-    });
-    
     const initalStagePositions:Point[] = [
         {...gridLogic.getStageFromPoint({x:0-0.15, y:0+0.15})},
         {...gridLogic.getStageFromPoint({x:0-0.15, y:1+0.15})},
@@ -78,7 +64,7 @@
         snap = {x: Math.max(Math.round(snap.x),0.2)-5, y: bar};
         pt = gridLogic.getStageFromPoint(snap);
         stagePositions[bar] = {x:pt.x-gridLogic.cellSize/3/2, y: initalStagePositions[bar].y};
-        energyBars[bar].width = snap.x; //- gridLogic.getStageFromPoint(originPoint).x;
+        energyBars[bar].value = snap.x; //- gridLogic.getStageFromPoint(originPoint).x;
     }
 
 
@@ -89,9 +75,9 @@
             let bar:number = Math.floor(snap.y);
             snap = {x: Math.max(Math.round(snap.x),0.2)-5, y: bar};
             pt = gridLogic.getStageFromPoint(snap);
-            previewEnergy.origin.y = initalStagePositions[bar].y;
+            previewEnergy.id = bar;
             // previewEnergy.origin = {x:pt.x-gridLogic.cellSize/3/2, y: initalStagePositions[bar].y};
-            previewEnergy.width = snap.x; //- gridLogic.getStageFromPoint(originPoint).x;
+            previewEnergy.value = snap.x; //- gridLogic.getStageFromPoint(originPoint).x;
             previewEnergy.color = energyBars[bar].color;
         }
     }
@@ -101,21 +87,21 @@
         let w = 0;
         energyBars.forEach((bar:EnergyBar)=>{
             if(bar.id !== 4)
-                w+=Math.floor(bar.width);
+                w+=Math.floor(bar.value);
         });
-        return {id: -1, name: 'Total Energy Preview', symbol:'E', origin: {...initialPositions(4)}, width: w, color: 'purple', opacity: 0.3};
+        return {id: 4, name: 'Total Energy Preview', symbol:'E', origin: {...initialPositions(4)}, value: w, color: 'purple', opacity: 0.3};
         // return {id: -1, name: 'Total Energy Preview', symbol:'E', origin: {...initialPositions(4)}, width:3, color: 'purple'};
     });
 
 
-    let previewEnergy: EnergyBar = $state({id: -1, name: 'Preview', origin: {...initialPositions(0)}, width: 0, color: 'purple', opacity: 0.3});
+    let previewEnergy: EnergyBar = $state({id: 4, name: 'Preview', symbol: 'E', value: 0, color: 'purple', opacity: 0.3});
 
 </script>
 
 {#snippet drawEnergyBar(bar:EnergyBar)}
-        <Rect x={bar.origin.x} 
-            y={bar.origin.y} 
-            width={bar.width*gridLogic.cellSize} 
+        <Rect x={initialPositions(bar.id).x} 
+            y={initialPositions(bar.id).y} 
+            width={bar.value*gridLogic.cellSize} 
             height={0.7*gridLogic.cellSize} 
             fill={bar.color}
             stroke='#445544'
@@ -139,7 +125,7 @@
     >
     <Layer id='labels'>
         {#each energyBars as bar}
-            <Text x={gridLogic.getStageFromPoint({x:0, y:0}).x-50} y={bar.origin.y} text={bar.symbol} fontSize={0.5*gridLogic.cellSize} fill={bar.color} stroke='black' strokeWidth={0.5}/>
+            <Text x={gridLogic.getStageFromPoint({x:0, y:0}).x-50} y={initalStagePositions[bar.id].y} text={bar.symbol} fontSize={0.5*gridLogic.cellSize} fill={bar.color} stroke='black' strokeWidth={0.5}/>
         {/each}
     </Layer>
     <Grid {gridLogic}/>
@@ -150,7 +136,7 @@
             <!-- <Circle bind:x={pos.x} bind:y ={pos.y} radius={50} fill='black' draggable ondragmove={(e)=>{
                 pos = {x: e.evt.layerX, y: 200};
             }}/> -->
-            {@render drawEnergyBar(previewTotalEnergy)}
+            <!-- {@render drawEnergyBar(previewTotalEnergy)} -->
             {#if onStage}
                 {@render drawEnergyBar(previewEnergy)}
             {/if}

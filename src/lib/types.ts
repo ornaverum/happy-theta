@@ -24,17 +24,56 @@ export type Force = {
     color: string;
 };
 
-export type BaseData<T> = {
+// export type Energy = {
+//     id: number,
+//     energies: {
+//         K: number,
+//         Ug: number,
+//         Us: number,
+//         Eth: number,
+//     },
+//     transfers: {
+//         W: number,
+//         Q: number
+//     }
+// }
+
+export type Energy = {
     id: number,
-    title: string,
-    data: T
+    energies: {
+        K: number,
+        Ug: number,
+        Us: number,
+        Eth: number,
+    },
+    transfers: {
+        W: number,
+        Q: number
+    }
 }
+
+export type EnergyBar = {
+    id: number,
+    name: string,
+    symbol: string,
+    value: number,
+    color: string,
+    opacity?: number,
+}
+
 
 export type DataSets = {
     type: string,
     id: number,
     title: string,
     instances: BaseData<any>[]
+}
+
+export type BaseData<T> = {
+    id: number,
+    title: string,
+    data: T
+    params?: any
 }
 
 export type FBD = BaseData<{
@@ -44,4 +83,8 @@ export type FBD = BaseData<{
 export type MD = BaseData<{
     posList: Point[],
     accList: Vector[],
+}>
+
+export type EngD = BaseData<{
+    energyBars: EnergyBar[],
 }>
