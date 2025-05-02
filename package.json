@@ -56,5 +56,8 @@
 		"flowbite-svelte-icons": "^2.0.2",
 		"html2canvas": "^1.4.1",
 		"svelte-konva": "^1.0.0-next.0"
-	}
+	},
+	"optionalDependencies": {
+		"@rollup/rollup-linux-x64-gnu": "4.9.5"
+	  }
 }
