@@ -23,7 +23,7 @@
 
 	let name: string = 'Energy Diagram';
 
-	let id_ind: number = 0;
+	let id_ind: number = $state(0);
 
 
 	let defaultParams = {
@@ -59,7 +59,7 @@
 	}
 
 	const defaultED: EngD = {
-		id: id_ind,	
+		id: 0,	
 		title: 'Title',
 		data: {
 			energyBars: [{id: 0, name: 'Kinetic Energy', symbol:'K', value: 1, color: 'blue'},

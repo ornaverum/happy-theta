@@ -25,10 +25,10 @@
 		id: 0,
 		instances: []}
 	);
-	let id_ind = 0;
+	let id_ind = $state(0);
 
 	const defaultFBD: FBD = {
-		id: id_ind,
+		id: 0,
 		title: 'Title',
 		data: {
 			forceList: [],
