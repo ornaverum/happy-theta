@@ -33,7 +33,7 @@
 		handleDelete = (e: KonvaMouseEvent) => {},
 	}: Props = $props();
 
-	let nextId:number = 0;
+	let nextId:number = $state(0);
 	let positionCircleProps = {radius: 8, fill: 'blue', opacity: 1}
 	let velocityArrowProps = {strokeWidth: 3, stroke: 'green', fill: 'green', opacity: 1}
 	
