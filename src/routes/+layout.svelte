@@ -20,8 +20,9 @@
 
 <Navbar let:hidden let:toggle >
 	<NavBrand href="/">
-		<object data="/IALogo.svg" class="me-3 h-6 sm:h-9" title="Inertial Apple Logo"></object>
-		<span class="self-center whitespace-nowrap text-xl font-semibold dark:text-white">Inertial Apple</span>
+		<object data="/HappyThetaLogo.svg" class="max-h-12" title="Happy Theta Logo"></object>
+		<!-- <object data="/HappyThetaLogo.svg" class="me-3 h-6 sm:h-9" title="Happy Theta Logo"></object> -->
+		<!-- <span class="self-center whitespace-nowrap text-xl font-semibold dark:text-white">Inertial Apple</span> -->
 
 	</NavBrand>
 	<NavHamburger class='ml-16' />
