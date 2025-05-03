@@ -37,7 +37,7 @@
 
 <div class='flex flex-row'>
     {#if showControlButtons}
-        <Button color='light' class='p-0 mx-1' size='xs' on:click={()=>{editing = !editing}}>
+        <Button color='light' class='p-0 mx-3' size='xs' on:click={()=>{editing = !editing}}>
             <EditOutline size='xs'/>
         </Button>
     {/if}
