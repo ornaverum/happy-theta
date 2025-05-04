@@ -61,22 +61,26 @@
         addForce();
 	}
 
-    const addForce:Function = () => {
-        let newForce:Force = {id: nextId++, 
-            symbol: 'F',
-            agent: 'A',
-            object: 'O',
-            type: 'force',
-            components: {...previewForcePoint},
-            color: 'green',
-            draggable: true,
+    const defaultForce: Force = {
+        id: 0,
+        components: {x:0, y: 1},
+        tao: {
+            symbol: "F",
+            type: "force",
+            agent: "agent",
+            object: "object",
+            color: "green",
             editText: false,
-        };
-        console.log(newForce);
+        }
+    }
+
+    const addForce:Function = () => {
+        let newForce:Force = defaultForce;
+        newForce.id = nextId++;
+        newForce.components = {...previewForcePoint};
         forceList = [...forceList, newForce];
 
         updateNetForce();
-        console.log(netForceVector, originPoint)
     }
 
     const deleteForce:Function = (id:number) => {
@@ -135,8 +139,6 @@
                 width={width}
                 height={height}
                 id='fbd-stage'
-                onmouseleave={() => {onStage = false; console.log('mouseleave')}}
-                onmouseenter={() => {onStage = true; console.log('mouseenter')}}
                 onclick={handleGridClick}
                 onmousemove={handleGridMouseMove}
             >
@@ -185,35 +187,35 @@
             {/if}
             <div id='tao-items' class=''>
                 {#each forceList as force (force.id)}
-                <div id='tao-item' class= {`${colorList[force.id].tw} p-2.5 m-1 gap-2 font-bold rounded-xl grid grid-cols-[0.25fr_1fr_2fr_2fr_2fr_0.25fr] w-full`} >
+                <div id='tao-item' onblur={(e)=>{force.tao.editText = false;}} class= {`${colorList[force.id].tw} p-2.5 m-1 gap-2 font-bold rounded-xl grid grid-cols-[0.25fr_1fr_2fr_2fr_2fr_0.25fr] w-full`} >
                     <Button color="red" class="ml-2 mb-0 p-0 w-0"
                             on:click={() => {
-                                force.editText = !force.editText;
+                                force.tao.editText = !force.tao.editText;
                             }}
                             size="xs"
                         >
                             <EditOutline/>
                         </Button>
-                        {#if force.editText}
-                            <Input id='tao-symbol' bind:value={force.symbol} placeholder="Symbol" class='my-auto'
-                                on:keydown={(evt) => { if (evt.key == 'Enter') { force.editText = false;}}}
+                        {#if force.tao.editText}
+                            <Input id='tao-symbol' bind:value={force.tao.symbol} placeholder="Symbol" class='my-auto'
+                                onkeydown={(evt) => { if (evt.key == 'Enter') { force.tao.editText = false;}}}
                             />
-                            <Input id='tao-type' bind:value={force.type} class='my-auto'
-                                on:keydown={(evt) => { if (evt.key == 'Enter') { force.editText = false;}}}
+                            <Input id='tao-type' bind:value={force.tao.type} class='my-auto'
+                                onkeydown={(evt) => { if (evt.key == 'Enter') { force.tao.editText = false;}}}
                             />
     
-                            <Input id='tao-agent' bind:value={force.agent} class='my-auto'
-                                on:keydown={(evt) => { if (evt.key == 'Enter') { force.editText = false;}}}
+                            <Input id='tao-agent' bind:value={force.tao.agent} class='my-auto'
+                                onkeydown={(evt) => { if (evt.key == 'Enter') { force.tao.editText = false;}}}
     
                             />
-                            <Input id='tao-object' bind:value={force.object} class='my-auto'
-                                on:keydown={(evt) => { if (evt.key == 'Enter') { force.editText = false;}}}
+                            <Input id='tao-object' bind:value={force.tao.object} class='my-auto'
+                                onkeydown={(evt) => { if (evt.key == 'Enter') { force.tao.editText = false;}}}
                             />
                         {:else}
-                            <div class='mx-auto' ondblclick={()=>{force.editText = true}}>{force.symbol}</div>
-                            <div class='mx-auto' ondblclick={()=>{force.editText = true}}>{force.type}</div>
-                            <div class='mx-auto' ondblclick={()=>{force.editText = true}}>{force.agent}</div>
-                            <div class='mx-auto' ondblclick={()=>{force.editText = true}}>{force.object}</div>
+                            <div class='mx-auto' ondblclick={()=>{force.tao.editText = true}}>{force.tao.symbol}</div>
+                            <div class='mx-auto' ondblclick={()=>{force.tao.editText = true}}>{force.tao.type}</div>
+                            <div class='mx-auto' ondblclick={()=>{force.tao.editText = true}}>{force.tao.agent}</div>
+                            <div class='mx-auto' ondblclick={()=>{force.tao.editText = true}}>{force.tao.object}</div>
                             
                         {/if}
                         <Button color="red" class="mb-0 p-0 w-0"

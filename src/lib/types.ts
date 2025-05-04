@@ -9,20 +9,21 @@ export type Vector = {
 };
 
 export type TaoItem = {
-    id: number,
+    id?: number,
     symbol: string,
     type: string,
     agent: string,
     object: string,
     color: string,
+    editText: boolean
 };
 
 export type Force = {
     id: number,
-    taoItem: TaoItem,
+    tao: TaoItem,
     components: Point,
-    color: string;
-};
+};    
+
 
 // export type Energy = {
 //     id: number,
