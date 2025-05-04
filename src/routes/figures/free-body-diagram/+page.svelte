@@ -77,15 +77,13 @@
 
 <ul class='list-none'>
 	{#each fbdSets.instances as fbd}
-		<li class='p-4'>
-			<ItemContainer>
-				<FreeBodyDiagram {...defaultParams} bind:forceList={fbd.data.forceList} bind:title={fbd.title} {showControlButtons}/>
-			</ItemContainer>
+		<li class='pb-4'>
+			<FreeBodyDiagram {...defaultParams} bind:forceList={fbd.data.forceList} bind:title={fbd.title} {showControlButtons}/>
 		</li>
 	{/each}
 </ul>
 {#if showControlButtons	}
-	<div class='flex flex-row p-4 w-1/3 justify-around'>
-		<Button color='alternative' on:click={addNewFBD}><CirclePlusOutline/>Add New Diagram</Button>
+	<div class='flex flex-row'>
+		<Button color='alternative' on:click={addNewFBD} class='w-full pb-4'><CirclePlusOutline/>Add New Diagram</Button>
 	</div>
 {/if}

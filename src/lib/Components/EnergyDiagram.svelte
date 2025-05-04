@@ -110,7 +110,7 @@
             />
 {/snippet}
 
-<div id='energy' class='flex flex-col bg-gray-100 w-max rounded-xl shadow-lg'>
+<div id='energy' class='flex flex-col bg-gray-100 w-full rounded-xl shadow-lg items-center'>
     <div id='energy-label' class='ml-4 text-lg font-bold'>
         Energy Diagram
     </div>

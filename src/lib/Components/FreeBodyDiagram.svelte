@@ -127,12 +127,12 @@
         strokeWidth={params.strokeWidth} id={params.id} />    
 {/snippet}
 
-<main class="flex flex-col bg-gray-100 w-max rounded-xl shadow-lg p-4">
+<main class="flex flex-col bg-gray-100 w-full rounded-xl shadow-lg p-4">
     <!-- <EditLabel bind:title/> -->
     <EditLabel bind:text={title} {showControlButtons} size={'xl2'} />
-    <div class='flex flex-row flex-wrap'>
+    <div class='flex flex-row flex-wrap justify-around'>
         <div id='fbd' class='px-4 flex flex-col flex-wrap'>
-            <div id='fbd-label' class='ml-4 text-lg font-bold select-none'>
+            <div id='fbd-label' class='ml-4 text-md font-bold select-none'>
                 Free Body Diagram
             </div>
             <Stage 
@@ -167,8 +167,8 @@
             </Stage>
         </div>
         <div id="tao-chart" class='max-w-lg px-4 top-0 flex-auto'>
-            <div id='fbd-label' class='mx-auto text-lg font-bold flex flex-row rounded-xl border-1'>
-                <p>TAO Chart</p>
+            <div id='fbd-label' class='mx-auto text-md font-bold flex flex-row rounded-xl border-1'>
+                <p>Type/Agent/Object Chart</p>
             </div>
             {#if forceList.length == 0}
                 <div class='mx-auto my-4 p-2 text-xl font-bold rounded-xl border-1'>

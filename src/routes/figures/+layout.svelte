@@ -2,7 +2,7 @@
 	import { setContext, getContext } from 'svelte';
 	import {saveDivAsImage, copyDivAsImageToClipboard} from '$lib/capturediv';
 
-	import { Button, Toggle } from 'flowbite-svelte';
+	import { ButtonGroup, Button, Toggle } from 'flowbite-svelte';
     import {TrashBinOutline, FileExportOutline, FileCopyOutline, FloppyDiskOutline, FolderOpenOutline, RefreshOutline} from 'flowbite-svelte-icons';
 
 	let { children } = $props();
@@ -21,15 +21,24 @@
 </script>
 
 
-<div class="w-max mx-auto w-9/12">
-	<div id='controls' class = 'w-full flex flex-row justify-end space-x-2'>
+<div class="w-9/12 mx-auto">
+	<ButtonGroup class = 'w-full flex flex-row justify-end space-x-px'>
 		<Button id='savediv' color='dark' onclick={saveDivAsImage}><FileExportOutline/></Button>
 		<Button id='copydiv' color='dark' onclick={copyDivAsImageToClipboard}><FileCopyOutline/></Button>
 		<Button id='savedata' color='dark' onclick={btnActions.saveData}><FloppyDiskOutline/></Button>
 		<Button id='loaddata' color='dark' onclick={btnActions.loadData}><FolderOpenOutline/></Button>
 		<Button id='refreshalldata' color='dark' onclick={btnActions.refreshAllData}><RefreshOutline/></Button>
-	</div>
-	<div id='capture' class="w-max mx-auto w-9/12">
+	</ButtonGroup>
+
+
+	<!-- <div id='controls' class = 'w-full flex flex-row justify-end space-x-2'>
+		<Button id='savediv' color='dark' onclick={saveDivAsImage}><FileExportOutline/></Button>
+		<Button id='copydiv' color='dark' onclick={copyDivAsImageToClipboard}><FileCopyOutline/></Button>
+		<Button id='savedata' color='dark' onclick={btnActions.saveData}><FloppyDiskOutline/></Button>
+		<Button id='loaddata' color='dark' onclick={btnActions.loadData}><FolderOpenOutline/></Button>
+		<Button id='refreshalldata' color='dark' onclick={btnActions.refreshAllData}><RefreshOutline/></Button>
+	</div> -->
+	<div id='capture' class="w-full mx-auto">
 		{@render children?.()}
 	</div>
 </div>

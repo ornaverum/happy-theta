@@ -37,9 +37,14 @@
 	  <!-- <NavLi href="{base}/equation-editor">Equation Editor</NavLi> -->
 	</NavUl>
   </Navbar>
+<div class="h-auto bg-gradient-to-b from-white to-blue-200 ">
+	
+	{@render children?.()}
+	
+</div>
+<div class='h-full bg-blue-200'>
 
-{@render children?.()}
-
+</div>
 <!-- 
 <Footer class="fixed bottom-0 z-20 w-full p-4 bg-white border-t border-gray-200 shadow md:flex md:items-center md:justify-between md:p-6 dark:bg-gray-800 dark:border-gray-600">
 	<div class="sm:flex sm:items-center sm:justify-between">

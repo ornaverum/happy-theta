@@ -27,7 +27,7 @@
 		height = 200,
 		title = $bindable('Title'),
 		numCells = {x: 30, y:0},
-		showControlButtons = true,
+		showControlButtons = false,
 		posList = $bindable([]),
 		accList = $bindable([]),
 		handleDelete = (e: KonvaMouseEvent) => {},
@@ -130,20 +130,8 @@
 	</Layer>
 {/snippet}
 
-<main class="flex flex-col p-4 items-center">
-	<!-- <div id='Title' class='text-2xl font-bold'>
-		<Button color='alternative' class='mr-3' size='xs' on:click={()=>{editTitle = !editTitle}}>
-			<EditOutline/>
-		</Button>
-		{#if editTitle}
-			<Input bind:value={title} placeholder="Free Body Diagram"
-				on:keydown={(evt) => { if (evt.key == 'Enter') { editTitle = false;}}}
-			/>
-		{:else}
-			{title}
-		{/if}
-	</div> -->
-	<EditLabel bind:text={title} {showControlButtons} size={'xl2'} />
+<main class="flex flex-col items-center bg-gray-100 p-4 shadow-lg">
+	<EditLabel bind:text={title} size={'xl2'} />
 	<div class="flex flex-row">
 		{#if (showControlButtons)}
 			<div id='button-container flex flex-row m-4 p-4'>
@@ -160,7 +148,7 @@
 				</div>
 			</div>
 		{/if}
-		<div id='fbd' class='bg-gray-100 p-4 shadow-lg'>
+		<div id='md' class=''>
 			<Stage {width} {height} id='main_stage'
 				onmouseleave={() => {onStage = false;}}
 				onmouseenter={() => {onStage = true;}}

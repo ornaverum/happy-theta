@@ -90,7 +90,7 @@
 	let defaulParams = {
 		width: 800,
 		height: 100,
-		showControlButtons: true
+		showControlButtons: false
 	}
 </script>
 
@@ -98,11 +98,11 @@
 
 <ul class='list-none'>
 	{#each mdSets.instances as md}
-		<li>
+		<li class='py-4'>
 			<MotionDiagram {...defaulParams} bind:posList={md.data.posList} bind:accList={md.data.accList} bind:title={md.title} {handleDelete}/>
 		</li>
 	{/each}
 </ul>
 
-<Button color='alternative' onclick={()=>addNewMD()}><CirclePlusOutline/>Add New Diagram</Button>
+<Button color='alternative' onclick={()=>addNewMD()} class='w-full'><CirclePlusOutline/>Add New Diagram</Button>
 

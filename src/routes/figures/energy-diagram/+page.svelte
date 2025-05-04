@@ -100,14 +100,14 @@
 
 <ul class='list-none'>
 	{#each engSets.instances as eng}
-		<li class='p-4'>
+		<li class='py-4'>
 			<EnergyDiagram {...defaultParams} bind:energyBars={eng.data.energyBars} bind:title={eng.title} showControlButtons={true}/>
 		</li>
 	{/each}
 </ul>
 {#if true	}
-	<div class='flex flex-row p-4 w-1/3 justify-around'>
-		<Button color='alternative' on:click={addNewED}><CirclePlusOutline/>Add New Energy State</Button>
-		<Button color='alternative' on:click={addNewW}><CirclePlusOutline/>Add New Energy Transfer</Button>
+	<div class='flex flex-row py-4 justify-around'>
+		<Button color='alternative' on:click={addNewED} class='w-full'><CirclePlusOutline/>Add New Energy State</Button>
+		<Button color='alternative' on:click={addNewW} class='w-full'><CirclePlusOutline/>Add New Energy Transfer</Button>
 	</div>
 {/if}
