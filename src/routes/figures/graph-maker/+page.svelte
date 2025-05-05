@@ -6,7 +6,7 @@
 
 	import {page} from '$app/stores';
 	import EditLabel from '$lib/Components/EditLabel.svelte';
-	import type {GraphPath, Point} from '$lib/Components/kinematicsTypes';
+	import type {GraphPath, Point} from '$lib/types.ts';
 
     import { Label, Select, Input, Button, Checkbox, Toggle} from 'flowbite-svelte';
     import {TrashBinOutline, FileExportOutline, ChevronDownOutline, CirclePlusOutline, RefreshOutline} from 'flowbite-svelte-icons';
@@ -14,14 +14,12 @@
 
 	import QualGraph from '$lib/Components/QualGraph.svelte';
 
-
-
 	const url = $page.url;
 	console.log(url);
 
 	let name: string = 'graph-maker';
 
-	let showControlButtons:boolean = $state(false);
+	let showControlButtons = getContext('ctrl');
 
 	let idIncrement = 0;
 
@@ -53,15 +51,6 @@
 	const handleDelete = (e:CustomEvent) => {
 		graphs = graphs.filter(graph => graph.graphID !== e.detail.id);
 	}
-
-	const resetAll = () =>{
-		graphs = [];
-		groupIDs = [0];
-		graphIDIncrement = 0;
-		groupIDIncrement = 0;
-		addNewGraph(0);
-	}
-
 	const labelGroupTitle = (groupID:number) => {
 		console.log(groupID);
 
@@ -138,14 +127,19 @@
 	}
 	const refreshAllData = () => {
 		console.log('refreshAllData from graph-maker page');
+		graphs = [];
+		groupIDs = [0];
+		graphIDIncrement = 0;
+		groupIDIncrement = 0;
+		addNewGraph(0);
 	}
 
 </script>
 
-<div class="flex flex-col flex-wrap">
+<div class="flex flex-col bg-gray-100 w-full rounded-xl shadow-lg items-center">
 	{#each groupIDs as group (group)}
 	<div class="flex flex-row flex-wrap shadow-lg">
-		{#if showControlButtons && groupIDs.length > 0}
+		{#if showControlButtons() && groupIDs.length > 0}
 			<div class='flex flex-col m-1'>
 				<Button class='my-1' on:click={()=>{groupIDs = groupIDs.filter(g => g !== group)}}><TrashBinOutline/></Button>
 				<Button class='my-1' on:click={()=>labelGroupTitle(group)}>Autotitle</Button>
@@ -160,7 +154,7 @@
 				<QualGraph bind:title={graph.title} id={graph.graphID} on:deleteMe={handleDelete} bind:pathList={graph.pathList} width={200} height={200} bind:labels={graph.labels} color='green' {showControlButtons}/>
 			{/if}
 		{/each}
-		{#if showControlButtons}
+		{#if showControlButtons()}
 			<Button color='alternative' onclick={()=>addNewGraph(group)}><CirclePlusOutline/></Button>
 		{/if}
 		</div>
@@ -168,8 +162,8 @@
 	{/each}
 </div>
 
-{#if showControlButtons}
-	<Button color='alternative' onclick={()=>{groupIDs=[...groupIDs, ++groupIDIncrement]}}>
+{#if showControlButtons()}
+	<Button color='alternative' class='w-full' onclick={()=>{groupIDs=[...groupIDs, ++groupIDIncrement]}}>
 		<CirclePlusOutline class='mx-2'/> Add New Group
 	</Button>
 {/if}

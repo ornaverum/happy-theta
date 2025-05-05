@@ -89,3 +89,13 @@ export type MD = BaseData<{
 export type EngD = BaseData<{
     energyBars: EnergyBar[],
 }>
+
+export type GraphPath = {
+    id: string,
+    points: {x: number, y: number}[],
+    data: string,
+    curvature: number,
+    stroke: string,
+    strokeWidth: number,
+    opacity: number,
+};

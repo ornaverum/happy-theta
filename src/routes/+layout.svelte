@@ -3,7 +3,7 @@
 	import { page } from '$app/stores';
 	import { base } from '$app/paths';
 	import { DarkMode } from 'flowbite-svelte';
-	import { Navbar, NavBrand, NavLi, NavUl, NavHamburger } from 'flowbite-svelte';
+	import { Navbar, NavBrand, NavLi, NavUl, NavHamburger, Tooltip } from 'flowbite-svelte';
 	import { setContext, getContext } from 'svelte';
 	import CaptureDiv from '$lib/Components/CaptureDiv.svelte';
 	let darkmodebtn =
