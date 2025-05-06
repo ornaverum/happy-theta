@@ -1,12 +1,13 @@
 <script lang="ts">
 	import { Stage, Layer, Line, Circle, Path, Group, type KonvaMouseEvent} from 'svelte-konva';
 	import type {GraphPath, Point} from './kinematicsTypes.js';
-    import { Label, Select, Input, Button} from 'flowbite-svelte';
+    import { Label, Select, Input, Button, ButtonGroup, Tooltip} from 'flowbite-svelte';
 	import Grid from './Grid.svelte';
 	import GridLogic from './GridLogic.js';
     import {TrashBinOutline, ChevronDownOutline, ChevronRightOutline, RefreshOutline} from 'flowbite-svelte-icons';
 	import { Dropdown, DropdownItem } from 'flowbite-svelte';
 	import EditLabel from './EditLabel.svelte';
+	import {getContext} from 'svelte';
 
 	let name: string = 'QualGraph';
 	let onStage: boolean = $state(false);
@@ -40,7 +41,6 @@
         x: false,
         y: true,
     }),
-		showControlButtons = true,
 		showGrid = true,
 		id = 0,
 		dotList = $bindable([]),
@@ -69,7 +69,7 @@
 	let showYLabelOptions = false;
 	let showAxisOptions = false;
 
-
+	let showControlButtons = getContext('ctrl');
 	let gridLogic = new GridLogic({size:{x:width, y:height}, numCells: {x:6, y:6}, origin:{x:0, y:3}});
 
 	let id_num = 0;
@@ -209,18 +209,22 @@
 
 <div id='graph-container' class='p-4 flex flex-col border-2'>
 	
-	{#if showControlButtons}
+	{#if showControlButtons()}
 		<div id='button-header' class="justify-left flex flex-row m-2 p-2">
-			<Button color="red" size="xs" class="mr-2"
-				on:click={handleDelete}
-				>
-				<RefreshOutline size='xs' class="text-white-500"/>
-			</Button>
-			<Button color="red" size="xs" class="mr-2"
-				on:click={()=>{console.log('s5-pass callback for delete')}}
-				>
-				<TrashBinOutline size='xs' class="text-white-500"/>
-			</Button>
+			<ButtonGroup class='space-x-px'>
+				<Button color="red" size="xs"
+					on:click={handleDelete}
+					>
+					<RefreshOutline size='xs' class="text-white-500"/>
+				</Button>
+				<Tooltip>Erase this graph</Tooltip>
+				<Button color="red" size="xs"
+					on:click={()=>{console.log('s5-pass callback for delete')}}
+					>
+					<TrashBinOutline size='xs' class="text-white-500"/>
+				</Button>
+				<Tooltip>Delete this graph</Tooltip>
+			</ButtonGroup>
 			<!-- <div class='flex flex-col mr-2'>
 				<Label for="select-y-label" class="">Select y-label</Label>
 				<Select id='select-y-label' class="" size="sm" items={yLabelOptions} bind:value={labels.y} />
@@ -243,7 +247,7 @@
 			</Dropdown> -->
 		</div>
 	{/if}
-	<EditLabel text={title} size='xs' {showControlButtons}/>
+	<EditLabel text={title} size='xs'/>
 	<div class='flex flex-row '>
 		<div id='y-label-container' class="my-auto relative h-30 w-30">
 			<div id='ylabel' class='transform -rotate-90 label-menu'>

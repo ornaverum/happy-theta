@@ -39,6 +39,8 @@
     numCells.y = energyBars.length;
     height = 40*(energyBars.length);
 
+    let showControlButtons = getContext('ctrl');
+
 	let gridLogic = new GridLogic({size:{x:width, y:height }, margin:{...margin}, numCells:{...numCells}, origin:{...originPoint}});
 
     const initialPositions:(yPt:number)=>Point = (yPt:number)=>{

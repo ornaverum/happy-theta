@@ -151,7 +151,7 @@
 		{/if}
 		{#each graphs as graph (graph.graphID)}
 			{#if graph.groupID == group}
-				<QualGraph bind:title={graph.title} id={graph.graphID} on:deleteMe={handleDelete} bind:pathList={graph.pathList} width={200} height={200} bind:labels={graph.labels} color='green' {showControlButtons}/>
+				<QualGraph bind:title={graph.title} id={graph.graphID} bind:pathList={graph.pathList} width={200} height={200} bind:labels={graph.labels} color='green'/>
 			{/if}
 		{/each}
 		{#if showControlButtons()}

@@ -34,7 +34,7 @@
 		<Button id='refreshalldata' color='dark' onclick={btnActions.refreshAllData}><RefreshOutline/></Button>
 			<Tooltip>Delete data and refresh</Tooltip>
 	</ButtonGroup>
-	<Toggle checked={showControlButtons} class='mr-2' onclick={()=>{console.log('layout: showControlButtons = ', showControlButtons)}}>Show Element Controls</Toggle>
+	<Toggle class='m-2 flex flex-row justify-end' onclick={()=>{showControlButtons = !showControlButtons}}>Show Element Controls</Toggle>
 	<div id='capture' class="w-full mx-auto">
 		{@render children?.()}
 	</div>

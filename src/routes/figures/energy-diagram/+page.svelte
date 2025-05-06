@@ -108,6 +108,6 @@
 {#if true	}
 	<div class='flex flex-row py-4 justify-around'>
 		<Button color='alternative' on:click={addNewED} class='w-full'><CirclePlusOutline/>Add New Energy State</Button>
-		<Button color='alternative' on:click={addNewW} class='w-full'><CirclePlusOutline/>Add New Energy Transfer</Button>
+		<Button color='alternative' on:click={addNewW} ><CirclePlusOutline/>Add New Energy Transfer</Button>
 	</div>
 {/if}

@@ -3,14 +3,14 @@
     import { Label, Input, Button } from 'flowbite-svelte';
     import { EditOutline } from 'flowbite-svelte-icons';
 
-    import {onMount} from 'svelte';
+    import {onMount, getContext} from 'svelte';
     interface Props {
         text?: string;
         size?: string;
         showControlButtons?: boolean;
     }
 
-    let { text = $bindable('Title'), size = 'xl', showControlButtons = true }: Props = $props();
+    let { text = $bindable('Title'), size = 'xl'}: Props = $props();
     let editing: boolean = $state(false);
 
     let sizes = {
@@ -31,18 +31,19 @@
         btnSize = sizes[size]['btn'];
     });
 
+    let showControlButtons = getContext('ctrl');
 
 
 </script>
 
 <div class='flex flex-row'>
-    {#if showControlButtons}
+    {#if showControlButtons()}
         <Button color='light' class='p-0 mx-3' size='xs' on:click={()=>{editing = !editing}}>
             <EditOutline size='xs'/>
         </Button>
     {/if}
-    {#if editing && showControlButtons}
-        <Input bind:value={text} placeholder="Free Body Diagram" size={fontSize}
+    {#if editing && showControlButtons()}
+        <Input bind:value={text} placeholder="Title" size={fontSize}
             on:keydown={(evt) => { if (evt.key == 'Enter') { editing = false;}}}
             on:blur={()=>{editing = false;}}
         />
