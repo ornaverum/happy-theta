@@ -83,7 +83,7 @@ export default class GridLogic {
                 y0: yVali + this.offSet.y,
                 x1: xVal + this.offSet.x,
                 y1: yValf+ this.offSet.y,
-                gridLineType: i%5==0?'major':'minor',
+                gridLineType: (i-origin.x)%5==0?'major':'minor',
             });
         }
     
@@ -98,7 +98,7 @@ export default class GridLogic {
                 y0: startParallel+ this.offSet.y,
                 x1: endPerp + this.offSet.x,
                 y1: startParallel+ this.offSet.y,
-                gridLineType: i%5==0?'major':'minor',
+                gridLineType: (i-origin.y)%5==0?'major':'minor',
             });
         }
     

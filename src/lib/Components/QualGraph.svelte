@@ -195,6 +195,17 @@
 		{svg: svgPathXnYn, x: true, y: true},
 	];
 
+	const cycleYLabel = (e) => {
+		let label: string = e.target.value;
+		if (label == 'Position'){
+			labels.y = 'Velocity';
+		} else if (label == 'Velocity'){
+			labels.y = 'Acceleration';
+		} else if (label == 'Acceleration'){
+			labels.y = 'Position';
+		}
+	}
+
 </script>	
 
 {#snippet drawDot(dot:Dot)}
@@ -207,7 +218,7 @@
 	/>
 {/snippet}
 
-<div id='graph-container' class='p-4 flex flex-col border-2'>
+<div id='graph-container' class='p-4 flex flex-col'>
 	
 	{#if showControlButtons()}
 		<div id='button-header' class="justify-left flex flex-row m-2 p-2">
@@ -250,7 +261,7 @@
 	<EditLabel text={title} size='xs'/>
 	<div class='flex flex-row '>
 		<div id='y-label-container' class="my-auto relative h-30 w-30">
-			<div id='ylabel' class='transform -rotate-90 label-menu'>
+			<div id='ylabel' class='transform -rotate-90 label-menu select-none cursor-pointer' onclick={(e)=>{console.log('click y-label', e)}}>
 				{labels.y}
 			</div>
 		</div>
