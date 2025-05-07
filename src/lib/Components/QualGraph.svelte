@@ -26,6 +26,7 @@
 		id?: number;
 		dotList?: Dot[];
 		pathList?: GraphPath[];
+		handleDelete?: (killId:number)=>void;
 	}
 
 	let {
@@ -38,9 +39,11 @@
         	y: 'Position',
     	}),
 		showNegativeAxes = $bindable({
-        x: false,
-        y: true,
-    }),
+			x: false,
+			y: true,
+		}),
+		handleDelete = $bindable((killId:number)=>{console.log('failed to delete ', killId)}),
+    
 		showGrid = true,
 		id = 0,
 		dotList = $bindable([]),
@@ -162,7 +165,7 @@
 		}
 	}
 
-	const handleDelete = (evt:Event)=>{
+	const handleDeleteData = (evt:Event)=>{
 		dotList = [];
 		pathList = [];
 		addingDot = true;
@@ -177,11 +180,11 @@
 		}
 	}
 
-	const yLabelOptions = [
-		{value: 'Position', name: 'Position', color:'blue'},
-		{value: 'Velocity', name: 'Velocity', color:'green'},
-		{value: 'Acceleration', name: 'Acceleration', color:'red'},
-	];
+	const yLabelOptions = {
+		Position: {name: 'Position', color:'blue'},
+		Velocity: {name: 'Velocity', color:'green'},
+		Acceleration: {name: 'Acceleration', color:'red'},
+	};
 
 	const svgPathXpYp:string = 'M 2 2 V 13 H 13';
 	const svgPathXpYn:string = 'M 2 2 V 13 M 2 8 H 13';
@@ -195,13 +198,12 @@
 		{svg: svgPathXnYn, x: true, y: true},
 	];
 
-	const cycleYLabel = (e) => {
-		let label: string = e.target.value;
-		if (label == 'Position'){
+	const cycleYLabel = () => {
+		if (labels.y == 'Position'){
 			labels.y = 'Velocity';
-		} else if (label == 'Velocity'){
+		} else if (labels.y == 'Velocity'){
 			labels.y = 'Acceleration';
-		} else if (label == 'Acceleration'){
+		} else if (labels.y == 'Acceleration'){
 			labels.y = 'Position';
 		}
 	}
@@ -213,7 +215,7 @@
 		x= {dot.pt.x}
 		y= {dot.pt.y}
 		radius= {8}
-		fill= {color}
+		fill= {yLabelOptions[labels.y].color}
 		opacity = {dot.opacity}
 	/>
 {/snippet}
@@ -224,13 +226,13 @@
 		<div id='button-header' class="justify-left flex flex-row m-2 p-2">
 			<ButtonGroup class='space-x-px'>
 				<Button color="red" size="xs"
-					on:click={handleDelete}
+					onclick={handleDeleteData}
 					>
 					<RefreshOutline size='xs' class="text-white-500"/>
 				</Button>
 				<Tooltip>Erase this graph</Tooltip>
 				<Button color="red" size="xs"
-					on:click={()=>{console.log('s5-pass callback for delete')}}
+					onclick={()=>{console.log('s5-pass callback for delete')}}
 					>
 					<TrashBinOutline size='xs' class="text-white-500"/>
 				</Button>
@@ -260,8 +262,8 @@
 	{/if}
 	<EditLabel text={title} size='xs'/>
 	<div class='flex flex-row '>
-		<div id='y-label-container' class="my-auto relative h-30 w-30">
-			<div id='ylabel' class='transform -rotate-90 label-menu select-none cursor-pointer' onclick={(e)=>{console.log('click y-label', e)}}>
+		<div id='y-label-container' class="my-auto relative w-10">
+			<div id='ylabel' class='transform -rotate-90 select-none cursor-pointer my-auto' onclick={cycleYLabel}>
 				{labels.y}
 			</div>
 		</div>
@@ -284,10 +286,10 @@
 				</Layer>
 				<Layer id= 'path_layer'>
 					{#if !addingDot && previewGraph}
-						<Path data={previewGraph.data} stroke='green' strokeWidth={4}/>
+						<Path data={previewGraph.data} stroke={yLabelOptions[labels.y].color} strokeWidth={4}/>
 					{/if}
 					{#each pathList as path (path.id)}
-						<Path data={path.data} stroke='green'strokeWidth={4}/>
+						<Path data={path.data} stroke={yLabelOptions[labels.y].color} strokeWidth={4}/>
 					{/each}
 				</Layer>
 			</Stage>

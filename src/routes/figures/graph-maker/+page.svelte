@@ -48,9 +48,10 @@
 		graphs = [...graphs, newGraph];
 	}
 
-	const handleDelete = (e:CustomEvent) => {
-		graphs = graphs.filter(graph => graph.graphID !== e.detail.id);
+	const handleDelete = (killId:number) => {
+		graphs = graphs.filter(graph => graph.graphID !== killId);
 	}
+
 	const labelGroupTitle = (groupID:number) => {
 		console.log(groupID);
 
@@ -101,22 +102,26 @@
 	
 	let btnActions = getContext('btnActions');
 	onMount( ()=>{
-		btnActions.saveData = saveData;
-		btnActions.loadData = loadData;
-		btnActions.refreshAllData = refreshAllData;
-			// console.log(document.querySelector('#savedata'));
-			// document.querySelector('#savedata')?.addEventListener('click', saveData);
-			// document.querySelector('#loaddata')?.addEventListener('click', loadData);
-			// document.querySelector('#refreshalldata')?.addEventListener('click', refreshAllData);
-			// document.querySelector('#autolabel')?.addEventListener('click', labelTitle);
+			btnActions.saveData = saveData;
+			btnActions.loadData = loadData;
+			btnActions.refreshAllData = refreshAllData;
+				// console.log(document.querySelector('#savedata'));
+				// document.querySelector('#savedata')?.addEventListener('click', saveData);
+				// document.querySelector('#loaddata')?.addEventListener('click', loadData);
+				// document.querySelector('#refreshalldata')?.addEventListener('click', refreshAllData);
+				// document.querySelector('#autolabel')?.addEventListener('click', labelTitle);
+			
+
+			graphs = [
+					{title: '', graphID: 0, groupID: 0, pathList: [{points: [], color: 'blue'}], labels: {x:'Time', y:'Position'}},
+					{title: '', graphID: 1, groupID: 0, pathList: [{points: [], color: 'green'}], labels: {x:'Time', y:'Velocity'}},
+					{title: '', graphID: 2, groupID: 0, pathList: [{points: [], color: 'red'}], labels: {x:'Time', y:'Acceleration'}},
+				];
+			graphIDIncrement = graphs.length;
 		}
 	);
 
-	graphs = [
-				{title: '', graphID: 0, groupID: 0, pathList: [{points: [], color: 'blue'}], labels: {x:'Time', y:'Position'}},
-				{title: '', graphID: 1, groupID: 0, pathList: [{points: [], color: 'green'}], labels: {x:'Time', y:'Velocity'}},
-				{title: '', graphID: 2, groupID: 0, pathList: [{points: [], color: 'red'}], labels: {x:'Time', y:'Acceleration'}},
-			];
+	
 
 	// addNewGraph(0);
 	const saveData = () => {
@@ -138,15 +143,15 @@
 
 <div class="flex flex-col bg-gray-100 w-full rounded-xl shadow-lg items-center">
 	{#each groupIDs as group (group)}
-	<div class="flex flex-row flex-wrap shadow-lg">
-		{#if showControlButtons() && groupIDs.length > 0}
+	<div class="flex flex-row flex-wrap">
+		{#if showControlButtons() && groupIDs.length >= 0}
 			<div class='flex flex-col m-1'>
 				<Button class='my-1' on:click={()=>{groupIDs = groupIDs.filter(g => g !== group)}}><TrashBinOutline/></Button>
 				<Button class='my-1' on:click={()=>labelGroupTitle(group)}>Autotitle</Button>
-				<div class='flex flex-col mr-2 mt-3'>
+				<!-- <div class='flex flex-col mr-2 mt-3'>
 					<Label for="select-y-label" class="">Select y-label for group</Label>
 					<Select on:change={()=>labelGroupYAxis(group, ylabel)} id='select-y-label' class="" size="sm" items={yLabelOptions} bind:value={ylabel} />
-				</div>
+				</div> -->
 			</div>
 		{/if}
 		{#each graphs as graph (graph.graphID)}
