@@ -8,7 +8,7 @@
 	import EditLabel from '$lib/Components/EditLabel.svelte';
 	import type {GraphPath, Point} from '$lib/types.ts';
 
-    import { Label, Select, Input, Button, Checkbox, Toggle} from 'flowbite-svelte';
+    import { Label, Select, Input, Button, Checkbox, Toggle, Tooltip} from 'flowbite-svelte';
     import {TrashBinOutline, FileExportOutline, ChevronDownOutline, CirclePlusOutline, RefreshOutline} from 'flowbite-svelte-icons';
 	import { Dropdown, DropdownItem } from 'flowbite-svelte';
 
@@ -146,8 +146,10 @@
 	<div class="flex flex-row flex-wrap">
 		{#if showControlButtons() && groupIDs.length >= 0}
 			<div class='flex flex-col m-1'>
-				<Button class='my-1' on:click={()=>{groupIDs = groupIDs.filter(g => g !== group)}}><TrashBinOutline/></Button>
-				<Button class='my-1' on:click={()=>labelGroupTitle(group)}>Autotitle</Button>
+				<Button class='my-1' color='blue' onclick={()=>{groupIDs = groupIDs.filter(g => g !== group)}}><TrashBinOutline/></Button>
+				<Tooltip>Delete Graph Group</Tooltip>
+				<Button class='my-1' color='blue'  onclick={()=>labelGroupTitle(group)}>Autotitle</Button>
+				<Tooltip>Give graphs alphabetical titles</Tooltip>
 				<!-- <div class='flex flex-col mr-2 mt-3'>
 					<Label for="select-y-label" class="">Select y-label for group</Label>
 					<Select on:change={()=>labelGroupYAxis(group, ylabel)} id='select-y-label' class="" size="sm" items={yLabelOptions} bind:value={ylabel} />
@@ -156,7 +158,7 @@
 		{/if}
 		{#each graphs as graph (graph.graphID)}
 			{#if graph.groupID == group}
-				<QualGraph bind:title={graph.title} id={graph.graphID} bind:pathList={graph.pathList} width={200} height={200} bind:labels={graph.labels} color='green'/>
+				<QualGraph {handleDelete} bind:title={graph.title} id={graph.graphID} bind:pathList={graph.pathList} width={200} height={200} bind:labels={graph.labels} color='green'/>
 			{/if}
 		{/each}
 		{#if showControlButtons()}

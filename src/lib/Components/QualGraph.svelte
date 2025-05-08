@@ -171,6 +171,10 @@
 		addingDot = true;
 	}
 
+	const handleDeleteFromParent = ()=>{
+		handleDelete(id);
+	}
+
 	const handleLeaveCanvas : (e: KonvaMouseEvent)=>void = (e: KonvaMouseEvent) =>{
 		onStage = false;
 		if (addingDot){
@@ -232,7 +236,7 @@
 				</Button>
 				<Tooltip>Erase this graph</Tooltip>
 				<Button color="red" size="xs"
-					onclick={()=>{console.log('s5-pass callback for delete')}}
+					onclick={handleDeleteFromParent}
 					>
 					<TrashBinOutline size='xs' class="text-white-500"/>
 				</Button>
