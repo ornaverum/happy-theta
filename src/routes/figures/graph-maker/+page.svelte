@@ -143,29 +143,35 @@
 
 <div class="flex flex-col bg-gray-100 w-full rounded-xl shadow-lg items-center">
 	{#each groupIDs as group (group)}
-	<div class="flex flex-row flex-wrap">
-		{#if showControlButtons() && groupIDs.length >= 0}
-			<div class='flex flex-col m-1'>
-				<Button class='my-1' color='blue' onclick={()=>{groupIDs = groupIDs.filter(g => g !== group)}}><TrashBinOutline/></Button>
-				<Tooltip>Delete Graph Group</Tooltip>
-				<Button class='my-1' color='blue'  onclick={()=>labelGroupTitle(group)}>Autotitle</Button>
-				<Tooltip>Give graphs alphabetical titles</Tooltip>
-				<!-- <div class='flex flex-col mr-2 mt-3'>
-					<Label for="select-y-label" class="">Select y-label for group</Label>
-					<Select on:change={()=>labelGroupYAxis(group, ylabel)} id='select-y-label' class="" size="sm" items={yLabelOptions} bind:value={ylabel} />
-				</div> -->
-			</div>
-		{/if}
-		{#each graphs as graph (graph.graphID)}
-			{#if graph.groupID == group}
-				<QualGraph {handleDelete} bind:title={graph.title} id={graph.graphID} bind:pathList={graph.pathList} width={200} height={200} bind:labels={graph.labels} color='green'/>
-			{/if}
-		{/each}
-		{#if showControlButtons()}
-			<Button color='alternative' onclick={()=>addNewGraph(group)}><CirclePlusOutline/></Button>
-		{/if}
-		</div>
+		<div class="flex flex-row flex-wrap">
 
+			{#if showControlButtons() && groupIDs.length >= 0}
+				<div class='flex flex-col justify-center'>
+					<Button class='my-1' color='blue' onclick={()=>{groupIDs = groupIDs.filter(g => g !== group)}}><TrashBinOutline/></Button>
+					<Tooltip>Delete Graph Group</Tooltip>
+					<Button class='my-1' color='blue'  onclick={()=>labelGroupTitle(group)}>Autotitle</Button>
+					<Tooltip>Give graphs alphabetical titles</Tooltip>
+					<!-- <div class='flex flex-col mr-2 mt-3'>
+						<Label for="select-y-label" class="">Select y-label for group</Label>
+						<Select on:change={()=>labelGroupYAxis(group, ylabel)} id='select-y-label' class="" size="sm" items={yLabelOptions} bind:value={ylabel} />
+					</div> -->
+				</div>
+			{/if}
+			<div class="relative h-auto w-20">
+				<div class='transform -translate-x-full origin-top-right -rotate-90 h-auto w-48'>
+					<!-- <p class='text-2xl'>Hi there friend</p> -->
+					<EditLabel text='Group One'/>
+				</div>
+			</div>
+			{#each graphs as graph (graph.graphID)}
+				{#if graph.groupID == group}
+					<QualGraph {handleDelete} bind:title={graph.title} id={graph.graphID} bind:pathList={graph.pathList} width={200} height={200} bind:labels={graph.labels} color='green'/>
+				{/if}
+			{/each}
+			{#if showControlButtons()}
+				<Button color='alternative' onclick={()=>addNewGraph(group)}><CirclePlusOutline/></Button>
+			{/if}
+		</div>
 	{/each}
 </div>
 

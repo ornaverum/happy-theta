@@ -7,7 +7,6 @@
     interface Props {
         text?: string;
         size?: string;
-        showControlButtons?: boolean;
     }
 
     let { text = $bindable('Title'), size = 'xl'}: Props = $props();
@@ -44,8 +43,8 @@
     {/if}
     {#if editing && showControlButtons()}
         <Input bind:value={text} placeholder="Title" size={fontSize}
-            on:keydown={(evt) => { if (evt.key == 'Enter') { editing = false;}}}
-            on:blur={()=>{editing = false;}}
+            onkeydown={(evt) => { if (evt.key == 'Enter') { editing = false;}}}
+            onblur={()=>{editing = false;}}
         />
     {:else}
         <p ondblclick={()=>{editing = true;}} class='{fontSize} font-bold'>{text}</p>
