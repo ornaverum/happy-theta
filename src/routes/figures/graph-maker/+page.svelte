@@ -157,11 +157,11 @@
 					</div> -->
 				</div>
 			{/if}
-			<div class="relative h-auto w-20">
-				<div class='transform -translate-x-full origin-top-right -rotate-90 h-auto w-48'>
-					<!-- <p class='text-2xl'>Hi there friend</p> -->
-					<EditLabel text='Group One'/>
-				</div>
+			<!-- <div class='transform -translate-x-full origin-top-right -rotate-90 h-auto w-48'> -->
+			<div class='h-full my-auto mx-auto'>
+				<!-- <p class='text-2xl'>Hi there friend</p> -->
+				<!-- <EditLabel text='Group One'/> -->
+					<p class='text-xl select-none [writing-mode:sideways-lr]'>group 1</p>
 			</div>
 			{#each graphs as graph (graph.graphID)}
 				{#if graph.groupID == group}

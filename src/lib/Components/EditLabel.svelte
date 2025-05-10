@@ -22,7 +22,7 @@
     };
 
 
-    let fontSize:string = $state();
+    let fontSize:string = $state('');
     let btnSize:string;
 
     onMount(() => {
@@ -31,11 +31,11 @@
     });
 
     let showControlButtons = getContext('ctrl');
-
-
+    let txtbx:HTMLElement;
+    
 </script>
 
-<div class='flex flex-row'>
+<!-- <div class='flex flex-row'>
     {#if showControlButtons()}
         <Button color='light' class='p-0 mx-3' size='xs' on:click={()=>{editing = !editing}}>
             <EditOutline size='xs'/>
@@ -47,6 +47,29 @@
             onblur={()=>{editing = false;}}
         />
     {:else}
+        <p contenteditable="true" class='{fontSize} font-bold'>{text}</p>
         <p ondblclick={()=>{editing = true;}} class='{fontSize} font-bold'>{text}</p>
     {/if}
+</div> -->
+
+<div class='flex flex-row'>
+    {#if showControlButtons()}
+        <Button color='light' class='p-0 mx-3' size='xs' 
+            on:click={()=>{
+                editing = !editing;
+                txtbx.focus();
+            }}
+        >
+            <EditOutline size='xs'/>
+        </Button>
+    {/if}
+        <p bind:this={txtbx}
+            contenteditable={editing && showControlButtons()} class='{fontSize} font-bold w-full' 
+            class:bg-white={editing && showControlButtons()}
+            class:select-none={!editing}
+            ondblclick={()=>{if (!editing) editing = true;}}
+            onkeydown={(evt) => { if (evt.key == 'Enter') { editing = false;}}}
+            onblur={()=>{editing = false;}}
+            >{text}
+        </p>
 </div>

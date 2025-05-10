@@ -265,14 +265,14 @@
 		</div>
 	{/if}
 	<EditLabel text={title} size='xs'/>
-	<div class='flex flex-row '>
-		<div id='y-label-container' class="my-auto relative w-10">
-			<div id='ylabel' class='transform -rotate-90 select-none cursor-pointer my-auto' onclick={cycleYLabel}>
-				{labels.y}
+	<div class='flex flex-row justify-end'>
+		<div id='y-label-container' class="my-auto relative">
+			<!-- <div id='ylabel' class='transform -rotate-90 select-none cursor-pointer my-auto' onclick={cycleYLabel}> -->
+			<div id='ylabel' class='[writing-mode:sideways-lr] select-none cursor-pointer my-auto' onclick={cycleYLabel}>
+					{labels.y}
 			</div>
 		</div>
-		<div id='graph' class="flex flex-col" >
-
+		<div id='graph' class="flex flex-col justify-start" >
 			<Stage {width} {height} id='main_stage'
 				onclick={handleClickCanvas}
 				onmousemove={handleMoveCanvas}
@@ -298,8 +298,6 @@
 				</Layer>
 			</Stage>
 			<div id='x-label' class="mx-auto justify-center">{labels.x}</div>
-
 		</div>
 	</div>
-	
 </div>
