@@ -297,7 +297,7 @@
 					{/each}
 				</Layer>
 			</Stage>
-			<div id='x-label' class="mx-auto justify-center">{labels.x}</div>
+			<div id='x-label' class="mx-auto justify-center select-none">{labels.x}</div>
 		</div>
 	</div>
 </div>

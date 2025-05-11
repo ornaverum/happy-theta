@@ -31,7 +31,27 @@
     });
 
     let showControlButtons = getContext('ctrl');
-    let txtbx:HTMLElement;
+    let txtbx:HTMLElement | undefined = $state();
+    let focus: void | undefined = $state();
+
+    $effect( ()=>{
+            focus = txtbx?.focus();
+        }
+    );
+
+    const editOn = ()=>{
+        editing = true;
+        focus();
+    }
+
+    const editOff = ()=>{
+        editing = false;
+    }
+
+    const editToggle = ()=>{
+        let fn = editing ? editOff: editOn;
+        fn();
+    }
     
 </script>
 
@@ -57,19 +77,20 @@
         <Button color='light' class='p-0 mx-3' size='xs' 
             on:click={()=>{
                 editing = !editing;
-                txtbx.focus();
+                focus();
             }}
         >
             <EditOutline size='xs'/>
         </Button>
     {/if}
-        <p bind:this={txtbx}
+        <div bind:this={txtbx}
             contenteditable={editing && showControlButtons()} class='{fontSize} font-bold w-full' 
             class:bg-white={editing && showControlButtons()}
             class:select-none={!editing}
-            ondblclick={()=>{if (!editing) editing = true;}}
-            onkeydown={(evt) => { if (evt.key == 'Enter') { editing = false;}}}
-            onblur={()=>{editing = false;}}
+            ondblclick={editToggle}
+            onkeydown={(evt) => { if (evt.key == 'Enter') { editOff()}}}
+            onblur={editOff}
+            onfocus={()=>{console.log('focus')}}
             >{text}
-        </p>
+        </div>
 </div>
