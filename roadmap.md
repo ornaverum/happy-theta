@@ -11,6 +11,15 @@ https://svelte.dev/docs/kit/routing
 ## Performance
 * Loading skeletons
 
+## Force
+* Preview arrow
+
+## Motion Diagram
+* Vertical, Horizontal, and 2D option
+* Acceleration vector
+    * Qualitative
+    * Exact (to scale, anyway)
+
 
 ## CSS
 * Figure out why gradient background isn't full screen
@@ -33,6 +42,9 @@ https://svelte.dev/docs/kit/routing
 * Textbox for state description?
 * Customize which energies are shown?
 * Hard-code E0 -> W -> E1?
+* Vertical orientation? (as an option?)
+* Fix Work size
+
 
 ## All
 * Delete a given figure

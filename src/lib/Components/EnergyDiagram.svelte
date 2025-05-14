@@ -3,13 +3,12 @@
     import GridLogic from "./GridLogic";
     import type {Point, EnergyBar} from "../types";
     import {Stage, Layer, Rect, Circle, Text, type KonvaMouseEvent} from "svelte-konva";
-    import {setContext} from "svelte";
+    import {setContext, getContext} from "svelte";
 	import { BarsFromLeftOutline } from "flowbite-svelte-icons";
     import {onMount} from 'svelte';
 
     interface Props {
         title?: string;
-        showControlButtons?: boolean;
         id?: number;
         height?: number;
         width?: number;
@@ -22,7 +21,6 @@
 
     let {
         title = $bindable('Title'),
-        showControlButtons = $bindable(false),
         id = 0,
         height = 200,
         width = 500,
