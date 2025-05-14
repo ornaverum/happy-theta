@@ -7,9 +7,10 @@
     interface Props {
         text?: string;
         size?: string;
+        vertical?: boolean;
     }
 
-    let { text = $bindable('Title'), size = 'xl'}: Props = $props();
+    let { text = $bindable('Title'), size = 'xl', vertical  = false}: Props = $props();
     let editing: boolean = $state(false);
 
     let sizes = {
@@ -41,7 +42,8 @@
 
     const editOn = ()=>{
         editing = true;
-        focus();
+        if (focus)
+            focus();
     }
 
     const editOff = ()=>{
@@ -77,7 +79,8 @@
         <Button color='light' class='p-0 mx-3' size='xs' 
             on:click={()=>{
                 editing = !editing;
-                focus();
+                if (focus)
+                    focus();
             }}
         >
             <EditOutline size='xs'/>
@@ -87,6 +90,7 @@
             contenteditable={editing && showControlButtons()} class='{fontSize} font-bold w-full' 
             class:bg-white={editing && showControlButtons()}
             class:select-none={!editing}
+            class:[writing-mode:sideways-lr]={vertical}
             ondblclick={editToggle}
             onkeydown={(evt) => { if (evt.key == 'Enter') { editOff()}}}
             onblur={editOff}

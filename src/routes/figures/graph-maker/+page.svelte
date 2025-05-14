@@ -161,7 +161,8 @@
 			<div class='h-full my-auto mx-auto'>
 				<!-- <p class='text-2xl'>Hi there friend</p> -->
 				<!-- <EditLabel text='Group One'/> -->
-					<p class='text-xl select-none [writing-mode:sideways-lr]'>group 1</p>
+					<!-- <p class='text-xl select-none [writing-mode:sideways-lr]'>group 1</p> -->
+					 <EditLabel text='group 1' size='xl' vertical={true}/>
 			</div>
 			{#each graphs as graph (graph.graphID)}
 				{#if graph.groupID == group}
