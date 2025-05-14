@@ -41,7 +41,7 @@
     let gridLogic = new GridLogic({size:{x:width, y:height}, margin:{...margin}, numCells:{...numCells}, origin:{...originPoint}});
 
     let originStage: Point = gridLogic.getStageFromPoint(originPoint);
-    let nextId:number = 0;
+    let nextId:number = $state(0);
     let previewForcePoint:Point = $state({x:0, y:0});
     let arrowProps = {strokeWidth: 3, stroke: 'green', fill: 'green', opacity: 1}
 	let editTitle:boolean = $state(false);
@@ -141,12 +141,14 @@
                 id='fbd-stage'
                 onclick={handleGridClick}
                 onmousemove={handleGridMouseMove}
+                onmouseleave={() => {onStage = false;}}
+				onmouseenter={() => {onStage = true;}}
             >
                 <Grid {gridLogic}/>
                 {#if onStage}
                     <Layer>
                         {@render drawForce(previewForcePoint, 
-                            {id: 'preview', opacity: 0.5, color: 'black', strokeWidth: 3})}
+                            {id: 'preview', opacity: 0.5, color: colorList[nextId%12].cc, strokeWidth: 3})}
                     </Layer>
                 {/if}
                 
