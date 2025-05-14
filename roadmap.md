@@ -1,8 +1,7 @@
 ## Refactor figure apps
-* Dumb approach
-** Control buttons inside +page
-* Want to eventually get control buttons and CaptureDiv inside +layout
-* Or, pass snippets as parameters, possibly with slugs.
+----- Dumb approach
+----- Control buttons inside +layout
+----- Want to eventually get control buttons and CaptureDiv inside +layout
 
 https://svelte.dev/tutorial/svelte/passing-snippets
 https://svelte.dev/docs/kit/routing
@@ -12,7 +11,7 @@ https://svelte.dev/docs/kit/routing
 * Loading skeletons
 
 ## Force
-* Preview arrow
+----- Preview arrow
 
 ## Motion Diagram
 * Vertical, Horizontal, and 2D option
@@ -25,16 +24,16 @@ https://svelte.dev/docs/kit/routing
 * Figure out why gradient background isn't full screen
 
 ## Item Controls
-* Standardize approach
-* Maybe use context
+------- Standardize approach
+----------- Maybe use context
 
 
 ## Graph Maker
-* Standardize CSS with other pages
-* Only axes have thicker lines
-* Fix Controls
+----- Standardize CSS with other pages
+----- Only axes have thicker lines
+----- Fix Controls
 * Drop down for preset behaviors
-* Color coding for different variables
+------ Color coding for different variables
 * Custom color coding for multiple graphs on one axis
 
 ## Energy Diagram
@@ -47,7 +46,7 @@ https://svelte.dev/docs/kit/routing
 
 
 ## All
-* Delete a given figure
-* Refresh a given figure
+----- Delete a given figure
+----- Refresh a given figure
 * Label Figures
-* Add new figure
+----- Add new figure
