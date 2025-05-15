@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Stage, Layer, Line, Circle, Path, Group, type KonvaMouseEvent} from 'svelte-konva';
-	import type {GraphPath, Point} from './kinematicsTypes.js';
+	import type {GraphPath, Point} from '$lib/types';
     import { Label, Select, Input, Button, ButtonGroup, Tooltip} from 'flowbite-svelte';
 	import Grid from './Grid.svelte';
 	import GridLogic from './GridLogic.js';

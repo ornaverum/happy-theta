@@ -87,10 +87,8 @@
 
 	addNewMD();
 	
-	let defaulParams = {
-		width: 800,
-		height: 100,
-		showControlButtons: false
+	let defaultParams = {
+		size: {x: 800, y:800},
 	}
 </script>
 
@@ -99,7 +97,7 @@
 <ul class='list-none'>
 	{#each mdSets.instances as md}
 		<li class='py-4'>
-			<MotionDiagram {...defaulParams} bind:posList={md.data.posList} bind:accList={md.data.accList} bind:title={md.title} {handleDelete}/>
+			<MotionDiagram {...defaultParams} bind:posList={md.data.posList} bind:accList={md.data.accList} bind:title={md.title} {handleDelete}/>
 		</li>
 	{/each}
 </ul>

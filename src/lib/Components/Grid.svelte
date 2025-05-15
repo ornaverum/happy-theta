@@ -1,7 +1,7 @@
 <script lang='ts'>
 
     import { Stage, Layer, Line, Circle, Arrow, Text, Group, Rect, type KonvaMouseEvent} from 'svelte-konva';
-	import type { Point, Position } from './kinematicsTypes';
+	import type { Point } from '$lib/types';
 	import {onMount} from 'svelte';
 	import GridLogic from './GridLogic';
 
@@ -18,20 +18,12 @@
 	}
 
 	interface Props {
-		active?: boolean;
 		gridLogic?: GridLogic;
 	}
 
 	let {
-		active = false,
-		gridLogic = $bindable(),
+		gridLogic = undefined,
 	}: Props = $props();
-
-    let id_num: number = 0;
-	let cellSize: number = $state(1);  // make aspect ratio of all cells 1:1
-	let gridCenter: Point;
-	let yValue :number;
-	let offSet: Point = $state({x: 0, y: 0});
 
 	let gridLineStyles:
 	{

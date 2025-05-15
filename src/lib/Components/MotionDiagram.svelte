@@ -12,8 +12,7 @@
 	let name: string = 'Motion Diagram Component';
 
 	interface Props {
-		width?: number;
-		height?: number;
+		size?: Point;
 		title?: string;
 		numCells?: Point;
 		showControlButtons?: boolean;
@@ -23,22 +22,21 @@
 	}
 
 	let {
-		width = 800,
-		height = 200,
+		size = {x:800, y:800},
 		title = $bindable('Title'),
-		numCells = {x: 30, y:0},
+		numCells = {x: 20, y:0},
 		showControlButtons = false,
 		posList = $bindable([]),
 		accList = $bindable([]),
 		handleDelete = (e: KonvaMouseEvent) => {},
 	}: Props = $props();
 
-	let nextId:number = 0;
+	let nextId:number = 0;  // don't make it state, since it updates in the snippets.
 	let positionCircleProps = {radius: 8, fill: 'blue', opacity: 1}
 	let velocityArrowProps = {strokeWidth: 3, stroke: 'green', fill: 'green', opacity: 1}
 	
 	// constructor(size:Point, margin:Point, numCells:Point, origin:Point)
-	let gridLogic = new GridLogic({size:{x:width, y:height}, margin:{x:5, y:5}, numCells:{...numCells}, origin:{x: 0, y: 0}});
+	let gridLogic = new GridLogic({maxSize:{...size}, margin:{x:5, y:5}, numCells:{...numCells}, origin:{x: 10, y: 0}});
 	let editTitle:boolean = $state(false);
 
 	let toggleChecked:boolean = $state(false);
@@ -149,13 +147,13 @@
 			</div>
 		{/if}
 		<div id='md' class=''>
-			<Stage {width} {height} id='main_stage'
+			<Stage width={size.x} height={size.y} id='main_stage'
 				onmouseleave={() => {onStage = false;}}
 				onmouseenter={() => {onStage = true;}}
 				onclick={handleGridClick}
 				onmousemove={handleGridMouseMove}
 				>
-				<Grid {gridLogic} active={onStage}/>
+				<Grid {gridLogic}/>
 				<!-- <Velocity bind:velList={velList} {posList}/>
 				<Acceleration active={toggleChecked && onStage} bind:accList={accList} {...params} {posList}/> -->
 

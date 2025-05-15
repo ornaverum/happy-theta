@@ -10,6 +10,7 @@ type GridLine = {
 }
 
 export default class GridLogic {
+    maxSize?: Point;
     size?: Point;
     margin?: Point;
     numCells?: Point;
@@ -20,14 +21,22 @@ export default class GridLogic {
     offSet?: Point;
     gridList?: GridLine[];
 
-    constructor({size={x:500, y:500}, margin={x:5, y:5}, numCells={x:5, y:5}, origin={x:0, y:0}, cellSize=0, stageCenter=undefined, gridCenter=undefined, offSet=undefined, gridList=undefined}) {
-        this.size = size;
+    constructor({maxSize={x:500, y:500}, margin={x:5, y:5}, numCells={x:5, y:5}, origin={x:0, y:0}, cellSize=0, stageCenter=undefined, gridCenter=undefined, offSet=undefined, gridList=undefined}) {
+
+        this.maxSize = maxSize;
+        this.size = maxSize;
         this.margin = margin;
         this.numCells = numCells;
         this.origin = origin;
-        this.cellSize = cellSize || Math.min((size.x-2*margin.x)/(numCells.x+1), (size.y-2*margin.y)/(numCells.y+1));
-        this.stageCenter = stageCenter ||{x: size.x/2.0, y: size.y/2.0};
-        this.gridCenter = gridCenter || {x: origin.x + this.numCells.x*this.cellSize/2.0, y: origin.y + this.numCells.y*this.cellSize/2.0};
+        this.cellSize = cellSize || Math.min((maxSize.x-2*margin.x)/(numCells.x+1), (maxSize.y-2*margin.y)/(numCells.y+1));
+        // this.cellSize = cellSize || Math.min(maxSize.x/(numCells.x+1), maxSize.y/(numCells.y+1));
+
+        this.size.x = this.cellSize*(this.numCells.x+1)+2*margin.x || this.maxSize.x;
+        this.size.y = this.cellSize*(this.numCells.y+1)+2*margin.y || this.maxSize.y;
+
+
+        this.stageCenter = stageCenter ||{x: this.size.x/2.0, y: this.size.y/2.0};
+        this.gridCenter = gridCenter || {x: this.origin.x + this.numCells.x*this.cellSize/2.0, y: this.origin.y + this.numCells.y*this.cellSize/2.0};
         this.offSet = offSet || this.calculateOffset(this.gridCenter, this.stageCenter);
         this.gridList = gridList || this.buildGridLines(this.numCells, this.cellSize, this.origin);
     }
