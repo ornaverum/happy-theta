@@ -31,8 +31,8 @@ export default class GridLogic {
         this.cellSize = cellSize || Math.min((maxSize.x-2*margin.x)/(numCells.x+1), (maxSize.y-2*margin.y)/(numCells.y+1));
         // this.cellSize = cellSize || Math.min(maxSize.x/(numCells.x+1), maxSize.y/(numCells.y+1));
 
-        this.size.x = this.cellSize*(this.numCells.x+1)+2*margin.x || this.maxSize.x;
-        this.size.y = this.cellSize*(this.numCells.y+1)+2*margin.y || this.maxSize.y;
+        this.size.x = Math.min(this.cellSize*(this.numCells.x+1)+2*margin.x || this.maxSize.x);
+        this.size.y = Math.min(this.cellSize*(this.numCells.y+1)+2*margin.y || this.maxSize.y);
 
 
         this.stageCenter = stageCenter ||{x: this.size.x/2.0, y: this.size.y/2.0};
@@ -52,22 +52,20 @@ export default class GridLogic {
 
 
     getPointFromStage:Function = (point: Point)=>{
-        return {x: (point.x - this.offSet.x)/this.cellSize, y: (point.y - this.offSet.y)/this.cellSize};
+        return {x: (point.x - this.offSet.x)/this.cellSize - this.origin.x, 
+            y: (point.y - this.offSet.y)/this.cellSize - this.origin.y};
     }
 
     getSnappedPointFromStage:Function = (point: Point)=>{
         let pt = this.getPointFromStage(point);
-
-        pt.x = Math.min(Math.max(Math.round(pt.x), 0), this.numCells.x);
-        pt.y = Math.min(Math.max(Math.round(pt.y), 0), this.numCells.y);
+        pt.x = Math.min(Math.max(Math.round(pt.x), -this.origin.x), this.numCells.x-this.origin.x);
+        pt.y = Math.min(Math.max(Math.round(pt.y), -this.origin.y), this.numCells.y-this.origin.y);
         return pt;
     }
 
     getStageFromPoint:Function = (point: Point)=>{
-
-        let pt:Point = {x: point.x*this.cellSize + this.offSet.x, 
-                        y: point.y*this.cellSize + this.offSet.y};
-
+        let pt:Point = {x: (point.x + this.origin.x)*this.cellSize + this.offSet.x, 
+                        y: (point.y + this.origin.y)*this.cellSize + this.offSet.y};
         return pt;
     }
 

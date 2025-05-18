@@ -4,10 +4,13 @@
 	import GridLogic from './GridLogic';
 	import EditLabel from './EditLabel.svelte';
 
+	import {onMount} from 'svelte';
+
 	import type { Point, Vector } from '$lib/types';
 
     import { Label, Select, Input, Button, Toggle } from 'flowbite-svelte';
     import {TrashBinOutline, FileExportOutline, EditOutline, ArrowRightOutline, RefreshOutline} from 'flowbite-svelte-icons';
+	import { derived } from 'svelte/store';
 
 	let name: string = 'Motion Diagram Component';
 
@@ -32,12 +35,12 @@
 	}: Props = $props();
 
 	let nextId:number = 0;  // don't make it state, since it updates in the snippets.
+
 	let positionCircleProps = {radius: 8, fill: 'blue', opacity: 1}
 	let velocityArrowProps = {strokeWidth: 3, stroke: 'green', fill: 'green', opacity: 1}
 	
 	// constructor(size:Point, margin:Point, numCells:Point, origin:Point)
-	let gridLogic = new GridLogic({maxSize:{...size}, margin:{x:5, y:5}, numCells:{...numCells}, origin:{x: 10, y: 0}});
-	let editTitle:boolean = $state(false);
+	let gridLogic:GridLogic|undefined = $state();
 
 	let toggleChecked:boolean = $state(false);
 	let onStage:boolean = $state(false);
@@ -46,6 +49,28 @@
 
 	let previewPos:Point = $state({x:400, y:100});
 
+
+	// onMount( ()=>{
+	// 		setMaxStageSize();
+	// 	}
+	// );
+
+	let windowSize:Point = $state({x:0, y:0});
+	let stageContainerSize: Point = $state({x:0, y:0});
+	let maxStageSize: Point = $state({x:0, y:0});
+
+	const setMaxStageSize = ()=>{
+		maxStageSize.x = 0.9*Math.min(windowSize.x, stageContainerSize.x);
+		maxStageSize.y = 0.9*Math.min(windowSize.y, stageContainerSize.y);
+		gridLogic = new GridLogic({maxSize:{...maxStageSize}, margin:{x:5, y:5}, numCells:{...numCells}, origin:{x: 10, y: 0}});
+
+	};
+
+
+	$effect( ()=>{
+			setMaxStageSize();
+		}
+	);
 
 	// in case of 1D, shift points to avoid overlap
 	const shiftPoint:Function = (pt:Point, prior:Point, prePrior:Point) => {
@@ -102,6 +127,11 @@
 
 	}
 
+
+
+
+
+	
 </script>
 
 {#snippet drawPositions(xs:Point[])}
@@ -128,7 +158,10 @@
 	</Layer>
 {/snippet}
 
-<main class="flex flex-col items-center bg-gray-100 p-4 shadow-lg">
+<svelte:window bind:innerWidth={windowSize.x} bind:innerHeight={windowSize.y}/>
+
+<main class="flex flex-col items-center bg-gray-100 p-4 shadow-lg"
+			bind:offsetWidth={stageContainerSize.x} bind:offsetHeight={stageContainerSize.y}>
 	<EditLabel bind:text={title} size={'xl2'} />
 	<div class="flex flex-row">
 		{#if (showControlButtons)}
@@ -146,8 +179,9 @@
 				</div>
 			</div>
 		{/if}
-		<div id='md' class=''>
-			<Stage width={size.x} height={size.y} id='main_stage'
+		<div id='stageContainer' class='w-max'>
+
+			<Stage width={maxStageSize.x} height={maxStageSize.y} id='main_stage'
 				onmouseleave={() => {onStage = false;}}
 				onmouseenter={() => {onStage = true;}}
 				onclick={handleGridClick}

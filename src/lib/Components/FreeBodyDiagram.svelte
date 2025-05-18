@@ -6,7 +6,7 @@
     import EditLabel from './EditLabel.svelte';
 
     let name: string = 'Free Body Diagram';
-
+    import {onMount} from 'svelte';
 
     import type { Point, Vector, Force } from '$lib/types';
     import { Label, Select, Input, Button, Toggle, Hr } from 'flowbite-svelte';
@@ -18,6 +18,7 @@
         height?: number;
         title?: string;
         numCells?: Point;
+        origin?: Point;
         showControlButtons?: boolean;
         id?: number;
         margin?: Point;
@@ -30,6 +31,7 @@
         height = 400,
         title = $bindable('Title'),
         numCells = {x: 10, y:10},
+        origin = {x:5, y:5},
         showControlButtons,
         id = 0,
         margin = {x:5, y:5},
@@ -37,21 +39,35 @@
         handleDelete = (e: MouseEvent) => {},
     }: Props = $props();
 
-    let originPoint:Point = {x:5, y:5};
-    let gridLogic = new GridLogic({size:{x:width, y:height}, margin:{...margin}, numCells:{...numCells}, origin:{...originPoint}});
 
-    let originStage: Point = gridLogic.getStageFromPoint(originPoint);
+    
+    let windowSize:Point = $state({x:0, y:0});
+	let stageContainerSize: Point = $state({x:0, y:0});
+	let maxStageSize: Point = $state({x:0, y:0});
+
+    let gridLogic:GridLogic = $state(new GridLogic({maxSize:{...maxStageSize}, margin:{...margin}, numCells:{...numCells}, origin:{...origin} }));
+
     let nextId:number = $state(0);
     let previewForcePoint:Point = $state({x:0, y:0});
     let arrowProps = {strokeWidth: 3, stroke: 'green', fill: 'green', opacity: 1}
-	let editTitle:boolean = $state(false);
 
-	let toggleChecked:boolean = $state(false);
 	let onStage:boolean = $state(false);
     let showNetForce:boolean = $state(true);
 
+	const setMaxStageSize = ()=>{
+		maxStageSize.x = 0.9*Math.max(Math.min(windowSize.x, stageContainerSize.x), 200);
+		maxStageSize.y = 0.9*Math.max(Math.min(windowSize.y, stageContainerSize.y), 200);
+		gridLogic = new GridLogic({maxSize:{...maxStageSize}, margin:{x:5, y:5}, numCells:{...numCells}, origin:{...origin}});
+        // originStage = gridLogic.getStageFromPoint(originPoint);
+	};
 
-    let netForceVector:Point = $state({...originStage});
+	$effect( ()=>{
+			setMaxStageSize();
+		}
+	);
+
+    let netForceVector:Point = $state({...gridLogic.getStageFromPoint({x:0, y:0})});
+
     const handleGridMouseMove:(e: KonvaMouseEvent)=>void = (e: KonvaMouseEvent) => {
 		let pt:Point = gridLogic.getSnappedPointFromStage({x:e.evt.layerX, y:e.evt.layerY});
 		previewForcePoint = {...pt};
@@ -90,10 +106,10 @@
     };
 
     const updateNetForce:Function = () => {
-        netForceVector = {...originPoint};
+        netForceVector = {x:0, y:0};
         forceList.forEach((force:Force) => {
-            netForceVector.x += (force.components.x -originPoint.x);
-            netForceVector.y += force.components.y -originPoint.y;
+            netForceVector.x += force.components.x;
+            netForceVector.y += force.components.y;
         });
     }
 
@@ -111,33 +127,44 @@
         {tw: 'bg-lime-400', cc: '#a3e635'},
         {tw: 'bg-fuchsia-600', cc: '#d946ef'},
     ];
+
+
+    $inspect(forceList);
+        // <Arrow points={[originStage.x, originStage.y, 
+        // gridLogic.getStageFromPoint(forceComps).x, 
+        // gridLogic.getStageFromPoint(forceComps).y]} 
+        // {...arrowProps} opacity = {params.opacity} fill={params.color} stroke={params.color} 
+        // strokeWidth={params.strokeWidth} id={params.id} />   
 </script>
 
 
-{#snippet drawForce(forceComp:Point, params:{
+{#snippet drawForce(forceComps:Point, params:{
     id:string,
     opacity:number,
     color:string,
     strokeWidth:number,
     })}
-    <Arrow points={[originStage.x, originStage.y, 
-        gridLogic.getStageFromPoint(forceComp).x, 
-        gridLogic.getStageFromPoint(forceComp).y]} 
+     <Arrow points={[gridLogic.getStageFromPoint({x:0, y:0}).x,
+        gridLogic.getStageFromPoint({x:0, y:0}).y, 
+        gridLogic.getStageFromPoint(forceComps).x, 
+        gridLogic.getStageFromPoint(forceComps).y]} 
         {...arrowProps} opacity = {params.opacity} fill={params.color} stroke={params.color} 
-        strokeWidth={params.strokeWidth} id={params.id} />    
+        strokeWidth={params.strokeWidth} id={params.id} />   
 {/snippet}
 
 <main class="flex flex-col bg-gray-100 w-full rounded-xl shadow-lg p-4">
     <!-- <EditLabel bind:title/> -->
-    <EditLabel bind:text={title} {showControlButtons} size={'xl2'} />
+    <EditLabel bind:text={title} size={'xl2'} />
     <div class='flex flex-row flex-wrap justify-around'>
-        <div id='fbd' class='px-4 flex flex-col flex-wrap'>
+        <div id='fbd' class='px-4 flex flex-col flex-wrap'
+            bind:clientWidth={stageContainerSize.x} bind:clientHeight={stageContainerSize.y}
+        >
             <div id='fbd-label' class='ml-4 text-md font-bold select-none'>
                 Free Body Diagram
             </div>
             <Stage 
-                width={width}
-                height={height}
+                width={maxStageSize.x}
+                height={maxStageSize.y}
                 id='fbd-stage'
                 onclick={handleGridClick}
                 onmousemove={handleGridMouseMove}
@@ -159,8 +186,8 @@
                 </Layer>
                 {#if showNetForce}
                     <Layer>
-                        {#if forceList.length == 0 || (netForceVector.x == originPoint.x && netForceVector.y == originPoint.y)}
-                            <Circle opacity={0.6} fill='black' {...originStage} radius = {8} id={'net'} />
+                        {#if forceList.length == 0 || (netForceVector.x == 0 && netForceVector.y == 0)}
+                            <Circle opacity={0.6} fill='black' {...gridLogic.getStageFromPoint({x:0,y:0})} radius = {8} id={'net'} />
                         {:else}
                             {@render drawForce(netForceVector, {id: 'net', opacity: 0.5, color: 'black', strokeWidth: 6})}
                         {/if}
@@ -237,7 +264,7 @@
                 <Hr classHr="w-48 h-1 mx-auto my-7 rounded md:my-10"> = </Hr>
                 <div id='netForce-item' class='mt-4 p-4 w-full inline-flex flex-row justify-center font-bold text-xl mx-auto bg-gray-500 text-white rounded-xl'>
                         <div>Net Force
-                            {#if forceList.length == 0 || (netForceVector.x == originPoint.x && netForceVector.y == originPoint.y)}
+                            {#if forceList.length == 0 || (netForceVector.x == 0 && netForceVector.y == 0)}
                                 = 0
                             {/if}
                         </div>
