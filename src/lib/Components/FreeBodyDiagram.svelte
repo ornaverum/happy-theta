@@ -43,9 +43,15 @@
     
     let windowSize:Point = $state({x:0, y:0});
 	let stageContainerSize: Point = $state({x:0, y:0});
-	let maxStageSize: Point = $state({x:0, y:0});
 
-    let gridLogic:GridLogic = $state(new GridLogic({maxSize:{...maxStageSize}, margin:{...margin}, numCells:{...numCells}, origin:{...origin} }));
+    let maxStageSize: Point = $derived.by(() => {
+        let szX: number = 0.9*Math.max(stageContainerSize.x, 200);
+        let szY: number = 0.9*Math.max(stageContainerSize.y, 200);
+	    return {x: Math.max(szX, szY), y: Math.max(szX, szY)};
+    });
+
+
+    let gridLogic:GridLogic = $derived(new GridLogic({maxSize:{...maxStageSize}, margin:{...margin}, numCells:{...numCells}, origin:{...origin} }));
 
     let nextId:number = $state(0);
     let previewForcePoint:Point = $state({x:0, y:0});
@@ -54,23 +60,24 @@
 	let onStage:boolean = $state(false);
     let showNetForce:boolean = $state(true);
 
-	const setMaxStageSize = ()=>{
-        let szX: number = 0.9*Math.max(Math.min(windowSize.x, stageContainerSize.x), 200);
-        let szY: number = 0.9*Math.max(Math.min(windowSize.y, stageContainerSize.y), 200);
-		maxStageSize.x = Math.max(szX, szY);
-		maxStageSize.y = Math.max(szX, szY);
-		gridLogic = new GridLogic({maxSize:{...maxStageSize}, margin:{x:5, y:5}, numCells:{...numCells}, origin:{...origin}});
-        // originStage = gridLogic.getStageFromPoint(originPoint);
-	};
+	// const setMaxStageSize = ()=>{
+    //     let szX: number = 0.9*Math.max(Math.min(windowSize.x, stageContainerSize.x), 200);
+    //     let szY: number = 0.9*Math.max(Math.min(windowSize.y, stageContainerSize.y), 200);
+	// 	maxStageSize.x = Math.max(szX, szY);
+	// 	maxStageSize.y = Math.max(szX, szY);
+	// 	gridLogic = new GridLogic({maxSize:{...maxStageSize}, margin:{x:5, y:5}, numCells:{...numCells}, origin:{...origin}});
+    //     // originStage = gridLogic.getStageFromPoint(originPoint);
+	// };
 
-	$effect( ()=>{
-        let szX: number = 0.9*Math.max(Math.min(windowSize.x, stageContainerSize.x), 200);
-        let szY: number = 0.9*Math.max(Math.min(windowSize.y, stageContainerSize.y), 200);
-		maxStageSize.x = Math.max(szX, szY);
-		maxStageSize.y = Math.max(szX, szY);
-		gridLogic = new GridLogic({maxSize:{...maxStageSize}, margin:{x:5, y:5}, numCells:{...numCells}, origin:{...origin}});
- 		}
-	);
+	// $effect( ()=>{
+    //     let szX: number = 0.9*Math.max(Math.min(windowSize.x, stageContainerSize.x), 200);
+    //     let szY: number = 0.9*Math.max(Math.min(windowSize.y, stageContainerSize.y), 200);
+	// 	maxStageSize.x = Math.max(szX, szY);
+	// 	maxStageSize.y = Math.max(szX, szY);
+	// 	gridLogic = new GridLogic({maxSize:{...maxStageSize}, margin:{x:5, y:5}, numCells:{...numCells}, origin:{...origin}});
+ 	// 	}
+	// );
+
 
     let netForceVector:Point = $state({...gridLogic.getStageFromPoint({x:0, y:0})});
 
@@ -134,11 +141,9 @@
         {tw: 'bg-fuchsia-600', cc: '#d946ef'},
     ];
 
-
-    $inspect(forceList);
-    $inspect(stageContainerSize);
-    $inspect(maxStageSize);
-    $inspect(windowSize);
+    $inspect('windowSize', windowSize);
+    $inspect('stageContainerSize', stageContainerSize);
+    $inspect('maxStageSize', maxStageSize);
     $inspect(gridLogic);
 
 
@@ -167,8 +172,8 @@
 <main class="flex flex-col bg-gray-100 w-full rounded-xl shadow-lg p-4">
     <!-- <EditLabel bind:title/> -->
     <EditLabel bind:text={title} size={'xl2'} />
-    <div class='grid grid-cols-2 bg-blue-200 w-full'>
-        <div id='fbd' class='px-4 flex flex-col flex-wrap bg-red-200'
+    <div class='grid grid-cols-2 w-full'>
+        <div id='fbd' class='px-4 flex flex-col flex-wrap'
             bind:clientWidth={stageContainerSize.x} bind:clientHeight={stageContainerSize.y}
         >
             <div id='fbd-label' class='ml-4 text-md font-bold select-none'>
