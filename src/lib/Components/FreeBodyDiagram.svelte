@@ -60,25 +60,6 @@
 	let onStage:boolean = $state(false);
     let showNetForce:boolean = $state(true);
 
-	// const setMaxStageSize = ()=>{
-    //     let szX: number = 0.9*Math.max(Math.min(windowSize.x, stageContainerSize.x), 200);
-    //     let szY: number = 0.9*Math.max(Math.min(windowSize.y, stageContainerSize.y), 200);
-	// 	maxStageSize.x = Math.max(szX, szY);
-	// 	maxStageSize.y = Math.max(szX, szY);
-	// 	gridLogic = new GridLogic({maxSize:{...maxStageSize}, margin:{x:5, y:5}, numCells:{...numCells}, origin:{...origin}});
-    //     // originStage = gridLogic.getStageFromPoint(originPoint);
-	// };
-
-	// $effect( ()=>{
-    //     let szX: number = 0.9*Math.max(Math.min(windowSize.x, stageContainerSize.x), 200);
-    //     let szY: number = 0.9*Math.max(Math.min(windowSize.y, stageContainerSize.y), 200);
-	// 	maxStageSize.x = Math.max(szX, szY);
-	// 	maxStageSize.y = Math.max(szX, szY);
-	// 	gridLogic = new GridLogic({maxSize:{...maxStageSize}, margin:{x:5, y:5}, numCells:{...numCells}, origin:{...origin}});
- 	// 	}
-	// );
-
-
     let netForceVector:Point = $state({...gridLogic.getStageFromPoint({x:0, y:0})});
 
     const handleGridMouseMove:(e: KonvaMouseEvent)=>void = (e: KonvaMouseEvent) => {
@@ -141,17 +122,6 @@
         {tw: 'bg-fuchsia-600', cc: '#d946ef'},
     ];
 
-    $inspect('windowSize', windowSize);
-    $inspect('stageContainerSize', stageContainerSize);
-    $inspect('maxStageSize', maxStageSize);
-    $inspect(gridLogic);
-
-
-        // <Arrow points={[originStage.x, originStage.y, 
-        // gridLogic.getStageFromPoint(forceComps).x, 
-        // gridLogic.getStageFromPoint(forceComps).y]} 
-        // {...arrowProps} opacity = {params.opacity} fill={params.color} stroke={params.color} 
-        // strokeWidth={params.strokeWidth} id={params.id} />   
 </script>
 
 

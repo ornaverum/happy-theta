@@ -39,7 +39,16 @@
 
     let showControlButtons = getContext('ctrl');
 
-	let gridLogic = new GridLogic({size:{x:width, y:height }, margin:{...margin}, numCells:{...numCells}, origin:{...originPoint}});
+    let windowSize:Point = $state({x:0, y:0});
+	let stageContainerSize: Point = $state({x:0, y:0});
+
+    let maxStageSize: Point = $derived.by(() => {
+        let szX: number = 0.9*Math.max(stageContainerSize.x, 200);
+        let szY: number = 0.9*Math.max(stageContainerSize.y, 200);
+	    return {x: Math.max(szX, szY), y: Math.max(szX, szY)};
+    });
+
+    let gridLogic:GridLogic = $derived(new GridLogic({maxSize:{...maxStageSize}, margin:{...margin}, numCells:{...numCells}, origin:{...origin} }));
 
     const initialPositions:(yPt:number)=>Point = (yPt:number)=>{
         let pt:Point = {x: gridLogic.getStageFromPoint({x:5, y:0}).x, 
@@ -110,7 +119,9 @@
             />
 {/snippet}
 
-<div id='energy' class='flex flex-col bg-gray-100 w-full rounded-xl shadow-lg items-center'>
+<div id='energy' class='flex flex-col bg-gray-100 w-full rounded-xl shadow-lg items-center'
+    bind:clientWidth={stageContainerSize.x}
+    bind:clientHeight={stageContainerSize.y}>
     <div id='energy-label' class='ml-4 text-lg font-bold'>
         Energy Diagram
     </div>
@@ -122,24 +133,24 @@
         onmouseenter={() => {onStage = true;}}
         onclick={handleGridClick}
         onmousemove={handleGridMouseMove}
-    >
-    <Layer id='labels'>
-        {#each energyBars as bar}
-            <Text x={gridLogic.getStageFromPoint({x:0, y:0}).x-50} y={initalStagePositions[bar.id].y} text={bar.symbol} fontSize={0.5*gridLogic.cellSize} fill={bar.color} stroke='black' strokeWidth={0.5}/>
-        {/each}
-    </Layer>
-    <Grid {gridLogic}/>
-        <Layer>
+        >
+        <Layer id='labels'>
             {#each energyBars as bar}
-                {@render drawEnergyBar(bar)}
+                <Text x={gridLogic.getStageFromPoint({x:0, y:0}).x-50} y={initalStagePositions[bar.id].y} text={bar.symbol} fontSize={0.5*gridLogic.cellSize} fill={bar.color} stroke='black' strokeWidth={0.5}/>
             {/each}
-            <!-- <Circle bind:x={pos.x} bind:y ={pos.y} radius={50} fill='black' draggable ondragmove={(e)=>{
-                pos = {x: e.evt.layerX, y: 200};
-            }}/> -->
-            <!-- {@render drawEnergyBar(previewTotalEnergy)} -->
-            {#if onStage}
-                {@render drawEnergyBar(previewEnergy)}
-            {/if}
         </Layer>
+        <Grid {gridLogic}/>
+            <Layer>
+                {#each energyBars as bar}
+                    {@render drawEnergyBar(bar)}
+                {/each}
+                <!-- <Circle bind:x={pos.x} bind:y ={pos.y} radius={50} fill='black' draggable ondragmove={(e)=>{
+                    pos = {x: e.evt.layerX, y: 200};
+                }}/> -->
+                <!-- {@render drawEnergyBar(previewTotalEnergy)} -->
+                {#if onStage}
+                    {@render drawEnergyBar(previewEnergy)}
+                {/if}
+            </Layer>
     </Stage>
 </div>
