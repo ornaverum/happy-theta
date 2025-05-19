@@ -55,15 +55,21 @@
     let showNetForce:boolean = $state(true);
 
 	const setMaxStageSize = ()=>{
-		maxStageSize.x = 0.9*Math.max(Math.min(windowSize.x, stageContainerSize.x), 200);
-		maxStageSize.y = 0.9*Math.max(Math.min(windowSize.y, stageContainerSize.y), 200);
+        let szX: number = 0.9*Math.max(Math.min(windowSize.x, stageContainerSize.x), 200);
+        let szY: number = 0.9*Math.max(Math.min(windowSize.y, stageContainerSize.y), 200);
+		maxStageSize.x = Math.max(szX, szY);
+		maxStageSize.y = Math.max(szX, szY);
 		gridLogic = new GridLogic({maxSize:{...maxStageSize}, margin:{x:5, y:5}, numCells:{...numCells}, origin:{...origin}});
         // originStage = gridLogic.getStageFromPoint(originPoint);
 	};
 
 	$effect( ()=>{
-			setMaxStageSize();
-		}
+        let szX: number = 0.9*Math.max(Math.min(windowSize.x, stageContainerSize.x), 200);
+        let szY: number = 0.9*Math.max(Math.min(windowSize.y, stageContainerSize.y), 200);
+		maxStageSize.x = Math.max(szX, szY);
+		maxStageSize.y = Math.max(szX, szY);
+		gridLogic = new GridLogic({maxSize:{...maxStageSize}, margin:{x:5, y:5}, numCells:{...numCells}, origin:{...origin}});
+ 		}
 	);
 
     let netForceVector:Point = $state({...gridLogic.getStageFromPoint({x:0, y:0})});
@@ -130,6 +136,12 @@
 
 
     $inspect(forceList);
+    $inspect(stageContainerSize);
+    $inspect(maxStageSize);
+    $inspect(windowSize);
+    $inspect(gridLogic);
+
+
         // <Arrow points={[originStage.x, originStage.y, 
         // gridLogic.getStageFromPoint(forceComps).x, 
         // gridLogic.getStageFromPoint(forceComps).y]} 
@@ -155,8 +167,8 @@
 <main class="flex flex-col bg-gray-100 w-full rounded-xl shadow-lg p-4">
     <!-- <EditLabel bind:title/> -->
     <EditLabel bind:text={title} size={'xl2'} />
-    <div class='flex flex-row flex-wrap justify-around'>
-        <div id='fbd' class='px-4 flex flex-col flex-wrap'
+    <div class='grid grid-cols-2 bg-blue-200 w-full'>
+        <div id='fbd' class='px-4 flex flex-col flex-wrap bg-red-200'
             bind:clientWidth={stageContainerSize.x} bind:clientHeight={stageContainerSize.y}
         >
             <div id='fbd-label' class='ml-4 text-md font-bold select-none'>
