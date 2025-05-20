@@ -46,8 +46,8 @@
 
     let maxStageSize: Point = $derived.by(() => {
         let szX: number = 0.9*Math.max(stageContainerSize.x, 200);
-        let szY: number = 0.9*Math.max(stageContainerSize.y, 200);
-	    return {x: Math.max(szX, szY), y: Math.max(szX, szY)};
+        let szY: number = szX*((numCells.y + 1)/(numCells.x + 1));
+	    return {x: szX, y: szY};
     });
 
 
@@ -126,10 +126,10 @@
 
 
 {#snippet drawForce(forceComps:Point, params:{
-    id:string,
-    opacity:number,
-    color:string,
-    strokeWidth:number,
+        id:string,
+        opacity:number,
+        color:string,
+        strokeWidth:number,
     })}
      <Arrow points={[gridLogic.getStageFromPoint({x:0, y:0}).x,
         gridLogic.getStageFromPoint({x:0, y:0}).y, 

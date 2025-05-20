@@ -10,7 +10,6 @@
 
     import { Label, Select, Input, Button, Toggle } from 'flowbite-svelte';
     import {TrashBinOutline, FileExportOutline, EditOutline, ArrowRightOutline, RefreshOutline} from 'flowbite-svelte-icons';
-	import { derived } from 'svelte/store';
 
 	let name: string = 'Motion Diagram Component';
 
@@ -21,6 +20,7 @@
 		showControlButtons?: boolean;
 		posList?: Point[];
 		accList?: Vector[];
+		margin?: Point[];
 		handleDelete?: (e: KonvaMouseEvent)=> void;
 	}
 
@@ -31,6 +31,7 @@
 		showControlButtons = false,
 		posList = $bindable([]),
 		accList = $bindable([]),
+        margin = {x:5, y:5},
 		handleDelete = (e: KonvaMouseEvent) => {},
 	}: Props = $props();
 
@@ -39,38 +40,24 @@
 	let positionCircleProps = {radius: 8, fill: 'blue', opacity: 1}
 	let velocityArrowProps = {strokeWidth: 3, stroke: 'green', fill: 'green', opacity: 1}
 	
-	// constructor(size:Point, margin:Point, numCells:Point, origin:Point)
-	let gridLogic:GridLogic|undefined = $state();
+
 
 	let toggleChecked:boolean = $state(false);
 	let onStage:boolean = $state(false);
 	
-	// let divToCapture: HTMLDivElement = document.querySelector('#capture');
-
 	let previewPos:Point = $state({x:400, y:100});
-
-
-	// onMount( ()=>{
-	// 		setMaxStageSize();
-	// 	}
-	// );
 
 	let windowSize:Point = $state({x:0, y:0});
 	let stageContainerSize: Point = $state({x:0, y:0});
-	let maxStageSize: Point = $state({x:0, y:0});
 
-	const setMaxStageSize = ()=>{
-		maxStageSize.x = 0.9*Math.min(windowSize.x, stageContainerSize.x);
-		maxStageSize.y = 0.9*Math.min(windowSize.y, stageContainerSize.y);
-		gridLogic = new GridLogic({maxSize:{...maxStageSize}, margin:{x:5, y:5}, numCells:{...numCells}, origin:{x: 10, y: 0}});
+    let maxStageSize: Point = $derived.by(() => {
+        let szX: number = 0.9*Math.max(stageContainerSize.x, 200);
+        let szY: number = szX*((numCells.y + 1)/(numCells.x + 1));
+	    return {x: szX, y: szY};
+    });
 
-	};
+	let gridLogic:GridLogic = $derived(new GridLogic({maxSize:{...maxStageSize}, margin:{...margin}, numCells:{...numCells}, origin:{...origin} }));
 
-
-	$effect( ()=>{
-			setMaxStageSize();
-		}
-	);
 
 	// in case of 1D, shift points to avoid overlap
 	const shiftPoint:Function = (pt:Point, prior:Point, prePrior:Point) => {
@@ -128,8 +115,8 @@
 	}
 
 
-
-
+	$inspect('stageContainerSize', stageContainerSize);
+	$inspect('maxStateSize', maxStageSize);
 
 	
 </script>
@@ -188,8 +175,6 @@
 				onmousemove={handleGridMouseMove}
 				>
 				<Grid {gridLogic}/>
-				<!-- <Velocity bind:velList={velList} {posList}/>
-				<Acceleration active={toggleChecked && onStage} bind:accList={accList} {...params} {posList}/> -->
 
 				{@render drawPositions(posList)}
 
