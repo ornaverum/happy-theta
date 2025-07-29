@@ -21,6 +21,7 @@
 		posList?: Point[];
 		accList?: Vector[];
 		margin?: Point[];
+		origin?: Point[];
 		handleDelete?: (e: KonvaMouseEvent)=> void;
 	}
 
@@ -31,6 +32,7 @@
 		showControlButtons = false,
 		posList = $bindable([]),
 		accList = $bindable([]),
+		origin = {x:10, y:0},
         margin = {x:5, y:5},
 		handleDelete = (e: KonvaMouseEvent) => {},
 	}: Props = $props();
@@ -51,7 +53,7 @@
 	let stageContainerSize: Point = $state({x:0, y:0});
 
     let maxStageSize: Point = $derived.by(() => {
-        let szX: number = 0.9*Math.max(stageContainerSize.x, 200);
+        let szX: number = 1*Math.max(stageContainerSize.x, 200);
         let szY: number = szX*((numCells.y + 1)/(numCells.x + 1));
 	    return {x: szX, y: szY};
     });
@@ -116,7 +118,8 @@
 
 
 	$inspect('stageContainerSize', stageContainerSize);
-	$inspect('maxStateSize', maxStageSize);
+	$inspect('maxStageSize', maxStageSize);
+	$inspect(gridLogic);
 
 	
 </script>
@@ -166,7 +169,7 @@
 				</div>
 			</div>
 		{/if}
-		<div id='stageContainer' class='w-max'>
+		<div id='stageContainer' class='w-full mx-auto'>
 
 			<Stage width={maxStageSize.x} height={maxStageSize.y} id='main_stage'
 				onmouseleave={() => {onStage = false;}}
