@@ -17,6 +17,7 @@
 		size?: Point;
 		title?: string;
 		numCells?: Point;
+		cellSize?: Point;
 		showControlButtons?: boolean;
 		posList?: Point[];
 		accList?: Vector[];
@@ -29,6 +30,7 @@
 		size = {x:800, y:800},
 		title = $bindable('Title'),
 		numCells = {x: 20, y:0},
+		cellSize = undefined,
 		showControlButtons = false,
 		posList = $bindable([]),
 		accList = $bindable([]),
@@ -58,7 +60,7 @@
 	    return {x: szX, y: szY};
     });
 
-	let gridLogic:GridLogic = $derived(new GridLogic({maxSize:{...maxStageSize}, margin:{...margin}, numCells:{...numCells}, origin:{...origin} }));
+	let gridLogic:GridLogic = $derived(new GridLogic({numCells:{...numCells}, origin:{...origin}, cellSize:{...cellSize}}));
 
 
 	// in case of 1D, shift points to avoid overlap

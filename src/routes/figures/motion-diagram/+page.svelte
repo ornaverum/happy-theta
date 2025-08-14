@@ -89,6 +89,8 @@
 	
 	let defaultParams = {
 		size: {x: 800, y:800},
+		cellSize: {x: 20, y: 20},
+		numCells: {x:10, y:10},
 	}
 </script>
 
@@ -97,7 +99,7 @@
 <ul class='list-none'>
 	{#each mdSets.instances as md}
 		<li class='py-4'>
-			<MotionDiagram {...defaultParams} numCells={{x: 0, y: 10}} bind:posList={md.data.posList} bind:accList={md.data.accList} bind:title={md.title} {handleDelete}/>
+			<MotionDiagram {...defaultParams} bind:posList={md.data.posList} bind:accList={md.data.accList} bind:title={md.title} {handleDelete}/>
 		</li>
 	{/each}
 </ul>

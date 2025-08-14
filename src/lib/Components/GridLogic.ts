@@ -10,9 +10,7 @@ type GridLine = {
 }
 
 export default class GridLogic {
-    maxSize?: Point;
     size?: Point;
-    margin?: Point;
     numCells?: Point;
     origin?: Point;
     cellSize?: number;
@@ -21,24 +19,21 @@ export default class GridLogic {
     offSet?: Point;
     gridList?: GridLine[];
 
-    constructor({maxSize={x:500, y:500}, margin={x:5, y:5}, numCells={x:5, y:5}, origin={x:0, y:0}, cellSize=0, stageCenter=undefined, gridCenter=undefined, offSet=undefined, gridList=undefined}) {
+    constructor({numCells={x:10, y:10}, origin={x:0, y:0}, 
+            cellSize=20, stageCenter=undefined, gridList=undefined}) {
 
-        this.maxSize = maxSize;
-        this.size = maxSize;
-        this.margin = margin;
-        this.numCells = numCells;
+            this.numCells = numCells;
+            this.cellSize = cellSize;
+
         this.origin = origin;
-        this.cellSize = cellSize || Math.min((maxSize.x-2*margin.x)/(numCells.x+1), (maxSize.y-2*margin.y)/(numCells.y+1));
-        // this.cellSize = cellSize || Math.min(maxSize.x/(numCells.x+1), maxSize.y/(numCells.y+1));
 
-        this.size.x = Math.min(this.cellSize*(this.numCells.x+1)+2*margin.x || this.maxSize.x);
-        this.size.y = Math.min(this.cellSize*(this.numCells.y+1)+2*margin.y || this.maxSize.y);
+        this.size = {x:(numCells.x+2)*cellSize, y:(numCells.y+2)*cellSize};
 
-
-        this.stageCenter = stageCenter ||{x: this.size.x/2.0, y: this.size.y/2.0};
-        this.gridCenter = gridCenter || {x: this.origin.x + this.numCells.x*this.cellSize/2.0, y: this.origin.y + this.numCells.y*this.cellSize/2.0};
-        this.offSet = offSet || this.calculateOffset(this.gridCenter, this.stageCenter);
+        this.stageCenter = {x: this.size.x/2.0, y: this.size.y/2.0};
+        this.gridCenter = {x: this.origin.x + this.numCells.x*this.cellSize/2.0, y: this.origin.y + this.numCells.y*this.cellSize/2.0};
+        this.offSet = this.calculateOffset(this.gridCenter, this.stageCenter);
         this.gridList = gridList || this.buildGridLines(this.numCells, this.cellSize, this.origin);
+
     }
 
     range(start:number, end:number, step:number = 1) {
