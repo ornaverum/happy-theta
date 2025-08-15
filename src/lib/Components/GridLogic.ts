@@ -22,17 +22,21 @@ export default class GridLogic {
     constructor({numCells={x:10, y:10}, origin={x:0, y:0}, 
             cellSize=20, stageCenter=undefined, gridList=undefined}) {
 
-            this.numCells = numCells;
-            this.cellSize = cellSize;
+        this.numCells = numCells;
+        this.cellSize = cellSize;
 
         this.origin = origin;
 
-        this.size = {x:(numCells.x+2)*cellSize, y:(numCells.y+2)*cellSize};
+        this.size = {x:(this.numCells.x+2)*this.cellSize, y:(this.numCells.y+2)*this.cellSize};
 
         this.stageCenter = {x: this.size.x/2.0, y: this.size.y/2.0};
+
+        console.log('GridLogic: size, numCells, origin, cellSize, stageCenter', this.size, this.numCells, this.origin, this.cellSize, this.stageCenter);
         this.gridCenter = {x: this.origin.x + this.numCells.x*this.cellSize/2.0, y: this.origin.y + this.numCells.y*this.cellSize/2.0};
         this.offSet = this.calculateOffset(this.gridCenter, this.stageCenter);
         this.gridList = gridList || this.buildGridLines(this.numCells, this.cellSize, this.origin);
+
+        
 
     }
 
