@@ -35,9 +35,6 @@ export default class GridLogic {
         this.gridCenter = {x: this.origin.x + this.numCells.x*this.cellSize/2.0, y: this.origin.y + this.numCells.y*this.cellSize/2.0};
         this.offSet = this.calculateOffset(this.gridCenter, this.stageCenter);
         this.gridList = gridList || this.buildGridLines(this.numCells, this.cellSize, this.origin);
-
-        
-
     }
 
     range(start:number, end:number, step:number = 1) {

@@ -21,8 +21,8 @@
 		showControlButtons?: boolean;
 		posList?: Point[];
 		accList?: Vector[];
-		margin?: Point[];
-		origin?: Point[];
+		margin?: Point;
+		origin?: Point;
 		handleDelete?: (e: KonvaMouseEvent)=> void;
 	}
 
