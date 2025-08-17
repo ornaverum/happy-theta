@@ -6,6 +6,7 @@
 	import GridLogic from './GridLogic';
 
 
+	
 	type GridLine = {
 		id: number,
 		x0: number,
