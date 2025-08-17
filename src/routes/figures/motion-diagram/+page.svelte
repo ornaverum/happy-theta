@@ -90,8 +90,8 @@
 	let defaultParams = {
 		size: {x: 500, y:500},
 		cellSize: 50,
-		numCells: {x:10, y:10},
-		origin: {x:0, y:5}
+		numCells: {x:10, y:0},
+		origin: {x:5, y:0}
 	}
 </script>
 

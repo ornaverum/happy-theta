@@ -17,7 +17,7 @@
 		size?: Point;
 		title?: string;
 		numCells?: Point;
-		cellSize?: number;
+		initCellSize?: number;
 		showControlButtons?: boolean;
 		posList?: Point[];
 		accList?: Vector[];
@@ -30,7 +30,7 @@
 		size = {x:800, y:800},
 		title = $bindable('Title'),
 		numCells = {x: 20, y:0},
-		cellSize = 20,
+		initCellSize = 20,
 		showControlButtons = false,
 		posList = $bindable([]),
 		accList = $bindable([]),
@@ -39,12 +39,11 @@
 		handleDelete = (e: KonvaMouseEvent) => {},
 	}: Props = $props();
 
+
 	let nextId:number = 0;  // don't make it state, since it updates in the snippets.
 
 	let positionCircleProps = {radius: 8, fill: 'blue', opacity: 1}
 	let velocityArrowProps = {strokeWidth: 3, stroke: 'green', fill: 'green', opacity: 1}
-	
-
 
 	let toggleChecked:boolean = $state(false);
 	let onStage:boolean = $state(false);
@@ -55,10 +54,30 @@
 	let stageContainerSize: Point = $state({x:0, y:0});
 
     let maxStageSize: Point = $derived.by(() => {
-        let szX: number = 1*Math.max(stageContainerSize.x, 200);
-        let szY: number = szX*((numCells.y + 1)/(numCells.x + 1));
+		let gridAspectRatio:number = (numCells.x + 2)/(numCells.y + 2);
+		let containerAspectRatio:number = windowSize.x / windowSize.y;
+		let szX:number = 200;
+		let szY:number = 200;
+
+		if (gridAspectRatio > 1){  // Landscape
+			szX = 0.5*Math.max(windowSize.x, 200);
+	        szY = szX/gridAspectRatio;
+		}
+
+		if (gridAspectRatio <= 1){ //|| szY > stageContainerSize.y){ // portrait, or width is too much for screen height
+			szY = 0.5*Math.max(windowSize.y, 200);
+			szX = szY*gridAspectRatio;
+		}
+
 	    return {x: szX, y: szY};
     });
+
+	let cellSize:number = $derived.by(() => {
+		let szX = maxStageSize.x / (numCells.x + 2);
+		let szY = maxStageSize.y / (numCells.y + 2);
+		return Math.min(szX, szY) || initCellSize;
+	});
+
 
 	let gridLogic:GridLogic = $derived(new GridLogic( {
 		numCells: {...numCells},
@@ -156,7 +175,7 @@
 
 <svelte:window bind:innerWidth={windowSize.x} bind:innerHeight={windowSize.y}/>
 
-<main class="flex flex-col items-center bg-gray-100 p-4 shadow-lg"
+<main class="flex flex-col items-center bg-gray-100 p-4 shadow-lg w-full"
 			bind:offsetWidth={stageContainerSize.x} bind:offsetHeight={stageContainerSize.y}>
 	<EditLabel bind:text={title} size={'xl2'} />
 	<div class="flex flex-row">
@@ -175,7 +194,7 @@
 				</div>
 			</div>
 		{/if}
-		<div id='stageContainer' class='w-full mx-auto'>
+		<div id='stageContainer' class='min-w-11/12 mx-auto'>
 
 			<Stage width={maxStageSize.x} height={maxStageSize.y} id='main_stage'
 				onmouseleave={() => {onStage = false;}}
