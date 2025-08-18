@@ -1,4 +1,5 @@
 import type {Point} from '$lib/types';
+import {tick} from 'svelte';
 
 type GridLine = {
     x0: number,
@@ -34,6 +35,10 @@ export default class GridLogic {
         this.gridCenter = {x: this.origin.x + this.numCells.x*this.cellSize/2.0, y: this.origin.y + this.numCells.y*this.cellSize/2.0};
         this.offSet = this.calculateOffset(this.gridCenter, this.stageCenter);
         this.gridList = gridList || this.buildGridLines(this.numCells, this.cellSize, this.origin);
+    }
+
+    init = async () => {
+        await tick();
     }
 
     range(start:number, end:number, step:number = 1) {
@@ -105,18 +110,6 @@ export default class GridLogic {
             });
         }
     
-        // for (let i = 0; i <= numCells.y; i++) {
-        //     let startParallel = i * cellSize;
-        //     let startPerp = 0;
-        //     let endPerp = numCells.x * cellSize;
-        //     gridList.push({
-        //         x0: startPerp + this.offSet.x,
-        //         y0: startParallel+ this.offSet.y,
-        //         x1: endPerp + this.offSet.x,
-        //         y1: startParallel+ this.offSet.y,
-        //         gridLineType: (i-origin.y)%5==0?'major':'minor',
-        //     });
-        // }
     
         // y axis
         let x_0 = origin.x * cellSize + this.offSet.x;

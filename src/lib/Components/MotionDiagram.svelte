@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { Stage, Layer, Line, Circle, Arrow, Text, Rect, type KonvaMouseEvent, Group } from 'svelte-konva';
-	import GridLines from './GridLines.svelte';
 	import GridLogic from './GridLogic';
 	import EditLabel from './EditLabel.svelte';
 	import Grid from './Grid.svelte';

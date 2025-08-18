@@ -1,83 +1,77 @@
 <script lang='ts'>
     import GridLines from "./GridLines.svelte";
     import GridLogic from "./GridLogic";
+    import Grid from "./Grid.svelte";
     import type {Point, EnergyBar} from "../types";
     import {Stage, Layer, Rect, Circle, Text, type KonvaMouseEvent} from "svelte-konva";
-    import {setContext, getContext} from "svelte";
+    import {setContext, getContext, tick} from "svelte";
 	import { BarsFromLeftOutline } from "flowbite-svelte-icons";
     import {onMount} from 'svelte';
 
     interface Props {
         title?: string;
         id?: number;
-        height?: number;
-        width?: number;
         numCells?: Point;
+        initCellSize?: number;
         handleDelete?: (e: MouseEvent)=> void;
         workFlag?: boolean;
-        margin?: Point;
         energyBars: EnergyBar[];
     }
 
     let {
         title = $bindable('Title'),
         id = 0,
-        height = 200,
-        width = 500,
         numCells = {x: 10, y:5},
-        margin = {x:5, y:5},
+        initCellSize = 20,
         handleDelete = (e: MouseEvent) => {},
         workFlag = false,
         energyBars = $bindable([])
     }: Props = $props();
 
     let onStage:boolean = $state(false);
-	let originPoint = {x:5, y:1};
+	let origin = {x:5, y:1};
 
     numCells.y = energyBars.length;
-    height = 40*(energyBars.length);
+    let cellSize = $state(initCellSize);
 
     let showControlButtons = getContext('ctrl');
 
-    let windowSize:Point = $state({x:0, y:0});
-	let stageContainerSize: Point = $state({x:0, y:0});
 
-    let maxStageSize: Point = $derived.by(() => {
-        let szX: number = 0.9*Math.max(stageContainerSize.x, 200);
-        let szY: number = 0.9*Math.max(stageContainerSize.y, 200);
-	    return {x: Math.max(szX, szY), y: Math.max(szX, szY)};
+    // let gridLogic:GridLogic|null = $state(new GridLogic({cellSize: cellSize, numCells: numCells}));
+    let gridLogic:GridLogic|null = $state(null);
+
+    let initialStagePositions:Point[] = $state([]);
+
+    onMount(async () => {
+        await tick();
+        if (gridLogic && energyBars.length > 0) {
+            initialStagePositions = energyBars.map( (bar) => 
+                gridLogic.getStageFromPoint({x:0-0.15, y: bar.id + 0.15})
+            );
+        }
     });
 
-    let gridLogic:GridLogic = $derived(new GridLogic({maxSize:{...maxStageSize}, margin:{...margin}, numCells:{...numCells}, origin:{...origin} }));
+    // Add a computed property to check if positions are ready
+    let positionsReady = $derived(initialStagePositions.length > 0);
 
-    const initialPositions:(yPt:number)=>Point = (yPt:number)=>{
-        let pt:Point = {x: gridLogic.getStageFromPoint({x:5, y:0}).x, 
-            y: gridLogic.getStageFromPoint({x:0, y:yPt+0.15}).y };
-        return pt;
-    }
-
-    const initalStagePositions:Point[] = [
-        {...gridLogic.getStageFromPoint({x:0-0.15, y:0+0.15})},
-        {...gridLogic.getStageFromPoint({x:0-0.15, y:1+0.15})},
-        {...gridLogic.getStageFromPoint({x:0-0.15, y:2+0.15})},
-        {...gridLogic.getStageFromPoint({x:0-0.15, y:3+0.15})},
-        {...gridLogic.getStageFromPoint({x:0-0.15, y:4+0.15})},
-    ]
-    
-    let stagePositions:Point[] = $state(initalStagePositions);
+    let stagePositions:Point[] = $state(initialStagePositions);
 
     const handleGridClick:(e: KonvaMouseEvent)=>void = (e: KonvaMouseEvent) => {
+        if (!gridLogic || !positionsReady) return;
+        
         let pt:Point = {x:e.evt.layerX, y:e.evt.layerY};
         let snap:Point = gridLogic.getPointFromStage(pt);
         let bar:number = Math.floor(snap.y);
         snap = {x: Math.max(Math.round(snap.x),0.2)-5, y: bar};
-        pt = gridLogic.getStageFromPoint(snap);
-        stagePositions[bar] = {x:pt.x-gridLogic.cellSize/3/2, y: initalStagePositions[bar].y};
+        pt = gridLogic.getStageFromPoint(snap); 
+        stagePositions[bar] = {x:pt.x-gridLogic.cellSize/3/2, y: initialStagePositions[bar].y};
         energyBars[bar].value = snap.x; //- gridLogic.getStageFromPoint(originPoint).x;
     }
 
 
     const handleGridMouseMove:(e: KonvaMouseEvent)=>void = (e: KonvaMouseEvent) => {
+        if (!gridLogic || !positionsReady) return;
+        
         let pt:Point = {x:e.evt.layerX, y:e.evt.layerY};
         let snap:Point = gridLogic.getPointFromStage(pt);
         if (snap.x >= 0 && snap.x <= numCells.x && snap.y >= 0 && snap.y <= numCells.y) {
@@ -85,7 +79,7 @@
             snap = {x: Math.max(Math.round(snap.x),0.2)-5, y: bar};
             pt = gridLogic.getStageFromPoint(snap);
             previewEnergy.id = bar;
-            // previewEnergy.origin = {x:pt.x-gridLogic.cellSize/3/2, y: initalStagePositions[bar].y};
+            // previewEnergy.origin = {x:pt.x-gridLogic.cellSize/3/2, y: initialStagePositions[bar].y};
             previewEnergy.value = snap.x; //- gridLogic.getStageFromPoint(originPoint).x;
             previewEnergy.color = energyBars[bar].color;
         }
@@ -93,23 +87,31 @@
 
 
     let previewTotalEnergy: EnergyBar = $derived.by(() => {
+        if (!positionsReady || initialStagePositions.length <= 4) {
+            return {id: 4, name: 'Total Energy Preview', symbol: 'E', origin: {x: 0, y: 0}, value: 0, color: 'purple', opacity: 0.3};
+        }
+        
         let w = 0;
         energyBars.forEach((bar:EnergyBar)=>{
             if(bar.id !== 4)
                 w+=Math.floor(bar.value);
         });
-        return {id: 4, name: 'Total Energy Preview', symbol:'E', origin: {...initialPositions(4)}, value: w, color: 'purple', opacity: 0.3};
+        return {id: 4, name: 'Total Energy Preview', symbol:'E', origin: {...initialStagePositions[4]}, value: w, color: 'purple', opacity: 0.3};
         // return {id: -1, name: 'Total Energy Preview', symbol:'E', origin: {...initialPositions(4)}, width:3, color: 'purple'};
     });
 
 
     let previewEnergy: EnergyBar = $state({id: 4, name: 'Preview', symbol: 'E', value: 0, color: 'purple', opacity: 0.3});
 
+
+
+
 </script>
 
 {#snippet drawEnergyBar(bar:EnergyBar)}
-        <Rect x={initialPositions(bar.id).x} 
-            y={initialPositions(bar.id).y} 
+    {#if positionsReady && initialStagePositions[bar.id]}
+        <Rect x={initialStagePositions[bar.id].x} 
+            y={initialStagePositions[bar.id].y} 
             width={bar.value*gridLogic.cellSize} 
             height={0.7*gridLogic.cellSize} 
             fill={bar.color}
@@ -117,29 +119,29 @@
             strokeWidth={1}
             opacity={bar.opacity || 0.7}
             />
+    {/if}
 {/snippet}
 
-<div id='energy' class='flex flex-col bg-gray-100 w-full rounded-xl shadow-lg items-center'
-    bind:clientWidth={stageContainerSize.x}
-    bind:clientHeight={stageContainerSize.y}>
+{#snippet writeEnergyLabels(bar:EnergyBar)}
+    {#if positionsReady && initialStagePositions[bar.id]}
+        <Text x={initialStagePositions[bar.id].x} y={initialStagePositions[bar.id].y} text={bar.symbol} 
+                fontSize={0.5*cellSize} fill={bar.color} stroke='black' strokeWidth={0.5}/>
+    {/if}
+{/snippet}
+
+<div id='energy' class='flex flex-col bg-gray-100 w-full rounded-xl shadow-lg items-center'>
     <div id='energy-label' class='ml-4 text-lg font-bold'>
         Energy Diagram
     </div>
-    <Stage 
-        width={width}
-        height={height}
-        id='energy-stage'
-        onmouseleave={() => {onStage = false;}}
-        onmouseenter={() => {onStage = true;}}
-        onclick={handleGridClick}
-        onmousemove={handleGridMouseMove}
-        >
-        <Layer id='labels'>
-            {#each energyBars as bar}
-                <Text x={gridLogic.getStageFromPoint({x:0, y:0}).x-50} y={initalStagePositions[bar.id].y} text={bar.symbol} fontSize={0.5*gridLogic.cellSize} fill={bar.color} stroke='black' strokeWidth={0.5}/>
-            {/each}
-        </Layer>
-        <GridLines {gridLogic}/>
+        <Grid {numCells} {initCellSize} {origin} bind:gridLogic bind:onStage
+				{handleGridMouseMove} {handleGridClick}
+			>
+        {#if positionsReady}
+            <Layer id='labels'>
+                {#each energyBars as bar}
+                    {@render writeEnergyLabels(bar)}
+                {/each}
+            </Layer>
             <Layer>
                 {#each energyBars as bar}
                     {@render drawEnergyBar(bar)}
@@ -152,5 +154,6 @@
                     {@render drawEnergyBar(previewEnergy)}
                 {/if}
             </Layer>
-    </Stage>
+        {/if}
+    </Grid>
 </div>
