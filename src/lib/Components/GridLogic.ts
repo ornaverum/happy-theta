@@ -52,25 +52,26 @@ export default class GridLogic {
 
 
     getPointFromStage:Function = (point: Point)=>{
-        console.log('getPointFromStage', point, this.offSet, this.cellSize, this.origin);
-        console.log({x: (point.x - this.offSet.x)/this.cellSize - this.origin.x, 
-            y: (point.y - this.offSet.y)/this.cellSize - this.origin.y});
-            
         return {x: (point.x - this.offSet.x)/this.cellSize - this.origin.x, 
-            y: (point.y - this.offSet.y)/this.cellSize - this.origin.y};
+            y: this.numCells.y -this.origin.y - ((point.y - this.offSet.y)/this.cellSize)};
+        // flips y so up is positive
     }
 
     getSnappedPointFromStage:Function = (point: Point)=>{
         let pt = this.getPointFromStage(point);
-        pt.x = Math.min(Math.max(Math.round(pt.x), -this.origin.x), this.numCells.x-this.origin.x);
-        pt.y = Math.min(Math.max(Math.round(pt.y), -this.origin.y), this.numCells.y-this.origin.y);
+        pt.x = Math.round(pt.x);//Math.min(Math.max(Math.round(pt.x), this.origin.x), this.numCells.x-this.origin.x);
+        pt.y = Math.round(pt.y);//Math.min(Math.max(Math.round(pt.y), this.origin.y), this.numCells.y-this.origin.y);
+        
         return pt;
     }
 
     getStageFromPoint:Function = (point: Point)=>{
+        // point.y = this.numCells.y - point.y; // flips y so up is positive
+        point.y = -point.y;
         let pt:Point = {x: (point.x + this.origin.x)*this.cellSize + this.offSet.x, 
                         y: (point.y + this.origin.y)*this.cellSize + this.offSet.y};
         return pt;
+
     }
 
     getGridList:Function = ()=>{

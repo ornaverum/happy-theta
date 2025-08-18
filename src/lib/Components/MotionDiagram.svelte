@@ -91,7 +91,9 @@
 			let prePrior:Point|null = posList[posList.length-2]||null;
 			newPt = shiftPoint({...newPt}, {...prior}, {...prePrior});
 		}
-
+		console.log('evt x & y', e.evt.layerX, e.evt.layerY);
+		console.log('snapped pt', pt);
+		console.log('new point', newPt);
 		previewPos = {...newPt};
 	}
 	const handleGridClick:(e: KonvaMouseEvent)=>void = (e: KonvaMouseEvent) => {
