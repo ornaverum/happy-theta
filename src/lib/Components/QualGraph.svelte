@@ -2,7 +2,7 @@
 	import { Stage, Layer, Line, Circle, Path, Group, type KonvaMouseEvent} from 'svelte-konva';
 	import type {GraphPath, Point} from '$lib/types';
     import { Label, Select, Input, Button, ButtonGroup, Tooltip} from 'flowbite-svelte';
-	import Grid from './Grid.svelte';
+	import GridLines from './GridLines.svelte';
 	import GridLogic from './GridLogic.js';
     import {TrashBinOutline, ChevronDownOutline, ChevronRightOutline, RefreshOutline} from 'flowbite-svelte-icons';
 	import { Dropdown, DropdownItem } from 'flowbite-svelte';
@@ -279,7 +279,7 @@
 				onmouseleave={()=>{onStage = false;}}
 				onmouseenter={()=>{onStage = true;}}
 			>
-				<Grid {gridLogic}/>
+				<GridLines {gridLogic}/>
 				<Layer id='dot_layer'>
 					{#each dotList as dot (dot.id)}
 						{@render drawDot(dot)}

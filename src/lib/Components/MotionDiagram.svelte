@@ -1,8 +1,9 @@
 <script lang="ts">
 	import { Stage, Layer, Line, Circle, Arrow, Text, Rect, type KonvaMouseEvent, Group } from 'svelte-konva';
-	import Grid from './Grid.svelte';
+	import GridLines from './GridLines.svelte';
 	import GridLogic from './GridLogic';
 	import EditLabel from './EditLabel.svelte';
+	import Grid from './Grid.svelte';
 
 	import {onMount} from 'svelte';
 
@@ -27,7 +28,6 @@
 	}
 
 	let {
-		size = {x:800, y:800},
 		title = $bindable('Title'),
 		numCells = {x: 20, y:0},
 		initCellSize = 20,
@@ -35,7 +35,6 @@
 		posList = $bindable([]),
 		accList = $bindable([]),
 		origin = {x:10, y:0},
-        margin = {x:5, y:5},
 		handleDelete = (e: KonvaMouseEvent) => {},
 	}: Props = $props();
 
@@ -50,41 +49,7 @@
 	
 	let previewPos:Point = $state({x:400, y:100});
 
-	let windowSize:Point = $state({x:0, y:0});
-	let stageContainerSize: Point = $state({x:0, y:0});
-
-    let maxStageSize: Point = $derived.by(() => {
-		let gridAspectRatio:number = (numCells.x + 2)/(numCells.y + 2);
-		let containerAspectRatio:number = windowSize.x / windowSize.y;
-		let szX:number = 200;
-		let szY:number = 200;
-
-		if (gridAspectRatio > 1){  // Landscape
-			szX = 0.5*Math.max(windowSize.x, 200);
-	        szY = szX/gridAspectRatio;
-		}
-
-		if (gridAspectRatio <= 1){ //|| szY > stageContainerSize.y){ // portrait, or width is too much for screen height
-			szY = 0.5*Math.max(windowSize.y, 200);
-			szX = szY*gridAspectRatio;
-		}
-
-	    return {x: szX, y: szY};
-    });
-
-	let cellSize:number = $derived.by(() => {
-		let szX = maxStageSize.x / (numCells.x + 2);
-		let szY = maxStageSize.y / (numCells.y + 2);
-		return Math.min(szX, szY) || initCellSize;
-	});
-
-
-	let gridLogic:GridLogic = $derived(new GridLogic( {
-		numCells: {...numCells},
-		origin: {...origin},
-		cellSize: cellSize
-	}));
-
+	let gridLogic:GridLogic|null = $state(null);
 
 	// in case of 1D, shift points to avoid overlap
 	const shiftPoint:Function = (pt:Point, prior:Point, prePrior:Point) => {
@@ -141,12 +106,6 @@
 
 	}
 
-
-	$inspect('stageContainerSize', stageContainerSize);
-	$inspect('maxStageSize', maxStageSize);
-	$inspect(gridLogic);
-
-	
 </script>
 
 {#snippet drawPositions(xs:Point[])}
@@ -173,10 +132,8 @@
 	</Layer>
 {/snippet}
 
-<svelte:window bind:innerWidth={windowSize.x} bind:innerHeight={windowSize.y}/>
 
-<main class="flex flex-col items-center bg-gray-100 p-4 shadow-lg w-full"
-			bind:offsetWidth={stageContainerSize.x} bind:offsetHeight={stageContainerSize.y}>
+<main class="flex flex-col items-center bg-gray-100 p-4 shadow-lg w-full">
 	<EditLabel bind:text={title} size={'xl2'} />
 	<div class="flex flex-row">
 		{#if (showControlButtons)}
@@ -195,15 +152,9 @@
 			</div>
 		{/if}
 		<div id='stageContainer' class='min-w-11/12 mx-auto'>
-
-			<Stage width={maxStageSize.x} height={maxStageSize.y} id='main_stage'
-				onmouseleave={() => {onStage = false;}}
-				onmouseenter={() => {onStage = true;}}
-				onclick={handleGridClick}
-				onmousemove={handleGridMouseMove}
-				>
-				<Grid {gridLogic}/>
-
+			<Grid {numCells} {initCellSize} {origin} bind:gridLogic bind:onStage
+				{handleGridMouseMove} {handleGridClick}
+			>
 				{@render drawPositions(posList)}
 
 				{@render drawVelocities(posList)}
@@ -214,7 +165,7 @@
 					</Layer>
 				{/if}
 
-			</Stage>
+			</Grid>
 		</div>
 	</div>
 </main>

@@ -1,5 +1,5 @@
 <script lang='ts'>
-    import Grid from "./Grid.svelte";
+    import GridLines from "./GridLines.svelte";
     import GridLogic from "./GridLogic";
     import type {Point, EnergyBar} from "../types";
     import {Stage, Layer, Rect, Circle, Text, type KonvaMouseEvent} from "svelte-konva";
@@ -139,7 +139,7 @@
                 <Text x={gridLogic.getStageFromPoint({x:0, y:0}).x-50} y={initalStagePositions[bar.id].y} text={bar.symbol} fontSize={0.5*gridLogic.cellSize} fill={bar.color} stroke='black' strokeWidth={0.5}/>
             {/each}
         </Layer>
-        <Grid {gridLogic}/>
+        <GridLines {gridLogic}/>
             <Layer>
                 {#each energyBars as bar}
                     {@render drawEnergyBar(bar)}

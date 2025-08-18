@@ -1,80 +1,86 @@
 <script lang='ts'>
+	import type { SvelteComponent } from 'svelte';
+	import {Stage, type KonvaMouseEvent} from 'svelte-konva';
+    import type {Point, Vector} from "../types";
+    import GridLogic from './GridLogic';
+	import GridLines from './GridLines.svelte';
 
-    import { Stage, Layer, Line, Circle, Arrow, Text, Group, Rect, type KonvaMouseEvent} from 'svelte-konva';
-	import type { Point } from '$lib/types';
-	import {onMount, tick} from 'svelte';
-	import GridLogic from './GridLogic';
+		interface Props {
+			children?:any;
+			numCells?: Point;
+			initCellSize?: number;
+			origin?: Point;
+			gridLogic?: GridLogic|null;
+			onStage?: boolean;
+			handleDelete?: (e: KonvaMouseEvent)=> void;
+			handleGridClick?: (e: KonvaMouseEvent)=> void;
+			handleGridMouseMove?: (e: KonvaMouseEvent)=> void;
+		}
 
-	type GridLine = {
-		id: number,
-		x0: number,
-		y0: number,
-		x1: number,
-		y1: number,
-		strokeWidth: number,
-		strokeColor: string,
-		gridLineType: 'minor' | 'major' | 'axis',
-	}
+		let {
+			children,
+			numCells = {x: 20, y:0},
+			initCellSize = 20,
+			origin = {x:10, y:0},
+			gridLogic = $bindable(null),
+			onStage = $bindable(false),
+			handleDelete = (e: KonvaMouseEvent) => {},
+			handleGridClick = (e: KonvaMouseEvent) => {},
+			handleGridMouseMove = (e: KonvaMouseEvent) => {},
+		}: Props = $props();
 
-	interface Props {
-		gridLogic?: GridLogic;
-	}
 
-	let {
-		gridLogic = undefined,
-	}: Props = $props();
+		let windowSize:Point = $state({x:0, y:0});
+		let stageContainerSize: Point = $state({x:0, y:0});
 
-	let gridLineStyles:
-	{
-		minor: {strokeWidth: number, strokeColor: string},
-		major: {strokeWidth: number, strokeColor: string},
-		axis: {strokeWidth: number, strokeColor: string},
-	} 
+		let maxStageSize: Point = $derived.by(() => {
+			let gridAspectRatio:number = (numCells.x + 2)/(numCells.y + 2);
+			let containerAspectRatio:number = windowSize.x / windowSize.y;
+			let szX:number = 200;
+			let szY:number = 200;
 
-	= {
-		minor : {strokeWidth: 1, strokeColor: 'gray'},
-		major : {strokeWidth: 2, strokeColor: 'gray'},
-		axis : {strokeWidth: 4, strokeColor: 'black'},
-	}
+			if (gridAspectRatio > 1){  // Landscape
+				szX = 0.5*Math.max(windowSize.x, 200);
+				szY = szX/gridAspectRatio;
+			}
 
-	let stage:Stage|null = $state(null);
-	let layer:Layer|null = $state(null);
+			if (gridAspectRatio <= 1){ //|| szY > stageContainerSize.y){ // portrait, or width is too much for screen height
+				szY = 0.5*Math.max(windowSize.y, 200);
+				szX = szY*gridAspectRatio;
+			}
 
-	onMount(async () => {
-		await tick();
-		console.log('layer', layer.node);
-		console.log('stage', stage);
-	})
+			return {x: szX, y: szY};
+		});
+
+		let cellSize:number = $derived.by(() => {
+			let szX = maxStageSize.x / (numCells.x + 2);
+			let szY = maxStageSize.y / (numCells.y + 2);
+			return Math.min(szX, szY) || initCellSize;
+		});
+
+		$effect(() => {
+			gridLogic = new GridLogic( {
+				numCells: {...numCells},
+				origin: {...origin},
+				cellSize: cellSize
+			});
+		});
 
 </script>
 
+<svelte:window bind:innerWidth={windowSize.x} bind:innerHeight={windowSize.y}/>
 
-<Layer id='grid_layer' bind:this={layer}>
-		<!-- <Rect x= {400} y= {50} height = {100} width = {800} fill= 'green' opacity= {0.5} /> -->
-		<!-- <Line points= {[400, 50, 800, 100, 0, 0 , 50, 50]} strokeWidth={18} stroke= {'blue'} opacity= {1} /> -->
-		{#each gridLogic?.getGridList() as item}
-			{#if item.gridLineType === 'axis'}
-				<Arrow 
-					points= {[item.x0, 
-							item.y0 , 
-							item.x1 , 
-							item.y1 ]}
-					strokeWidth= {gridLineStyles[item.gridLineType].strokeWidth}
-					stroke= {gridLineStyles[item.gridLineType].strokeColor}
-					opacity= {1}
-					/>
+<div id='stageContainer' class='min-w-11/12 mx-auto'>
+	<Stage width={maxStageSize.x} height={maxStageSize.y} id='main_stage'
+			onmouseleave={() => {onStage = false;}}
+			onmouseenter={() => {onStage = true;}}
+			onclick={handleGridClick}
+			onmousemove={handleGridMouseMove}
+		>
+		<GridLines {gridLogic}/>
 
-			{:else}
-				<Line 
-					points= {[item.x0, 
-							item.y0 , 
-							item.x1 , 
-							item.y1 ]}
-					strokeWidth= {gridLineStyles[item.gridLineType].strokeWidth}
-					stroke= {gridLineStyles[item.gridLineType].strokeColor}
-					opacity= {1}
-					/>
-			{/if}
-		{/each}
+		{@render children?.()}
 
-</Layer>
+	</Stage>
+</div>
+

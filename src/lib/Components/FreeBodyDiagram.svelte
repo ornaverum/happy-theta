@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Stage, Layer, Line, Circle, Arrow, Text, Rect, type KonvaMouseEvent} from 'svelte-konva';
-	import Grid from './Grid.svelte';
+	import GridLines from './GridLines.svelte';
 	import GridLogic from './GridLogic';
 
     import EditLabel from './EditLabel.svelte';
@@ -158,7 +158,7 @@
                 onmouseleave={() => {onStage = false;}}
 				onmouseenter={() => {onStage = true;}}
             >
-                <Grid {gridLogic}/>
+                <GridLines {gridLogic}/>
                 {#if onStage}
                     <Layer>
                         {@render drawForce(previewForcePoint, 
