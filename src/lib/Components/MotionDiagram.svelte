@@ -15,14 +15,12 @@
 	let name: string = 'Motion Diagram Component';
 
 	interface Props {
-		size?: Point;
 		title?: string;
 		numCells?: Point;
 		initCellSize?: number;
 		showControlButtons?: boolean;
 		posList?: Point[];
 		accList?: Vector[];
-		margin?: Point;
 		origin?: Point;
 		handleDelete?: (e: KonvaMouseEvent)=> void;
 	}

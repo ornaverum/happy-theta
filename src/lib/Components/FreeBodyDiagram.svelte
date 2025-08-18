@@ -2,7 +2,7 @@
 	import { Stage, Layer, Line, Circle, Arrow, Text, Rect, type KonvaMouseEvent} from 'svelte-konva';
 	import GridLines from './GridLines.svelte';
 	import GridLogic from './GridLogic';
-
+    import Grid from './Grid.svelte';
     import EditLabel from './EditLabel.svelte';
 
     let name: string = 'Free Body Diagram';
@@ -14,10 +14,9 @@
 
 
     interface Props {
-        width?: number;
-        height?: number;
         title?: string;
         numCells?: Point;
+		initCellSize?: number;
         origin?: Point;
         showControlButtons?: boolean;
         id?: number;
@@ -27,11 +26,10 @@
     }
 
     let {
-        width = 400,
-        height = 400,
         title = $bindable('Title'),
         numCells = {x: 10, y:10},
         origin = {x:5, y:5},
+        initCellSize = 20,
         showControlButtons,
         id = 0,
         margin = {x:5, y:5},
@@ -40,18 +38,7 @@
     }: Props = $props();
 
 
-    
-    let windowSize:Point = $state({x:0, y:0});
-	let stageContainerSize: Point = $state({x:0, y:0});
-
-    let maxStageSize: Point = $derived.by(() => {
-        let szX: number = 0.9*Math.max(stageContainerSize.x, 200);
-        let szY: number = szX*((numCells.y + 1)/(numCells.x + 1));
-	    return {x: szX, y: szY};
-    });
-
-
-    let gridLogic:GridLogic = $derived(new GridLogic({maxSize:{...maxStageSize}, margin:{...margin}, numCells:{...numCells}, origin:{...origin} }));
+	let gridLogic:GridLogic|null = $state(null);
 
     let nextId:number = $state(0);
     let previewForcePoint:Point = $state({x:0, y:0});
@@ -60,7 +47,7 @@
 	let onStage:boolean = $state(false);
     let showNetForce:boolean = $state(true);
 
-    let netForceVector:Point = $state({...gridLogic.getStageFromPoint({x:0, y:0})});
+    let netForceVector:Point|null = $state(null);
 
     const handleGridMouseMove:(e: KonvaMouseEvent)=>void = (e: KonvaMouseEvent) => {
 		let pt:Point = gridLogic.getSnappedPointFromStage({x:e.evt.layerX, y:e.evt.layerY});
@@ -122,6 +109,10 @@
         {tw: 'bg-fuchsia-600', cc: '#d946ef'},
     ];
 
+    const getStageFromPoint = (point: Point): Point => {
+        return gridLogic?.getStageFromPoint(point) || {x: 0, y: 0};
+    }
+
 </script>
 
 
@@ -139,26 +130,21 @@
         strokeWidth={params.strokeWidth} id={params.id} />   
 {/snippet}
 
+{#snippet drawOriginDot()}
+    <Circle {...getStageFromPoint({x:0, y:0})} radius={8} fill='black' />
+{/snippet}
+
 <main class="flex flex-col bg-gray-100 w-full rounded-xl shadow-lg p-4">
     <!-- <EditLabel bind:title/> -->
     <EditLabel bind:text={title} size={'xl2'} />
     <div class='grid grid-cols-2 w-full'>
-        <div id='fbd' class='px-4 flex flex-col flex-wrap'
-            bind:clientWidth={stageContainerSize.x} bind:clientHeight={stageContainerSize.y}
-        >
+        <div id='fbd' class='px-4 flex flex-col flex-wrap'>
             <div id='fbd-label' class='ml-4 text-md font-bold select-none'>
                 Free Body Diagram
             </div>
-            <Stage 
-                width={maxStageSize.x}
-                height={maxStageSize.y}
-                id='fbd-stage'
-                onclick={handleGridClick}
-                onmousemove={handleGridMouseMove}
-                onmouseleave={() => {onStage = false;}}
-				onmouseenter={() => {onStage = true;}}
-            >
-                <GridLines {gridLogic}/>
+            <Grid {numCells} {initCellSize} {origin} bind:gridLogic bind:onStage
+				{handleGridMouseMove} {handleGridClick}
+			>
                 {#if onStage}
                     <Layer>
                         {@render drawForce(previewForcePoint, 
@@ -174,13 +160,18 @@
                 {#if showNetForce}
                     <Layer>
                         {#if forceList.length == 0 || (netForceVector.x == 0 && netForceVector.y == 0)}
-                            <Circle opacity={0.6} fill='black' {...gridLogic.getStageFromPoint({x:0,y:0})} radius = {8} id={'net'} />
+                            {@render drawOriginDot()}
                         {:else}
                             {@render drawForce(netForceVector, {id: 'net', opacity: 0.5, color: 'black', strokeWidth: 6})}
                         {/if}
                     </Layer>
                 {/if}
-            </Stage>
+
+
+
+            </Grid>
+
+
         </div>
         <div id="tao-chart" class='max-w-lg px-4 top-0 flex-auto'>
             <div id='fbd-label' class='mx-auto text-md font-bold flex flex-row rounded-xl border-1'>
