@@ -21,9 +21,6 @@
 	let { name = 'Motion Diagram' }: Props = $props();
 	let showControlButtons: boolean;
 
-	let width = 800;
-    let height = 100;
-
 	let mdSets: DataSets = $state({
 		title: 'Title',
 		type: 'motion-diagram',
@@ -91,7 +88,7 @@
 		size: {x: 500, y:500},
 		cellSize: 50,
 		numCells: {x:10, y:10},
-		origin: {x:5, y:0}
+		origin: {x:5, y:5}
 	}
 </script>
 

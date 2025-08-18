@@ -52,6 +52,10 @@ export default class GridLogic {
 
 
     getPointFromStage:Function = (point: Point)=>{
+        console.log('getPointFromStage', point, this.offSet, this.cellSize, this.origin);
+        console.log({x: (point.x - this.offSet.x)/this.cellSize - this.origin.x, 
+            y: (point.y - this.offSet.y)/this.cellSize - this.origin.y});
+            
         return {x: (point.x - this.offSet.x)/this.cellSize - this.origin.x, 
             y: (point.y - this.offSet.y)/this.cellSize - this.origin.y};
     }
