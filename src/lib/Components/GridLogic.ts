@@ -53,26 +53,31 @@ export default class GridLogic {
 
     getPointFromStage:Function = (point: Point)=>{
         return {x: (point.x - this.offSet.x)/this.cellSize - this.origin.x, 
-            y: this.numCells.y +this.origin.y - ((point.y - this.offSet.y)/this.cellSize)};
+            y: this.numCells.y -this.origin.y - ((point.y - this.offSet.y)/this.cellSize)};
         // flips y so up is positive
     }
 
     getSnappedPointFromStage:Function = (point: Point)=>{
+        // console.log('get point from stage: original canvas point', point);
         let pt = this.getPointFromStage(point);
+        // console.log('get point from stage: transformed point', pt);
+
+        // console.log('back to stage: ', this.getStageFromPoint(pt));
+        // console.log('Back to grid', this.getPointFromStage(this.getStageFromPoint(pt)));
         pt.x = Math.round(pt.x);//Math.min(Math.max(Math.round(pt.x), this.origin.x), this.numCells.x-this.origin.x);
         pt.y = Math.round(pt.y);//Math.min(Math.max(Math.round(pt.y), this.origin.y), this.numCells.y-this.origin.y);
         
+
         return pt;
     }
 
     getStageFromPoint:Function = (point: Point)=>{
         // point.y = this.numCells.y - point.y; // flips y so up is positive
-        console.log('original point',point);
-        point.y = this.numCells.y-point.y;
-        console.log('updated point', point);
+
+        // console.log('get stage from point: original grid point',point);
         let pt:Point = {x: (point.x + this.origin.x)*this.cellSize + this.offSet.x, 
-                        y: (point.y + this.origin.y)*this.cellSize + this.offSet.y};
-        console.log('stage point', pt);
+                        y: (this.numCells.y - point.y  - this.origin.y)*this.cellSize + this.offSet.y};
+        // console.log('stage point', pt);
         return pt;
 
     }

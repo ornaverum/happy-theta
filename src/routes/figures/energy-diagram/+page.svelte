@@ -61,12 +61,19 @@
 	const defaultED: EngD = {
 		id: 0,	
 		title: 'Title',
+		// data: {
+		// 	energyBars: [{id: 4, name: 'Kinetic Energy', symbol:'K', value: 1, color: 'blue'},
+		// 		{id: 3, name: 'Gravitational Potential Energy', symbol:'Ug', value: 1, color: 'green'},
+		// 		{id: 2, name: 'Elastic Potential Energy', symbol:'Uel', value: -1, color: 'yellow'},
+		// 		{id: 1, name: 'Thermal Energy', symbol:'Eth', value: 3, color: 'red'},
+		// 		{id: 0, name: 'Total Energy', symbol:'E', value: 2, color: 'purple'},],
+		// }
 		data: {
-			energyBars: [{id: 4, name: 'Kinetic Energy', symbol:'K', value: 1, color: 'blue'},
-				{id: 3, name: 'Gravitational Potential Energy', symbol:'Ug', value: 1, color: 'green'},
-				{id: 2, name: 'Elastic Potential Energy', symbol:'Uel', value: -1, color: 'yellow'},
-				{id: 1, name: 'Thermal Energy', symbol:'Eth', value: 3, color: 'red'},
-				{id: 0, name: 'Total Energy', symbol:'E', value: 2, color: 'purple'},],
+			energyBars: {4 : {id: 4, name: 'Kinetic Energy', symbol:'K', value: 1, color: 'blue'},
+				3: {id: 3, name: 'Gravitational Potential Energy', symbol:'Ug', value: 1, color: 'green'},
+				2: {id: 2, name: 'Elastic Potential Energy', symbol:'Uel', value: -1, color: 'yellow'},
+				1: {id: 1, name: 'Thermal Energy', symbol:'Eth', value: 3, color: 'red'},
+				0: {id: 0, name: 'Total Energy', symbol:'E', value: 2, color: 'purple'},},
 		}
 	};
 
@@ -74,7 +81,7 @@
 		id: id_ind,	
 		title: 'Title',
 		data: {
-			energyBars: [{id: 0, name: 'Work', symbol:'W', value: 1, color: 'orange',},]
+			energyBars: {0: {id: 0, name: 'Work', symbol:'W', value: 1, color: 'orange',},}
 		}
 	}
 

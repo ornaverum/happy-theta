@@ -46,7 +46,7 @@
         await tick();
         if (gridLogic && energyBars.length > 0) {
             initialStagePositions = energyBars.map( (bar, i) => 
-                gridLogic.getStageFromPoint({x:0, y: i })
+                gridLogic.getStageFromPoint({x:0, y: bar.id })
             );
             console.log(initialStagePositions);
         }
@@ -65,10 +65,13 @@
         if (!gridLogic || !positionsReady) return;
         
         let pt:Point = {x:e.evt.layerX, y:e.evt.layerY};
-        let snap:Point = gridLogic.getPointFromStage(pt);
-        let bar:number = Math.floor(snap.y);
-        snap = {x: Math.max(Math.round(snap.x),0.2)-5, y: bar};
-        pt = gridLogic.getStageFromPoint(snap); 
+        console.log('stage point', pt);
+        let snap:Point = gridLogic.getSnappedPointFromStage(pt);
+        console.log('snapped point', snap);
+        let bar:number = snap.y;
+        console.log('bar id', bar);
+        // snap = {x: Math.max(Math.round(snap.x),0.2)-5, y: bar};
+        // pt = gridLogic.getStageFromPoint(snap); 
         // stagePositions[bar] = {x:pt.x-gridLogic.cellSize/3/2, y: initialStagePositions[bar].y};
         energyBars[bar].value = snap.x; //- gridLogic.getStageFromPoint(originPoint).x;
     }
@@ -83,7 +86,6 @@
         snap.x = Math.round(snap.x);
 
         console.log('event X, Y', e.evt.layerX, e.evt.layerY);
-        console.log('pt', pt);
         console.log('snapped', snap);
         // if (snap.x >= 0 && snap.x <= numCells.x && snap.y >= 0 && snap.y <= numCells.y) {
         // console.log('snap', snap);
