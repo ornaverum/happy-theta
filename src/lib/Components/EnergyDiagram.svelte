@@ -29,7 +29,7 @@
     }: Props = $props();
 
     let onStage:boolean = $state(false);
-	let origin = {x:5, y:0};
+	let origin = {x:5, y:1};
 
     numCells.y = energyBars.length;
     let cellSize = $state(initCellSize);
@@ -45,18 +45,21 @@
     onMount(async () => {
         await tick();
         if (gridLogic && energyBars.length > 0) {
-            initialStagePositions = energyBars.map( (bar) => 
-                gridLogic.getStageFromPoint({x:0, y: bar.id })
+            initialStagePositions = energyBars.map( (bar, i) => 
+                gridLogic.getStageFromPoint({x:0, y: i })
             );
+            console.log(initialStagePositions);
         }
     });
 
     $inspect(energyBars);
+    $inspect(initialStagePositions);
 
     // Add a computed property to check if positions are ready
     let positionsReady = $derived(initialStagePositions.length > 0);
 
-    let stagePositions:Point[] = $state(initialStagePositions);
+
+
 
     const handleGridClick:(e: KonvaMouseEvent)=>void = (e: KonvaMouseEvent) => {
         if (!gridLogic || !positionsReady) return;
@@ -66,7 +69,7 @@
         let bar:number = Math.floor(snap.y);
         snap = {x: Math.max(Math.round(snap.x),0.2)-5, y: bar};
         pt = gridLogic.getStageFromPoint(snap); 
-        stagePositions[bar] = {x:pt.x-gridLogic.cellSize/3/2, y: initialStagePositions[bar].y};
+        // stagePositions[bar] = {x:pt.x-gridLogic.cellSize/3/2, y: initialStagePositions[bar].y};
         energyBars[bar].value = snap.x; //- gridLogic.getStageFromPoint(originPoint).x;
     }
 
@@ -75,12 +78,16 @@
         if (!gridLogic || !positionsReady) return;
         
         let pt:Point = {x:e.evt.layerX, y:e.evt.layerY};
-        let snap:Point = gridLogic.getSnappedPointFromStage(pt);
+        let snap:Point = gridLogic.getPointFromStage(pt);
+        snap.y = Math.ceil(snap.y);
+        snap.x = Math.round(snap.x);
 
+        console.log('event X, Y', e.evt.layerX, e.evt.layerY);
+        console.log('pt', pt);
         console.log('snapped', snap);
         // if (snap.x >= 0 && snap.x <= numCells.x && snap.y >= 0 && snap.y <= numCells.y) {
         // console.log('snap', snap);
-            let bar:number = Math.ceil(snap.y);
+            let bar:number = (energyBars.length - snap.y);
             snap = {x: Math.max(Math.round(snap.x),0.2), y: bar};
             pt = gridLogic.getStageFromPoint(snap);
             previewEnergy.id = bar;

@@ -67,9 +67,12 @@ export default class GridLogic {
 
     getStageFromPoint:Function = (point: Point)=>{
         // point.y = this.numCells.y - point.y; // flips y so up is positive
-        point.y = this.numCells.y - point.y;
+        console.log('original point',point);
+        point.y = this.numCells.y-point.y;
+        console.log('updated point', point);
         let pt:Point = {x: (point.x + this.origin.x)*this.cellSize + this.offSet.x, 
                         y: (point.y + this.origin.y)*this.cellSize + this.offSet.y};
+        console.log('stage point', pt);
         return pt;
 
     }
