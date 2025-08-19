@@ -46,10 +46,12 @@
         await tick();
         if (gridLogic && energyBars.length > 0) {
             initialStagePositions = energyBars.map( (bar) => 
-                gridLogic.getStageFromPoint({x:0-0.15, y: bar.id + 0.15})
+                gridLogic.getStageFromPoint({x:0, y: bar.id })
             );
         }
     });
+
+    $inspect(energyBars);
 
     // Add a computed property to check if positions are ready
     let positionsReady = $derived(initialStagePositions.length > 0);
@@ -74,9 +76,11 @@
         
         let pt:Point = {x:e.evt.layerX, y:e.evt.layerY};
         let snap:Point = gridLogic.getSnappedPointFromStage(pt);
+
+        console.log('snapped', snap);
         // if (snap.x >= 0 && snap.x <= numCells.x && snap.y >= 0 && snap.y <= numCells.y) {
         // console.log('snap', snap);
-            let bar:number = Math.floor(snap.y);
+            let bar:number = Math.ceil(snap.y);
             snap = {x: Math.max(Math.round(snap.x),0.2), y: bar};
             pt = gridLogic.getStageFromPoint(snap);
             previewEnergy.id = bar;
@@ -102,7 +106,7 @@
     });
 
 
-    let previewEnergy: EnergyBar = $state({id: 4, name: 'Preview', symbol: 'E', value: 0, color: 'purple', opacity: 0.3});
+    let previewEnergy: EnergyBar = $state({id: 5, name: 'Preview', symbol: 'E', value: 0, color: 'purple', opacity: 0.3});
 
 
 

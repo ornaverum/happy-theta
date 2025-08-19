@@ -88,7 +88,7 @@
 		size: {x: 500, y:500},
 		cellSize: 50,
 		numCells: {x:10, y:10},
-		origin: {x:5, y:5}
+		origin: {x:5, y:6}
 	}
 </script>
 

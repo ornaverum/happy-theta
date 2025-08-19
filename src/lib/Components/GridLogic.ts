@@ -53,7 +53,7 @@ export default class GridLogic {
 
     getPointFromStage:Function = (point: Point)=>{
         return {x: (point.x - this.offSet.x)/this.cellSize - this.origin.x, 
-            y: this.numCells.y -this.origin.y - ((point.y - this.offSet.y)/this.cellSize)};
+            y: this.numCells.y +this.origin.y - ((point.y - this.offSet.y)/this.cellSize)};
         // flips y so up is positive
     }
 
@@ -67,7 +67,7 @@ export default class GridLogic {
 
     getStageFromPoint:Function = (point: Point)=>{
         // point.y = this.numCells.y - point.y; // flips y so up is positive
-        point.y = -point.y;
+        point.y = this.numCells.y - point.y;
         let pt:Point = {x: (point.x + this.origin.x)*this.cellSize + this.offSet.x, 
                         y: (point.y + this.origin.y)*this.cellSize + this.offSet.y};
         return pt;
