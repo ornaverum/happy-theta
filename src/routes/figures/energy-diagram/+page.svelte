@@ -69,11 +69,11 @@
 		// 		{id: 0, name: 'Total Energy', symbol:'E', value: 2, color: 'purple'},],
 		// }
 		data: {
-			energyBars: [{id: 4, name: 'Kinetic Energy', symbol:'K', value: 1, color: 'blue'},
-				{id: 3, name: 'Gravitational Potential Energy', symbol:'Ug', value: 1, color: 'green'},
-				{id: 2, name: 'Elastic Potential Energy', symbol:'Uel', value: -1, color: 'yellow'},
-				{id: 1, name: 'Thermal Energy', symbol:'Eth', value: 3, color: 'red'},
-				{id: 0, name: 'Total Energy', symbol:'E', value: 2, color: 'purple'},],
+			energyBars: [{pos: 3, name: 'Kinetic Energy', symbol:'K', value: 1, color: 'blue'},
+				{pos: 2, name: 'Gravitational Potential Energy', symbol:'Ug', value: 1, color: 'green'},
+				{pos: 1, name: 'Elastic Potential Energy', symbol:'Uel', value: -1, color: 'yellow'},
+				{pos: 0, name: 'Thermal Energy', symbol:'Eth', value: 3, color: 'red'},
+				{pos: -1, name: 'Total Energy', symbol:'E', value: 2, color: 'purple'},],
 		}
 	};
 

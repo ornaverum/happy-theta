@@ -40,14 +40,20 @@
     // let gridLogic:GridLogic|null = $state(new GridLogic({cellSize: cellSize, numCells: numCells}));
     let gridLogic:GridLogic|null = $state(null);
 
-    let initialStagePositions:Point[] = $state([]);
-
+    let initialStagePositions:Point[] = $state(Array(energyBars.length).fill({x:0, y:0}));
     onMount(async () => {
         await tick();
+
         if (gridLogic && energyBars.length > 0) {
-            initialStagePositions = energyBars.map( (bar, i) => 
-                gridLogic.getStageFromPoint({x:0, y: bar.id })
-            );
+            energyBars.forEach( (bar, i) => {
+                initialStagePositions[bar.pos] = (
+                    gridLogic.getStageFromPoint({x:0, y: bar.pos })
+                );
+                initialStagePositions[bar.pos] = {
+                    x: initialStagePositions[bar.pos].x,
+                    y: initialStagePositions[bar.pos].y + 1
+                };
+            });
             console.log(initialStagePositions);
         }
     });
@@ -65,11 +71,11 @@
         if (!gridLogic || !positionsReady) return;
         
         let pt:Point = {x:e.evt.layerX, y:e.evt.layerY};
-        console.log('stage point', pt);
-        let snap:Point = gridLogic.getSnappedPointFromStage(pt);
-        console.log('snapped point', snap);
-        let bar:EnergyBar|undefined = energyBars.find((bar) => bar.id === snap.y);
-        console.log('bar id', bar);
+        let snap:Point = gridLogic.getPointFromStage(pt);
+        snap.y = Math.floor(snap.y);
+        snap.x = Math.round(snap.x);
+
+        let bar:EnergyBar|undefined = energyBars.find((bar) => bar.pos === snap.y);
         // snap = {x: Math.max(Math.round(snap.x),0.2)-5, y: bar};
         // pt = gridLogic.getStageFromPoint(snap); 
         // stagePositions[bar] = {x:pt.x-gridLogic.cellSize/3/2, y: initialStagePositions[bar].y};
@@ -84,20 +90,22 @@
         
         let pt:Point = {x:e.evt.layerX, y:e.evt.layerY};
         let snap:Point = gridLogic.getPointFromStage(pt);
-        snap.y = Math.ceil(snap.y);
+        console.log('handleGridMouseMove', snap);
+        snap.y = Math.floor(snap.y);
         snap.x = Math.round(snap.x);
 
         console.log('event X, Y', e.evt.layerX, e.evt.layerY);
         console.log('snapped', snap);
         // if (snap.x >= 0 && snap.x <= numCells.x && snap.y >= 0 && snap.y <= numCells.y) {
         // console.log('snap', snap);
-            let bar:number = (energyBars.length - snap.y);
-            snap = {x: Math.max(Math.round(snap.x),0.2), y: bar};
-            pt = gridLogic.getStageFromPoint(snap);
-            previewEnergy.id = bar;
-            // previewEnergy.origin = {x:pt.x-gridLogic.cellSize/3/2, y: initialStagePositions[bar].y};
-            previewEnergy.value = snap.x; //- gridLogic.getStageFromPoint(originPoint).x;
-            previewEnergy.color = energyBars[bar].color;
+        let bar:EnergyBar|undefined = energyBars.find((bar)=>bar.pos == snap.y);
+        console.log('bar', bar);
+        if (!bar) return;
+        pt = gridLogic.getStageFromPoint(snap);
+        previewEnergy.pos = bar.pos;
+        // previewEnergy.origin = {x:pt.x-gridLogic.cellSize/3/2, y: initialStagePositions[bar].y};
+        previewEnergy.value = snap.x; //- gridLogic.getStageFromPoint(originPoint).x;
+        previewEnergy.color = bar.color;
         // }
     }
 
@@ -109,7 +117,7 @@
         
         let w = 0;
         energyBars.forEach((bar:EnergyBar)=>{
-            if(bar.id !== 4)
+            if(bar.pos !== 4)
                 w+=Math.floor(bar.value);
         });
         return {id: 4, name: 'Total Energy Preview', symbol:'E', origin: {...initialStagePositions[4]}, value: w, color: 'purple', opacity: 0.3};
@@ -125,10 +133,10 @@
 </script>
 
 {#snippet drawEnergyBar(bar:EnergyBar)}
-    {#if positionsReady && initialStagePositions[bar.id]}
-        <Rect x={initialStagePositions[bar.id].x}
-            y={initialStagePositions[bar.id].y} 
-            width={bar.value*gridLogic?.cellSize | 0}
+    {#if positionsReady && initialStagePositions[bar.pos]}
+        <Rect x={bar.value >= 0 ? initialStagePositions[bar.pos].x : initialStagePositions[bar.pos].x + (bar.value+1)*gridLogic?.cellSize}
+            y={initialStagePositions[bar.pos].y - 0.9*gridLogic?.cellSize}
+            width={ bar.value >0  ? bar.value*gridLogic?.cellSize: (-bar.value-2)*gridLogic?.cellSize }
             height={0.7*gridLogic?.cellSize | 0}
             fill={bar.color}
             stroke='#445544'
@@ -139,8 +147,8 @@
 {/snippet}
 
 {#snippet writeEnergyLabels(bar:EnergyBar)}
-    {#if positionsReady && initialStagePositions[bar.id]}
-        <Text x={initialStagePositions[bar.id].x} y={initialStagePositions[bar.id].y} text={bar.symbol} 
+    {#if positionsReady && initialStagePositions[bar.pos]}
+        <Text x={initialStagePositions[bar.pos].x} y={initialStagePositions[bar.pos].y} text={bar.symbol} 
                 fontSize={0.5*cellSize} fill={bar.color} stroke='black' strokeWidth={0.5}/>
     {/if}
 {/snippet}

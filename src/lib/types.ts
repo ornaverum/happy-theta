@@ -54,7 +54,7 @@ export type Energy = {
 }
 
 export type EnergyBar = {
-    id: number,
+    pos: number,   // position value on y axis
     name: string,
     symbol: string,
     value: number,
