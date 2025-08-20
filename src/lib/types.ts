@@ -63,12 +63,6 @@ export type EnergyBar = {
 }
 
 
-export type DataSets = {
-    id: number,
-    dataSet: Data<any>
-
-}
-
 export type Data<T> = {
     type: string,
     id: number,

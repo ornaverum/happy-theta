@@ -68,12 +68,14 @@
         console.log('stage point', pt);
         let snap:Point = gridLogic.getSnappedPointFromStage(pt);
         console.log('snapped point', snap);
-        let bar:number = snap.y;
+        let bar:EnergyBar|undefined = energyBars.find((bar) => bar.id === snap.y);
         console.log('bar id', bar);
         // snap = {x: Math.max(Math.round(snap.x),0.2)-5, y: bar};
         // pt = gridLogic.getStageFromPoint(snap); 
         // stagePositions[bar] = {x:pt.x-gridLogic.cellSize/3/2, y: initialStagePositions[bar].y};
-        energyBars[bar].value = snap.x; //- gridLogic.getStageFromPoint(originPoint).x;
+        if (bar) {
+            bar.value = snap.x; //- gridLogic.getStageFromPoint(originPoint).x;
+        }
     }
 
 
