@@ -53,8 +53,11 @@
 		"@tailwindcss/container-queries": "^0.1.1",
 		"@tailwindcss/forms": "^0.5.9",
 		"@tailwindcss/typography": "^0.5.15",
+		"@types/gif.js": "^0.2.5",
 		"flowbite-svelte": "^0.47.4",
 		"flowbite-svelte-icons": "^2.0.2",
+		"gif.js": "^0.2.0",
+		"gif.js.optimized": "^1.0.1",
 		"html2canvas": "^1.4.1",
 		"svelte-konva": "^1.0.0-next.0"
 	},

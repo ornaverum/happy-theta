@@ -1,14 +1,18 @@
+
 <script lang="ts">
     import { Stage, Layer, Rect, Image } from 'svelte-konva';
-    import { onMount } from 'svelte';
+    import { onMount, tick } from 'svelte';
     import {Fileupload, Helper, Label, Carousel, } from 'flowbite-svelte';
+    import GIF from 'gif.js.optimized';
 
     onMount(() => {
         // Your initialization code here
     });
 
     let selectedFiles = $state<FileList | null>(null);
+    let selectedFileIndex: number = $state(0);
 
+    // Precompute file names
     let fileNames = $derived(
         selectedFiles
         ? Array.from(selectedFiles)
@@ -17,17 +21,61 @@
         : null
     );
 
+    // Precompute object URLs for all selected files
+    let fileObjectURLs = $derived(
+        selectedFiles
+        ? Array.from(selectedFiles).map((file) => URL.createObjectURL(file))
+        : []
+    );
 
-    $effect (()=>{
-        if (selectedFiles) {
-            $inspect(URL.createObjectURL(selectedFiles[selectedFileIndex]));
-        }
+    $effect(() => {
+        // Clean up object URLs when files change
+        return () => {
+            if (fileObjectURLs) {
+                fileObjectURLs.forEach((url) => URL.revokeObjectURL(url));
+            }
+        };
     });
 
-    // $inspect(URL.createObjectURL(selectedFiles[selectedFileIndex]));
-    let selectedFileIndex:number = $state(0);
-   
+    // Function to create GIF from selected files
+    async function createGif() {
+        if (!selectedFiles || selectedFiles.length === 0) return;
 
+        console.log("Creating GIF from files:", selectedFiles);
+
+        const gif = new GIF({
+            workers: 2,
+            quality: 10,
+            workerScript: '/gif.worker.js', // Uncomment and adjust if needed
+        });
+
+        console.log("GIF creation started", gif);
+
+        // Load each image as an Image element and add as a frame
+        for (const file of Array.from(selectedFiles)) {
+            const url = URL.createObjectURL(file);
+            await new Promise<void>((resolve) => {
+                const img = new window.Image();
+                img.src = url;
+                img.onload = () => {
+                    gif.addFrame(img, { delay: 500 }); // 500ms per frame
+                    URL.revokeObjectURL(url);
+                    resolve();
+                };
+            });
+        }
+
+        console.log("GIF frames completed?", gif);
+
+
+        gif.on('finishRendering', function(blob: Blob) {
+            console.log("GIF creation finished", blob);
+            const gifUrl = URL.createObjectURL(blob);
+            window.open(gifUrl, '_blank');
+        });
+
+        gif.render();
+    }
 </script>
 
 
@@ -41,7 +89,7 @@
         <div class='flex flex-row bg-green-200 p-3 m-3 '>
             <div id='main-view' class='min-w-40 max-w-4/5  bg-slate-200 p-4'>
                 {#if selectedFiles}
-                    <img src={URL.createObjectURL(selectedFiles[selectedFileIndex])} alt='Selected Image' class='max-w-full max-h-96'/>
+                    <img src={fileObjectURLs[selectedFileIndex]} alt='Selected Image' class='max-w-full max-h-96'/>
                 {:else}
                     <div class='w-full h-40 bg-gray-300 flex items-center justify-center text-gray-500'>
                         No image selected
@@ -56,8 +104,7 @@
                             class="px-2 py-1 text-xs rounded {selectedFileIndex === index ? 'bg-blue-500 text-white' : 'bg-gray-200 hover:bg-gray-300'}"
                             onclick={() => selectedFileIndex = index}
                         >
-                            <img src={URL.createObjectURL(selectedFiles[index])} alt='Selected Image' class='max-w-full max-h-10 object-contain'/>
-
+                            <img src={fileObjectURLs[index]} alt='Selected Image' class='max-w-full max-h-10 object-contain'/>
                         </button>
                     {/each}
                 {/if}
@@ -68,6 +115,9 @@
             <Label class="p-2" for="image_files" >Upload image files</Label>
             <Fileupload clearable bind:files={selectedFiles} multiple  onchange={(e) => {console.log(e.target.files)}}/>
             <Helper class="mt-2">Selected files: {fileNames ? fileNames : "No files selected"}</Helper>
+            <button class="mt-4 px-4 py-2 bg-blue-500 text-white rounded" onclick={createGif}>
+                Create GIF from Images
+            </button>
         </div>
         
 
