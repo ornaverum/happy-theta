@@ -18,6 +18,7 @@
 	},
 	"devDependencies": {
 		"@chromatic-com/storybook": "^3.2.2",
+		"@dhdbstjr98/gif.js": "^1.0.2",
 		"@playwright/test": "^1.45.3",
 		"@storybook/addon-essentials": "^8.4.6",
 		"@storybook/addon-interactions": "^8.4.6",
