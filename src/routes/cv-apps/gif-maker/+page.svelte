@@ -3,7 +3,6 @@
     import { Stage, Layer, Rect, Image } from 'svelte-konva';
     import { onMount, tick } from 'svelte';
     import {Fileupload, Helper, Label, Carousel, } from 'flowbite-svelte';
-    import GIF from 'gif.js.optimized';
 
     onMount(() => {
         // Your initialization code here
@@ -37,45 +36,45 @@
         };
     });
 
-    // Function to create GIF from selected files
-    async function createGif() {
-        if (!selectedFiles || selectedFiles.length === 0) return;
+    // // Function to create GIF from selected files
+    // async function createGif() {
+    //     if (!selectedFiles || selectedFiles.length === 0) return;
 
-        console.log("Creating GIF from files:", selectedFiles);
+    //     console.log("Creating GIF from files:", selectedFiles);
 
-        const gif = new GIF({
-            workers: 2,
-            quality: 10,
-            workerScript: '/gif.worker.js', // Uncomment and adjust if needed
-        });
+    //     const gif = new GIF({
+    //         workers: 2,
+    //         quality: 10,
+    //         workerScript: '/gif.worker.js', // Uncomment and adjust if needed
+    //     });
 
-        console.log("GIF creation started", gif);
+    //     console.log("GIF creation started", gif);
 
-        // Load each image as an Image element and add as a frame
-        for (const file of Array.from(selectedFiles)) {
-            const url = URL.createObjectURL(file);
-            await new Promise<void>((resolve) => {
-                const img = new window.Image();
-                img.src = url;
-                img.onload = () => {
-                    gif.addFrame(img, { delay: 500 }); // 500ms per frame
-                    URL.revokeObjectURL(url);
-                    resolve();
-                };
-            });
-        }
+    //     // Load each image as an Image element and add as a frame
+    //     for (const file of Array.from(selectedFiles)) {
+    //         const url = URL.createObjectURL(file);
+    //         await new Promise<void>((resolve) => {
+    //             const img = new window.Image();
+    //             img.src = url;
+    //             img.onload = () => {
+    //                 gif.addFrame(img, { delay: 500 }); // 500ms per frame
+    //                 URL.revokeObjectURL(url);
+    //                 resolve();
+    //             };
+    //         });
+    //     }
 
-        console.log("GIF frames completed?", gif);
+    //     console.log("GIF frames completed?", gif);
 
 
-        gif.on('finishRendering', function(blob: Blob) {
-            console.log("GIF creation finished", blob);
-            const gifUrl = URL.createObjectURL(blob);
-            window.open(gifUrl, '_blank');
-        });
+    //     gif.on('finishRendering', function(blob: Blob) {
+    //         console.log("GIF creation finished", blob);
+    //         const gifUrl = URL.createObjectURL(blob);
+    //         window.open(gifUrl, '_blank');
+    //     });
 
-        gif.render();
-    }
+    //     gif.render();
+    // }
 </script>
 
 
