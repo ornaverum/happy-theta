@@ -1,32 +1,60 @@
 
 <script lang="ts">
-    import { Stage, Layer, Rect, Image } from 'svelte-konva';
+    import { Stage, Layer, Rect, Image as KonvaImage } from 'svelte-konva';
     import { onMount, tick } from 'svelte';
-    import {Fileupload, Helper, Label, Carousel, } from 'flowbite-svelte';
-    import GIF from '@dhdbstjr98/gif.js';
+    import {Fileupload, Helper, Label, Carousel, type ImgType} from 'flowbite-svelte';
+    import cv from '@techstark/opencv-js'
+    import gifshot from 'gifshot';
 
     onMount(() => {
         // Your initialization code here
     });
 
-    let selectedFiles = $state<FileList | null>(null);
+    let selectedFiles = $state<File[] | undefined>(undefined);
+    let fileListForUpload = $state<FileList | undefined>(undefined);
     let selectedFileIndex: number = $state(0);
+
+    // Convert FileList to File[] when files are selected
+    $effect(() => {
+        if (fileListForUpload) {
+            selectedFiles = Array.from(fileListForUpload);
+        } else {
+            selectedFiles = undefined;
+        }
+    });
 
     // Precompute file names
     let fileNames = $derived(
         selectedFiles
-        ? Array.from(selectedFiles)
+        ? selectedFiles
             .map((file) => file.name)
             .join(", ")
-        : null
+        : undefined
     );
 
     // Precompute object URLs for all selected files
     let fileObjectURLs = $derived(
         selectedFiles
-        ? Array.from(selectedFiles).map((file) => URL.createObjectURL(file))
+        ? selectedFiles.map((file) => URL.createObjectURL(file))
         : []
     );
+    let dataURLs: string[] = $state([]);
+
+    let images: ImgType[] = $derived(
+        dataURLs.map((dataURL) => ({ src: dataURL, alt: "Image" }))
+    );
+
+    $inspect(images);
+
+    // Convert files to dataURLs
+    const readFileAsDataURL = (file: File): Promise<string> => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result as string);
+            reader.onerror = () => reject(reader.error);
+            reader.readAsDataURL(file);
+        });
+    };
 
     $effect(() => {
         // Clean up object URLs when files change
@@ -37,44 +65,72 @@
         };
     });
 
-    // Function to create GIF from selected files
-    async function createGif() {
-        if (!selectedFiles || selectedFiles.length === 0) return;
-
-        console.log("Creating GIF from files:", selectedFiles);
-
-        const gif = new GIF({
-            workers: 2,
-            quality: 10,
-        });
-
-        console.log("GIF creation started", gif);
-
-        // Load each image as an Image element and add as a frame
-        for (const file of Array.from(selectedFiles)) {
-            const url = URL.createObjectURL(file);
-            await new Promise<void>((resolve) => {
-                const img = new window.Image();
-                img.src = url;
-                img.onload = () => {
-                    gif.addFrame(img, { delay: 500 }); // 500ms per frame
-                    URL.revokeObjectURL(url);
-                    resolve();
-                };
-            });
+    const handleMakeGif = async () => {
+        if (!selectedFiles) {
+            console.error("No files selected!");
+            return;
         }
+  
+        // Convert files to dataURLs
+        const readFileAsDataURL = (file: File): Promise<string> => {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result as string);
+                reader.onerror = () => reject(reader.error);
+                reader.readAsDataURL(file);
+            });
+        };
+        
+        try {
+            dataURLs = await Promise.all(
+                selectedFiles.map((file) => readFileAsDataURL(file))
+            );
 
-        console.log("GIF frames completed?", gif);
+            let {w, h}: {w: number, h:number} = await getImageWidth(dataURLs[0]);
+            gifshot.createGIF({
+                'images': dataURLs,
+                'gifWidth': 500,
+                'gifHeight': h/w*500,
+                'frameDuration': 10,
+                'text': 'boo',
+                'textAlign': 'right',
+                'fontColor': '#ff9922',
+                'fontSize': '24px',
+                'fontWeight': 'bold',
+                }, function (obj) {
+                if (!obj.error) {
+                    var image = obj.image,
+                    animatedImage = document.createElement('img');
+                    animatedImage.src = image;
+                    document.getElementById('gif-preview')?.appendChild(animatedImage);
+                }
+            });
+        } catch (error) {
+            console.error("Error reading files:", error);
+        }
+    };
 
+    const removeFile = (index: number) => {
+        if (selectedFiles) {
+            const filesArray = [...selectedFiles]; // Create a copy of the array
+            filesArray.splice(index, 1);
+            selectedFiles = filesArray.length > 0 ? filesArray : undefined;
+        }
+    };
 
-        gif.on('finishRendering', function(blob: Blob) {
-            console.log("GIF creation finished", blob);
-            const gifUrl = URL.createObjectURL(blob);
-            window.open(gifUrl, '_blank');
-        });
-
-        gif.render();
+    function getImageWidth(imageUrl:string) {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => {
+          resolve({w: img.naturalWidth, h: img.naturalHeight}); // Or img.width if you want the rendered width
+        };
+        img.onerror = (error) => {
+          reject(error);
+        };
+        img.src = imageUrl;
+      });
     }
+
 </script>
 
 
@@ -98,27 +154,33 @@
             <div class='flex flex-col max-h-80 p-2 space-y-2 overflow-y-scroll'>
                 {#if selectedFiles && selectedFiles.length > 1}
                     <div class='text-sm font-semibold'>Select Image:</div>
-                    {#each Array.from(selectedFiles) as file, index}
-                        <button 
-                            class="px-2 py-1 text-xs rounded {selectedFileIndex === index ? 'bg-blue-500 text-white' : 'bg-gray-200 hover:bg-gray-300'}"
-                            onclick={() => selectedFileIndex = index}
-                        >
-                            <img src={fileObjectURLs[index]} alt='Selected Image' class='max-w-full max-h-10 object-contain'/>
-                        </button>
+                    {#each selectedFiles as file, index}
+                        <div class='relative p-2 bg-yellow-100'>
+                            <div class=" px-2 py-1 text-xs rounded {selectedFileIndex === index ? 'bg-blue-500 text-white' : 'bg-gray-200 hover:bg-gray-300'}"
+                                onclick={() => selectedFileIndex = index}
+                            >
+                                <img src={fileObjectURLs[index]} alt='Selected Image' class='max-w-full max-h-10 object-contain'/>
+                                
+                            </div>
+                            <div class="absolute top-0 right-0 p-1">
+                                    <button class="bg-red-500 text-white rounded px-1 py-0.5 text-xs" onclick={() => removeFile(index)}>X</button>
+                            </div>
+                        </div>
                     {/each}
                 {/if}
             </div>
             
         </div>
+        <div id='gif-preview' class='bg-emerald-100 mx-auto'>
+        </div>
         <div class='w-1/2 m-4'>
             <Label class="p-2" for="image_files" >Upload image files</Label>
-            <Fileupload clearable bind:files={selectedFiles} multiple  onchange={(e) => {console.log(e.target.files)}}/>
+            <Fileupload class="bg-white text-white" clearable bind:files={fileListForUpload} 
+                multiple accept='.jpg, .jpeg, .heic, .png'  onchange={(e) => {console.log((e.target as HTMLInputElement)?.files)}}/>
             <Helper class="mt-2">Selected files: {fileNames ? fileNames : "No files selected"}</Helper>
-            <button class="mt-4 px-4 py-2 bg-blue-500 text-white rounded" onclick={createGif}>
+            <button class="mt-4 px-4 py-2 bg-blue-500 text-white rounded" onclick={handleMakeGif}>
                 Create GIF from Images
             </button>
         </div>
-        
-
     </div> 
 </div>

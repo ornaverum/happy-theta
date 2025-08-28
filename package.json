@@ -56,11 +56,15 @@
 		"@tailwindcss/typography": "^0.5.15",
 		"@techstark/opencv-js": "^4.11.0-release.1",
 		"@types/gif.js": "^0.2.5",
+		"flowbite": "^3.1.2",
 		"flowbite-svelte": "^0.47.4",
 		"flowbite-svelte-icons": "^2.0.2",
 		"gif.js": "^0.2.0",
 		"gif.js.optimized": "^1.0.1",
+		"gifshot": "^0.4.5",
 		"html2canvas": "^1.4.1",
+		"konva": "^9.3.22",
+		"svelte-canvas": "^2.0.2",
 		"svelte-konva": "^1.0.0-next.0"
 	},
 	"optionalDependencies": {
