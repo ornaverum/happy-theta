@@ -52,8 +52,9 @@
 	},
 	"dependencies": {
 		"@tailwindcss/container-queries": "^0.1.1",
-		"@tailwindcss/forms": "^0.5.9",
+		"@tailwindcss/forms": "^0.5.10",
 		"@tailwindcss/typography": "^0.5.15",
+		"@techstark/opencv-js": "^4.11.0-release.1",
 		"@types/gif.js": "^0.2.5",
 		"flowbite-svelte": "^0.47.4",
 		"flowbite-svelte-icons": "^2.0.2",
