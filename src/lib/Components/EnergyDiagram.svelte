@@ -126,12 +126,17 @@
 
     $inspect(energyBars);
 
+    const awaitGridLogic = async () => {
+        while (!gridLogic) {
+            await new Promise(resolve => setTimeout(resolve, 100));
+        }
+        console.log('gridLogic ready', gridLogic);
+    }
 </script>
 
 {#snippet drawEnergyBar(bar:EnergyBar)}
-    {#if positionsReady && initialStagePositions[bar.pos]}
-
-        <Rect x={ bar.value ===0? initialStagePositions[bar.pos].x -5 :bar.value >= 0 ? initialStagePositions[bar.pos].x : initialStagePositions[bar.pos].x + (bar.value)*gridLogic?.cellSize}
+    {#if gridLogic && positionsReady && initialStagePositions[bar.pos]}
+        <Rect x={ bar.value ===0? initialStagePositions[bar.pos].x -5:bar.value >= 0 ? initialStagePositions[bar.pos].x : initialStagePositions[bar.pos].x + (bar.value)*gridLogic?.cellSize}
             y={initialStagePositions[bar.pos].y - 0.9*gridLogic?.cellSize}
             width={ bar.value ===0? 10 : bar.value >0  ? bar.value*gridLogic?.cellSize: (-bar.value)*gridLogic?.cellSize }
             height={0.7*gridLogic?.cellSize | 0}
@@ -144,10 +149,10 @@
 {/snippet}
 
 {#snippet writeEnergyLabels(bar:EnergyBar)}
-    {#if positionsReady && initialStagePositions[bar.pos]}
-        <Text x={initialStagePositions[bar.pos].x - (numCells.x+2)*cellSize} y={initialStagePositions[bar.pos].y - 1.5*cellSize} text={bar.symbol} 
-                fontSize={0.5*cellSize} fill={bar.color} stroke='black' strokeWidth={0.5}/>
-    {/if}
+    {#if gridLogic &&positionsReady && initialStagePositions[bar.pos]}
+            <Text x={initialStagePositions[bar.pos].x -(gridLogic.numCells.x+1.7)/2.0*gridLogic?.cellSize} y={initialStagePositions[bar.pos].y - 0.8*gridLogic?.cellSize} text={bar.symbol} 
+                    fontSize={0.5*gridLogic?.cellSize} fill={bar.color} stroke='black' strokeWidth={0.5}/>
+        {/if}
 {/snippet}
 
 <div id='energy' class='flex flex-col bg-gray-100 w-full rounded-xl shadow-lg items-center'>
