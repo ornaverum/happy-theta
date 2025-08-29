@@ -2,7 +2,7 @@
 <script lang="ts">
     import { Stage, Layer, Rect, Image as KonvaImage } from 'svelte-konva';
     import { onMount, tick } from 'svelte';
-    import {Fileupload, Helper, Label, Carousel, type ImgType} from 'flowbite-svelte';
+    import {Fileupload, Helper, Label, Button, type ImgType} from 'flowbite-svelte';
     import cv from '@techstark/opencv-js'
     import gifshot from 'gifshot';
 
@@ -132,6 +132,31 @@
     }
 
     let mainViewDiv: HTMLDivElement | null = null;
+
+    const clearFiles = () => {
+        selectedFiles = undefined;
+        fileObjectURLs = [];
+        selectedFileIndex = 0;
+    };
+
+    const saveGif = () => {
+        const gifPreviewDiv = document.getElementById('gif-preview');
+        if (gifPreviewDiv) {
+            const imgElement = gifPreviewDiv.querySelector('img');
+            if (imgElement) {
+                const link = document.createElement('a');
+                link.href = imgElement.src;
+                link.download = 'generated.gif';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            } else {
+                console.error("No GIF image found to save.");
+            }
+        } else {
+            console.error("GIF preview div not found.");
+        }
+    };
 </script>
 
 <div>
@@ -141,17 +166,17 @@
         </div>
         
         
-        <div class='flex flex-row bg-green-200 p-3 m-3'>
-            <div id='main-view' class='min-w-40 max-w-4/5 p-4' bind:this={mainViewDiv}>
+        <div class='flex flex-row bg-green-200 p-3 m-3 min-h-40 items-stretch'>
+            <div id='main-view' class='min-w-40 max-w-4/5 p-4 flex-1 flex items-center justify-center relative' bind:this={mainViewDiv}>
                 {#if selectedFiles}
-                    <img src={fileObjectURLs[selectedFileIndex]} alt='Selected Image' class='max-w-full max-h-96'/>
+                    <img src={fileObjectURLs[selectedFileIndex]} alt='' class='object-contain w-full h-full max-h-96 max-w-full'/>
                 {:else}
                     <div class='w-full h-40 bg-gray-300 flex items-center justify-center text-gray-500'>
                         No image selected
                     </div>
                 {/if}
             </div>
-            <div id='thumbnails' class='flex flex-col p-2 space-y-2 overflow-y-scroll' style='max-height: {mainViewDiv?.clientHeight || 500}px'>
+            <div id='thumbnails' class='flex flex-col p-2 space-y-2 overflow-y-scroll {selectedFiles ? "h-full" : ""}'>
                 {#if selectedFiles && selectedFiles.length > 1}
                     <div class='text-sm font-semibold'>Select Image:</div>
                     {#each selectedFiles as file, index}
@@ -178,9 +203,13 @@
             <Fileupload class="bg-white text-white" clearable bind:files={fileListForUpload} 
                 multiple accept='.jpg, .jpeg, .heic, .png'  onchange={(e) => {console.log((e.target as HTMLInputElement)?.files)}}/>
             <Helper class="mt-2">Selected files: {fileNames ? fileNames : "No files selected"}</Helper>
-            <button class="mt-4 px-4 py-2 bg-blue-500 text-white rounded" onclick={handleMakeGif}>
-                Create GIF from Images
-            </button>
+            <div class='flex space-x-2'>
+                <Button disabled={!selectedFiles || selectedFiles.length === 0} class="mt-4 px-4 py-2 bg-blue-500 text-white rounded" onclick={handleMakeGif}>
+                    Create GIF from Images
+                </Button>
+
+                <Button disabled={!selectedFiles || selectedFiles.length === 0}  class="mt-4 px-4 py-2 bg-blue-500 text-white rounded" onclick={saveGif}>Save Gif</Button>
+            </div>
         </div>
     </div> 
 </div>
