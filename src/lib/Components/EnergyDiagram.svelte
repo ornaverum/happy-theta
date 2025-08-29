@@ -73,7 +73,7 @@
         let pt:Point = {x:e.evt.layerX, y:e.evt.layerY};
         let snap:Point = gridLogic.getPointFromStage(pt);
         snap.y = Math.floor(snap.y);
-        snap.x = Math.round(snap.x);
+        snap.x = Math.round( Math.min(Math.max(snap.x, -5), 5));
 
         let bar:EnergyBar|undefined = energyBars.find((bar) => bar.pos === snap.y);
         // snap = {x: Math.max(Math.round(snap.x),0.2)-5, y: bar};
@@ -90,16 +90,12 @@
         
         let pt:Point = {x:e.evt.layerX, y:e.evt.layerY};
         let snap:Point = gridLogic.getPointFromStage(pt);
-        console.log('handleGridMouseMove', snap);
         snap.y = Math.floor(snap.y);
-        snap.x = Math.round(snap.x);
+        snap.x = Math.round( Math.min(Math.max(snap.x, -5), 5));
 
-        console.log('event X, Y', e.evt.layerX, e.evt.layerY);
-        console.log('snapped', snap);
         // if (snap.x >= 0 && snap.x <= numCells.x && snap.y >= 0 && snap.y <= numCells.y) {
         // console.log('snap', snap);
         let bar:EnergyBar|undefined = energyBars.find((bar)=>bar.pos == snap.y);
-        console.log('bar', bar);
         if (!bar) return;
         pt = gridLogic.getStageFromPoint(snap);
         previewEnergy.pos = bar.pos;
@@ -128,15 +124,16 @@
     let previewEnergy: EnergyBar = $state({id: 5, name: 'Preview', symbol: 'E', value: 0, color: 'purple', opacity: 0.3});
 
 
-
+    $inspect(energyBars);
 
 </script>
 
 {#snippet drawEnergyBar(bar:EnergyBar)}
     {#if positionsReady && initialStagePositions[bar.pos]}
-        <Rect x={bar.value >= 0 ? initialStagePositions[bar.pos].x : initialStagePositions[bar.pos].x + (bar.value+1)*gridLogic?.cellSize}
+
+        <Rect x={ bar.value ===0? initialStagePositions[bar.pos].x -5 :bar.value >= 0 ? initialStagePositions[bar.pos].x : initialStagePositions[bar.pos].x + (bar.value)*gridLogic?.cellSize}
             y={initialStagePositions[bar.pos].y - 0.9*gridLogic?.cellSize}
-            width={ bar.value >0  ? bar.value*gridLogic?.cellSize: (-bar.value-2)*gridLogic?.cellSize }
+            width={ bar.value ===0? 10 : bar.value >0  ? bar.value*gridLogic?.cellSize: (-bar.value)*gridLogic?.cellSize }
             height={0.7*gridLogic?.cellSize | 0}
             fill={bar.color}
             stroke='#445544'
@@ -148,7 +145,7 @@
 
 {#snippet writeEnergyLabels(bar:EnergyBar)}
     {#if positionsReady && initialStagePositions[bar.pos]}
-        <Text x={initialStagePositions[bar.pos].x} y={initialStagePositions[bar.pos].y} text={bar.symbol} 
+        <Text x={initialStagePositions[bar.pos].x - (numCells.x+2)*cellSize} y={initialStagePositions[bar.pos].y - 1.5*cellSize} text={bar.symbol} 
                 fontSize={0.5*cellSize} fill={bar.color} stroke='black' strokeWidth={0.5}/>
     {/if}
 {/snippet}
