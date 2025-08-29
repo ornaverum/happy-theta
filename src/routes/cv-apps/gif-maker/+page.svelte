@@ -131,8 +131,8 @@
       });
     }
 
+    let mainViewDiv: HTMLDivElement | null = null;
 </script>
-
 
 <div>
     <div id='gif' class='mx-auto w-4/5 flex flex-col bg-gray-100 rounded-xl shadow-lg items-center'>
@@ -141,8 +141,8 @@
         </div>
         
         
-        <div class='flex flex-row bg-green-200 p-3 m-3 '>
-            <div id='main-view' class='min-w-40 max-w-4/5  bg-slate-200 p-4'>
+        <div class='flex flex-row bg-green-200 p-3 m-3'>
+            <div id='main-view' class='min-w-40 max-w-4/5 p-4' bind:this={mainViewDiv}>
                 {#if selectedFiles}
                     <img src={fileObjectURLs[selectedFileIndex]} alt='Selected Image' class='max-w-full max-h-96'/>
                 {:else}
@@ -151,7 +151,7 @@
                     </div>
                 {/if}
             </div>
-            <div class='flex flex-col max-h-80 p-2 space-y-2 overflow-y-scroll'>
+            <div id='thumbnails' class='flex flex-col p-2 space-y-2 overflow-y-scroll' style='max-height: {mainViewDiv?.clientHeight || 500}px'>
                 {#if selectedFiles && selectedFiles.length > 1}
                     <div class='text-sm font-semibold'>Select Image:</div>
                     {#each selectedFiles as file, index}

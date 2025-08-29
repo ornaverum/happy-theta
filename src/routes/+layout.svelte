@@ -18,7 +18,7 @@
 <!-- <DarkMode btnClass={darkmodebtn} /> -->
  <!-- <DarkMode></DarkMode> -->
 
-<div class="h-screen max-w-full overflow-x-hidden bg-gradient-to-b from-white to-blue-200">
+<div class="h-screen max-w-full overflow-x-hidden bg-gradient-to-b from-white to-blue-200 min-w-[40rem]">
 	<Navbar let:hidden let:toggle >
 		<NavBrand href="/">
 			<object data="/HappyThetaLogo.svg" class="max-h-12" title="Happy Theta Logo"></object>
