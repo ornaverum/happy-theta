@@ -181,15 +181,40 @@ canvas.ht-stage { user-select: none; touch-action: none; }
 .energy-title { margin-left: 1rem; font-size: 1.125rem; line-height: 1.75rem; font-weight: 700; }
 
 /* ---------- graph maker ---------- */
-.group-row { display: flex; flex-direction: row; flex-wrap: wrap; }
-.group-ctrls { display: flex; flex-direction: column; justify-content: center; }
-.group-ctrls .btn { margin: 0.25rem 0; }
-.group-label { height: auto; margin: auto; display: flex; }
-.qual-graph { padding: 1rem; display: flex; flex-direction: column; }
-.qual-graph .btn-header { display: flex; flex-direction: row; margin: 0.5rem; padding: 0.5rem; }
-.qual-graph .row { display: flex; flex-direction: row; justify-content: flex-end; }
-.ylabel { margin: auto 0; writing-mode: vertical-rl; transform: rotate(180deg); user-select: none; cursor: pointer; }
-.xlabel { margin: 0 auto; user-select: none; }
+.gm-hint { font-size: 0.875rem; color: #4b5563; margin: 0 0.5rem 0.5rem; }
+.gm-groups { display: flex; flex-direction: column; gap: 1rem; }
+.gm-group {
+	display: flex; align-items: stretch; gap: 0.75rem; background: #f3f4f6; border-radius: 0.75rem; padding: 0.75rem;
+	box-shadow: 0 10px 15px -3px rgb(0 0 0 / .1), 0 4px 6px -4px rgb(0 0 0 / .1);
+}
+.gm-group-side { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.5rem;
+	padding-right: 0.75rem; border-right: 2px solid #e5e7eb; min-width: 3rem; }
+.gm-group-side .edit-label { flex-direction: column; gap: 0.25rem; }
+.gm-group-side .edit-label .btn { margin: 0; }
+.gm-group-ctrls { display: flex; flex-direction: column; gap: 0.375rem; }
+.gm-graphs { flex: 1; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-evenly; gap: 1rem; min-width: 0; }
+.qg-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 0.5rem; padding: 0.5rem 0.75rem 0.5rem 0.5rem; }
+.qg-head { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; min-height: 2rem; padding-left: 1.75rem; }
+.qg-head .edit-label .btn { margin: 0 0.5rem 0 0; }
+.qg-ctrls { display: flex; gap: 1px; }
+.qg-ctrls .btn { border-radius: 0; padding: 0.4rem 0.55rem; }
+.qg-ctrls .btn:first-child { border-radius: 0.375rem 0 0 0.375rem; }
+.qg-ctrls .btn:last-child { border-radius: 0 0.375rem 0.375rem 0; }
+.qg-body { display: grid; grid-template-columns: 1.75rem auto; }
+.qg-ylabel {
+	writing-mode: vertical-rl; transform: rotate(180deg); align-self: stretch; display: flex; align-items: center; justify-content: center;
+	font-weight: 600; font-size: 0.95rem; user-select: none; border-radius: 0.25rem;
+}
+.qg-ylabel:hover { background: #f3f4f6; }
+.qg-stage canvas { cursor: crosshair; }
+.qg-xlabel { text-align: center; font-weight: 600; font-size: 0.95rem; color: #374151; user-select: none; padding-top: 0.125rem; }
+.gm-add-graph {
+	width: 3rem; height: 3rem; border-radius: 9999px; border: 2px dashed #9ca3af; color: #6b7280;
+	display: flex; align-items: center; justify-content: center; flex: none;
+}
+.gm-add-graph:hover { border-color: #1d4ed8; color: #1d4ed8; background: #eff6ff; }
+.gm-add-graph svg { width: 1.5rem; height: 1.5rem; }
+.gm-add-group { margin-top: 1rem; }
 
 /* ---------- gif maker ---------- */
 .gif-box { margin: 0 auto; width: 80%; display: flex; flex-direction: column; background: #f3f4f6; border-radius: 0.75rem;
