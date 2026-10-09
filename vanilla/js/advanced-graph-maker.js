@@ -103,19 +103,19 @@
 		const base = { id: ++plotSeq, type, hidden: false, legend: '', style: style(color) };
 		switch (type) {
 			case 'function':
-				return { ...base, expr: '', edgeArrows: true };
+				return { ...base, expr: '', edgeArrows: false };
 			case 'conic':
-				return { ...base, expr: '', edgeArrows: true };
+				return { ...base, expr: '', edgeArrows: false };
 			case 'polar':
-				return { ...base, expr: '', tmin: '0', tmax: '2π', edgeArrows: true };
+				return { ...base, expr: '', tmin: '0', tmax: '2π', edgeArrows: false };
 			case 'parametric':
 				return { ...base, xexpr: '', yexpr: '', tmin: '0', tmax: '10', dirArrows: 2 };
 			case 'scatter':
 				return { ...base, method: 'points', points: range(9, () => ({ x: '', y: '' })), list: '', marker: { shape: 'circle', color, size: 12 } };
 			case 'piecewise':
-				return { ...base, rows: range(4, () => ({ expr: '', lo: '', op: 'ltlt', hi: '' })), edgeArrows: true, showEnds: true, endSize: 12 };
+				return { ...base, rows: range(4, () => ({ expr: '', lo: '', op: 'ltlt', hi: '' })), edgeArrows: false, showEnds: true, endSize: 12 };
 			case 'asymptotes':
-				return { ...base, vx: ['', '', ''], hy: ['', ''], edgeArrows: true, style: style(color, '5 5') };
+				return { ...base, vx: ['', '', ''], hy: ['', ''], edgeArrows: false, style: style(color, '5 5') };
 			case 'polygon':
 				return { ...base, method: 'points', points: range(9, () => ({ x: '', y: '' })), list: '', close: true, fill: 'semi', fillColor: color };
 			case 'slopefield':
@@ -966,15 +966,14 @@
 		ctx.lineWidth = g.axisW;
 		ctx.setLineDash([]);
 		ctx.beginPath();
-		ctx.moveTo(L.gx - ext, axes.xAxisY);
+		ctx.moveTo(L.gx, axes.xAxisY);
 		ctx.lineTo(L.gx + L.W + ext - 4, axes.xAxisY);
 		ctx.moveTo(axes.yAxisX, L.gy - ext + 4);
-		ctx.lineTo(axes.yAxisX, L.gy + L.H + ext);
+		ctx.lineTo(axes.yAxisX, L.gy + L.H);
 		ctx.stroke();
+		// arrowheads only at the positive ends: right of the x-axis, top of the y-axis
 		arrowHead(ctx, L.gx + L.W + ext, axes.xAxisY, 0, g.axisW, g.axisColor);
-		arrowHead(ctx, L.gx - ext, axes.xAxisY, Math.PI, g.axisW, g.axisColor);
 		arrowHead(ctx, axes.yAxisX, L.gy - ext, -Math.PI / 2, g.axisW, g.axisColor);
-		arrowHead(ctx, axes.yAxisX, L.gy + L.H + ext, Math.PI / 2, g.axisW, g.axisColor);
 
 		// tick marks (ticks mode)
 		if (g.mode === 'ticks') {
