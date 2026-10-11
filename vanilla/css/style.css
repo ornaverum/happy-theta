@@ -323,3 +323,36 @@ canvas.ht-stage { user-select: none; touch-action: none; }
 .agm-char { width: 2.4rem; height: 2.4rem; border: 1px solid #d1d5db; border-radius: 0.375rem; background: #fff; font-size: 1.15rem; }
 .agm-char:hover { background: #eff6ff; border-color: #3b82f6; }
 @media (max-width: 1100px) { .agm-top { grid-template-columns: 1fr; } .agm, .figures-wrap { width: 92%; } }
+
+/* ---------- save / open dialogs ---------- */
+.ht-dialog {
+	width: min(32rem, calc(100vw - 2rem)); padding: 1.25rem; border: 1px solid #e5e7eb; border-radius: 0.75rem;
+	box-shadow: 0 20px 25px -5px rgb(0 0 0 / .15), 0 8px 10px -6px rgb(0 0 0 / .1); color: #111827;
+}
+.ht-dialog::backdrop { background: rgb(17 24 39 / 0.4); }
+.ht-dialog h2 { font-size: 1.125rem; font-weight: 700; margin-bottom: 0.75rem; }
+.ht-field { display: flex; flex-direction: column; gap: 0.25rem; font-size: 0.875rem; font-weight: 500; }
+.ht-input {
+	width: 100%; font-size: 0.875rem; border-radius: 0.5rem; border: 1px solid #d1d5db;
+	background: #f9fafb; color: #111827; padding: 0.5rem 0.625rem;
+}
+.ht-dialog-msg { min-height: 1.25rem; margin-top: 0.5rem; font-size: 0.875rem; color: #374151; }
+.ht-dialog-msg.error { color: #b91c1c; }
+.ht-dialog-footer { display: flex; gap: 0.5rem; align-items: center; margin-top: 0.5rem; }
+.ht-spacer { flex: 1; }
+.ht-save-list { max-height: 50vh; overflow-y: auto; display: flex; flex-direction: column; gap: 0.25rem; }
+.ht-save-list li { display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem; border-radius: 0.5rem; background: #f3f4f6; }
+.ht-save-info { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.ht-save-info strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ht-save-info small { color: #6b7280; }
+.ht-save-list li.ht-save-empty { background: none; color: #6b7280; justify-content: center; }
+
+/* ---------- FBD extras ---------- */
+.fbd-axes { display: flex; align-items: center; gap: 0.5rem; margin: 0.5rem 1rem; font-size: 0.875rem; }
+.fbd-axes input[type='range'] { flex: 1; }
+.fbd-axes output { min-width: 3rem; font-variant-numeric: tabular-nums; }
+.tao-row select {
+	display: block; width: 100%; margin: auto 0; font-size: 0.875rem; border-radius: 0.5rem; border: 1px solid #d1d5db;
+	background: #f9fafb; color: #111827; padding: 0.625rem 0.25rem; font-weight: 400;
+}
+.tao-row .placeholder { opacity: 0.6; font-style: italic; font-weight: 400; }

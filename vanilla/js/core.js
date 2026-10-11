@@ -158,8 +158,8 @@ HT.actions = {
 			{ class: 'btn-group' },
 			HT.button({ cls: 'btn-dark', icon: 'fileExport', tip: 'Download image as png', onclick: () => HT.saveDivAsImage() }),
 			HT.button({ cls: 'btn-dark', icon: 'fileCopy', tip: 'Copy image to clipboard', onclick: () => HT.copyDivAsImageToClipboard() }),
-			HT.button({ cls: 'btn-dark', icon: 'floppy', tip: 'Save data locally (TBD)', disabled: true, onclick: call('saveData') }),
-			HT.button({ cls: 'btn-dark', icon: 'folderOpen', tip: 'Load local data (TBD)', disabled: true, onclick: call('loadData') }),
+			HT.button({ cls: 'btn-dark', icon: 'floppy', tip: 'Save in this browser', onclick: call('saveData') }),
+			HT.button({ cls: 'btn-dark', icon: 'folderOpen', tip: 'Open a saved figure', onclick: call('loadData') }),
 			HT.button({ cls: 'btn-dark', icon: 'refresh', tip: 'Delete data and refresh', onclick: call('refreshAllData') })
 		);
 		const checkbox = HT.el('input', { type: 'checkbox', onchange: (e) => HT.setCtrl(e.target.checked) });
@@ -583,3 +583,287 @@ HT.copyDivAsImageToClipboard = async function () {
 	const canvas = await HT.captureToCanvas();
 	canvas.toBlob((blob) => navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]));
 };
+
+/* ------------------------------------------------------------------ */
+/* Save files — one JSON envelope for every tool                       */
+/*   { format, version, tool, role, id, meta, data, view }             */
+/*   data = what the figure means (graded); view = how it was drawn.   */
+/* ------------------------------------------------------------------ */
+
+const FILE_FORMAT = 'happytheta';
+const FILE_VERSION = 1;
+const STORE_PREFIX = 'happytheta:save:';
+const TOOLS = ['fbd', 'energy', 'motion', 'graph'];
+
+HT.files = {
+	FORMAT: FILE_FORMAT,
+	VERSION: FILE_VERSION,
+
+	newId(prefix = 's') {
+		return prefix + '_' + Math.random().toString(36).slice(2, 10);
+	},
+
+	/* Build a fresh envelope, or update a previous one (keeps id + created) */
+	wrap(tool, { title, data, view = {} }, prev) {
+		const now = new Date().toISOString();
+		return {
+			format: FILE_FORMAT,
+			version: FILE_VERSION,
+			tool,
+			role: 'response',
+			id: prev ? prev.id : HT.files.newId('s'),
+			meta: { title: title || 'Untitled', created: prev ? prev.meta.created : now, modified: now },
+			data,
+			view
+		};
+	},
+
+	/* Validate text or an object; throws an Error with a readable message */
+	parse(input, tool) {
+		let f = input;
+		if (typeof input === 'string') {
+			try {
+				f = JSON.parse(input);
+			} catch {
+				throw new Error('That file is not valid JSON.');
+			}
+		}
+		if (!f || f.format !== FILE_FORMAT) throw new Error('That is not a Happy Theta file.');
+		if (!TOOLS.includes(f.tool)) throw new Error(`Unknown tool "${f.tool}".`);
+		if (tool && f.tool !== tool) throw new Error(`That file is for the ${HT.files.toolName(f.tool)}, not this page.`);
+		if (typeof f.version !== 'number' || f.version > FILE_VERSION)
+			throw new Error('That file was made by a newer version of Happy Theta.');
+		if (!f.data || typeof f.data !== 'object') throw new Error('That file has no figure data.');
+		return HT.files.migrate(f);
+	},
+
+	/* Upgrade older versions step by step. Only version 1 exists so far. */
+	migrate(f) {
+		f.meta = f.meta || {};
+		f.view = f.view || {};
+		return f;
+	},
+
+	toolName(tool) {
+		return { fbd: 'Free Body Diagram', energy: 'Energy Diagram', motion: 'Motion Diagram', graph: 'Graph Maker' }[tool] || tool;
+	},
+
+	/* ---- localStorage (every call can throw: private mode, quota, blocked storage) ---- */
+	key: (tool, id) => STORE_PREFIX + tool + ':' + id,
+
+	list(tool) {
+		const out = [];
+		const pre = STORE_PREFIX + tool + ':';
+		for (let i = 0; i < localStorage.length; i++) {
+			const k = localStorage.key(i);
+			if (!k || !k.startsWith(pre)) continue;
+			try {
+				const f = HT.files.parse(localStorage.getItem(k), tool);
+				out.push(f);
+			} catch (err) {
+				console.warn('Skipping unreadable save', k, err);
+			}
+		}
+		return out.sort((a, b) => String(b.meta.modified).localeCompare(String(a.meta.modified)));
+	},
+
+	read(tool, id) {
+		const raw = localStorage.getItem(HT.files.key(tool, id));
+		return raw ? HT.files.parse(raw, tool) : null;
+	},
+
+	write(file) {
+		localStorage.setItem(HT.files.key(file.tool, file.id), JSON.stringify(file));
+	},
+
+	remove(tool, id) {
+		localStorage.removeItem(HT.files.key(tool, id));
+	},
+
+	/* ---- files on disk: name.fbd.json etc. ---- */
+	download(file) {
+		const safe = (file.meta.title || 'figure').replace(/[^\w\- ]+/g, '').trim().replace(/\s+/g, '-') || 'figure';
+		const blob = new Blob([JSON.stringify(file, null, 2)], { type: 'application/json' });
+		const a = document.createElement('a');
+		a.href = URL.createObjectURL(blob);
+		a.download = `${safe}.${file.tool}.json`;
+		document.body.appendChild(a);
+		a.click();
+		a.remove();
+		setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+	},
+
+	readUpload(blob, tool) {
+		return blob.text().then((t) => HT.files.parse(t, tool));
+	}
+};
+
+/* ------------------------------------------------------------------ */
+/* Page document: each figure page registers how to save and load      */
+/* ------------------------------------------------------------------ */
+
+/*  HT.registerDoc({ tool, serialize() -> {data, view}, load(file), reset(), defaultTitle() })  */
+HT.registerDoc = function (spec) {
+	HT.docSpec = spec;
+	HT.doc = null; // the envelope this page was last saved to / loaded from
+	HT.actions.saveData = () => openSaveDialog();
+	HT.actions.loadData = () => openLoadDialog();
+	HT.actions.refreshAllData = () => {
+		HT.doc = null;
+		spec.reset();
+	};
+};
+
+HT.loadFile = function (file) {
+	HT.docSpec.load(file);
+	HT.doc = file;
+};
+
+function fmtDate(iso) {
+	const d = new Date(iso);
+	return isNaN(d) ? '' : d.toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });
+}
+
+/* Small modal built on <dialog>; returns { dlg, setMessage, close } */
+function modal(title, body, footer) {
+	const msg = HT.el('p', { class: 'ht-dialog-msg', role: 'status' });
+	const dlg = HT.el(
+		'dialog',
+		{ class: 'ht-dialog' },
+		HT.el('h2', { text: title }),
+		body,
+		msg,
+		HT.el('div', { class: 'ht-dialog-footer' }, footer)
+	);
+	dlg.addEventListener('close', () => dlg.remove());
+	dlg.addEventListener('click', (e) => {
+		if (e.target === dlg) dlg.close(); // backdrop
+	});
+	document.body.appendChild(dlg);
+	dlg.showModal();
+	return {
+		dlg,
+		close: () => dlg.close(),
+		setMessage(text, isError = true) {
+			msg.textContent = text;
+			msg.classList.toggle('error', isError);
+		}
+	};
+}
+
+function openSaveDialog() {
+	const spec = HT.docSpec;
+	const cur = HT.doc;
+	const name = HT.el('input', {
+		type: 'text',
+		class: 'ht-input',
+		value: cur ? cur.meta.title : spec.defaultTitle(),
+		'aria-label': 'Name'
+	});
+	const body = HT.el('label', { class: 'ht-field' }, HT.el('span', { text: 'Name' }), name);
+
+	const build = (prev) => HT.files.wrap(spec.tool, { title: name.value.trim(), ...spec.serialize() }, prev);
+	const save = (prev) => {
+		try {
+			const file = build(prev);
+			HT.files.write(file);
+			HT.doc = file;
+			m.close();
+		} catch (err) {
+			console.error(err);
+			m.setMessage(
+				err && err.name === 'QuotaExceededError'
+					? 'Browser storage is full. Delete some saves or download a file instead.'
+					: 'This browser blocked saving (private window or storage turned off). Download a file instead.'
+			);
+		}
+	};
+
+	const footer = [
+		HT.el('button', { type: 'button', class: 'btn btn-light btn-xs', text: 'Download file', onclick: () => HT.files.download(build(cur)) }),
+		HT.el('span', { class: 'ht-spacer' }),
+		HT.el('button', { type: 'button', class: 'btn btn-light btn-xs', text: 'Cancel', onclick: () => m.close() })
+	];
+	if (cur) {
+		footer.push(HT.el('button', { type: 'button', class: 'btn btn-light btn-xs', text: 'Save as new', onclick: () => save(null) }));
+		footer.push(HT.el('button', { type: 'button', class: 'btn btn-blue btn-xs', text: 'Save', onclick: () => save(cur) }));
+	} else {
+		footer.push(HT.el('button', { type: 'button', class: 'btn btn-blue btn-xs', text: 'Save', onclick: () => save(null) }));
+	}
+	const m = modal('Save ' + HT.files.toolName(spec.tool), body, footer);
+	name.addEventListener('keydown', (e) => {
+		if (e.key === 'Enter') save(cur);
+	});
+	name.select();
+}
+
+function openLoadDialog() {
+	const spec = HT.docSpec;
+	const listBox = HT.el('ul', { class: 'ht-save-list' });
+	const fileInput = HT.el('input', { type: 'file', accept: '.json,application/json', hidden: true });
+
+	const open = (file) => {
+		try {
+			HT.loadFile(file);
+			m.close();
+		} catch (err) {
+			console.error(err);
+			m.setMessage('Could not open that figure: ' + err.message);
+		}
+	};
+
+	const render = () => {
+		let saves = [];
+		try {
+			saves = HT.files.list(spec.tool);
+		} catch (err) {
+			console.error(err);
+			m.setMessage('This browser blocked reading saved figures.');
+		}
+		listBox.replaceChildren();
+		if (!saves.length) listBox.appendChild(HT.el('li', { class: 'ht-save-empty', text: 'No saved figures yet.' }));
+		for (const f of saves) {
+			const del = HT.el('button', { type: 'button', class: 'btn btn-light btn-xs', text: 'Delete' });
+			del.addEventListener('click', () => {
+				if (del.dataset.armed) {
+					try {
+						HT.files.remove(spec.tool, f.id);
+						if (HT.doc && HT.doc.id === f.id) HT.doc = null;
+					} catch (err) {
+						console.error(err);
+					}
+					render();
+				} else {
+					del.dataset.armed = '1';
+					del.textContent = 'Confirm delete';
+					del.classList.add('btn-red');
+				}
+			});
+			listBox.appendChild(
+				HT.el(
+					'li',
+					null,
+					HT.el('div', { class: 'ht-save-info' }, HT.el('strong', { text: f.meta.title }), HT.el('small', { text: fmtDate(f.meta.modified) })),
+					del,
+					HT.el('button', { type: 'button', class: 'btn btn-blue btn-xs', text: 'Open', onclick: () => open(f) })
+				)
+			);
+		}
+	};
+
+	fileInput.addEventListener('change', () => {
+		const blob = fileInput.files[0];
+		if (!blob) return;
+		HT.files
+			.readUpload(blob, spec.tool)
+			.then(open)
+			.catch((err) => m.setMessage(err.message));
+	});
+
+	const m = modal('Open ' + HT.files.toolName(spec.tool), HT.el('div', null, listBox, fileInput), [
+		HT.el('button', { type: 'button', class: 'btn btn-light btn-xs', text: 'Open file…', onclick: () => fileInput.click() }),
+		HT.el('span', { class: 'ht-spacer' }),
+		HT.el('button', { type: 'button', class: 'btn btn-light btn-xs', text: 'Close', onclick: () => m.close() })
+	]);
+	render();
+}

@@ -121,7 +121,7 @@
 		/* Quadratic curve between two endpoints; curvature -1, 0 or 1 */
 		pathFor(a, b, curvature = 0) {
 			const ctrl = a.y + (b.y - a.y) * 0.5 * (1 - curvature);
-			return { a: { ...a }, b: { ...b }, c: { x: (a.x + b.x) / 2, y: ctrl } };
+			return { a: { ...a }, b: { ...b }, c: { x: (a.x + b.x) / 2, y: ctrl }, bend: curvature };
 		}
 
 		curvature(pos) {
@@ -307,17 +307,93 @@
 	HT.onResize(fitGraphs);
 	document.addEventListener('ht-ctrl', () => requestAnimationFrame(fitGraphs));
 
-	HT.actions.saveData = () => console.log('saveData from graph-maker page');
-	HT.actions.loadData = () => console.log('loadData from graph-maker page');
-	HT.actions.refreshAllData = () => {
-		graphs = [];
-		views.clear();
-		groupLabels.clear();
-		groupIDs = [0];
-		graphIDIncrement = 0;
-		groupIDIncrement = 0;
-		addNewGraph(0);
-	};
+	/* ---------------- save / load ---------------- */
+
+	/*
+	 * Saved form:
+	 *   data.axes   = { x: { quantity, min, max }, y: { min, max } }   grid in graph units
+	 *   data.groups = [{ id, label, graphs: [{ id, title, quantity, segments }] }]
+	 *   segment     = { from: [t, v], to: [t, v], shape: 'line' | 'curve-up' | 'curve-down' }
+	 * Endpoints are whole grid points. The curve's control point is rebuilt from the shape on load.
+	 */
+	const sign = (v) => (v > 0 ? 1 : v < 0 ? -1 : 0);
+
+	function toSegment(p) {
+		const dy = p.b.y - p.a.y;
+		const bend = p.bend ?? 0;
+		const shape = bend === 0 || dy === 0 ? 'line' : bend * sign(dy) > 0 ? 'curve-up' : 'curve-down';
+		return { from: [p.a.x, p.a.y], to: [p.b.x, p.b.y], shape };
+	}
+
+	function fromSegment(seg) {
+		const pt = (v) => {
+			const x = Math.round(Number(v && v[0]));
+			const y = Math.round(Number(v && v[1]));
+			return { x: Math.min(COLS, Math.max(0, x || 0)), y: Math.min(Y_MAX, Math.max(Y_MAX - ROWS, y || 0)) };
+		};
+		const a = pt(seg.from);
+		const b = pt(seg.to);
+		const want = seg.shape === 'curve-up' ? 1 : seg.shape === 'curve-down' ? -1 : 0;
+		const bend = want * sign(b.y - a.y);
+		return QualGraph.prototype.pathFor(a, b, bend);
+	}
+
+	function resetIds() {
+		graphIDIncrement = graphs.reduce((m, g) => Math.max(m, g.graphID), -1);
+		groupIDIncrement = Math.max(0, ...groupIDs);
+	}
+
+	HT.registerDoc({
+		tool: 'graph',
+		defaultTitle: () => 'Motion graphs',
+		serialize: () => ({
+			data: {
+				axes: { x: { quantity: 'Time', min: 0, max: COLS }, y: { min: Y_MAX - ROWS, max: Y_MAX } },
+				groups: groupIDs.map((gid) => ({
+					id: 'grp' + gid,
+					label: groupLabels.get(gid) ?? `Group ${groupIDs.indexOf(gid) + 1}`,
+					graphs: graphs
+						.filter((g) => g.groupID === gid)
+						.map((g) => ({ id: 'g' + g.graphID, title: g.title, quantity: g.labels.y, segments: g.pathList.map(toSegment) }))
+				}))
+			},
+			view: {}
+		}),
+		load(file) {
+			const groups = Array.isArray(file.data.groups) ? file.data.groups : [];
+			graphs = [];
+			views.clear();
+			groupLabels.clear();
+			groupIDs = [];
+			let nextGraph = 0;
+			groups.forEach((grp, i) => {
+				const gid = i;
+				groupIDs.push(gid);
+				groupLabels.set(gid, grp.label == null ? `Group ${i + 1}` : String(grp.label));
+				for (const g of Array.isArray(grp.graphs) ? grp.graphs : []) {
+					graphs.push({
+						title: g.title == null ? '' : String(g.title),
+						graphID: nextGraph++,
+						groupID: gid,
+						pathList: (Array.isArray(g.segments) ? g.segments : []).map(fromSegment),
+						labels: { x: 'Time', y: Y_LABELS[g.quantity] ? g.quantity : 'Position' }
+					});
+				}
+			});
+			if (!groupIDs.length) groupIDs = [0];
+			resetIds();
+			render();
+		},
+		reset() {
+			graphs = [];
+			views.clear();
+			groupLabels.clear();
+			groupIDs = [0];
+			graphIDIncrement = 0;
+			groupIDIncrement = 0;
+			addNewGraph(0);
+		}
+	});
 
 	graphs = [
 		{ title: '', graphID: 0, groupID: 0, pathList: [], labels: { x: 'Time', y: 'Position' } },

@@ -121,24 +121,83 @@
 
 	/* ---------------- page ---------------- */
 	const list = el('ul', { class: 'figure-list' });
-	HT.capture.append(list, button({ cls: 'btn-alt', icon: 'plusCircle', text: 'Add New Diagram', extra: 'w-full', onclick: () => addNewMD() }));
+	HT.capture.append(list, button({ cls: 'btn-alt', icon: 'plusCircle', text: 'Add New Diagram', extra: 'w-full', onclick: () => addDiagram() }));
 
-	const mdSets = { title: 'Title', type: 'motion-diagram', id: 0, instances: [] };
+	const GRID = { numCells: { x: 10, y: 10 }, origin: { x: 5, y: 6 } };
+	let diagrams = []; // in-memory: { id, title, data: { posList: [{ pt, shift }], accList } }
 	let idInd = 0;
 
-	function addNewMD() {
-		const data = { id: idInd++, title: 'Title', data: { posList: [], accList: [] } };
-		mdSets.instances.push(data);
-		list.appendChild(el('li', null, new MotionDiagram(data).root));
+	function addDiagram(data) {
+		if (!data) data = { id: 'm' + idInd++, title: 'Title', data: { posList: [], accList: [] } };
+		diagrams.push(data);
+		list.appendChild(el('li', null, new MotionDiagram(data, HT.clone(GRID)).root));
 	}
 
-	HT.actions.saveData = () => console.log('saveData from motion-diagram page');
-	HT.actions.loadData = () => console.log('loadData from motion-diagram page');
-	HT.actions.refreshAllData = () => {
-		mdSets.instances = [];
+	function clearPage() {
+		diagrams = [];
+		idInd = 0;
 		list.replaceChildren();
-		addNewMD();
-	};
+	}
 
-	addNewMD();
+	const int = (v) => (Number.isFinite(Number(v)) ? Math.round(Number(v)) : 0);
+	const num = (v) => (Number.isFinite(Number(v)) ? Number(v) : 0);
+
+	/*
+	 * Saved form:
+	 *   data.diagrams[] = { id, title, dims, dt, dots: [{ x, y }] }   integer grid positions, in time order
+	 *   view.diagrams[] = { id, shifts: [[px, py]] }                  pixel nudges that keep 1D dots from overlapping
+	 */
+	HT.registerDoc({
+		tool: 'motion',
+		defaultTitle: () => (diagrams[0] && diagrams[0].title !== 'Title' ? diagrams[0].title : 'Motion diagram'),
+		serialize: () => {
+			const n = GRID.numCells;
+			const dims = n.x > 0 && n.y > 0 ? 2 : 1;
+			return {
+				data: {
+					diagrams: diagrams.map((d) => ({
+						id: d.id,
+						title: d.title,
+						dims,
+						dt: 1,
+						dots: d.data.posList.map((p) => (dims === 2 ? { x: p.pt.x, y: p.pt.y } : n.y == 0 ? { x: p.pt.x } : { y: p.pt.y }))
+					}))
+				},
+				view: {
+					grid: HT.clone(GRID),
+					diagrams: diagrams.map((d) => ({ id: d.id, shifts: d.data.posList.map((p) => [p.shift.x, p.shift.y]) }))
+				}
+			};
+		},
+		load(file) {
+			const saved = Array.isArray(file.data.diagrams) ? file.data.diagrams : [];
+			const views = (file.view && Array.isArray(file.view.diagrams) ? file.view.diagrams : []);
+			clearPage();
+			saved.forEach((d, i) => {
+				const id = d.id == null ? 'm' + i : String(d.id);
+				const v = views.find((x) => x.id === id) || views[i] || {};
+				const shifts = Array.isArray(v.shifts) ? v.shifts : [];
+				const dots = Array.isArray(d.dots) ? d.dots : [];
+				addDiagram({
+					id,
+					title: d.title == null ? 'Title' : String(d.title),
+					data: {
+						posList: dots.map((p, j) => ({
+							pt: { x: int(p.x), y: int(p.y) },
+							shift: { x: num(shifts[j] && shifts[j][0]), y: num(shifts[j] && shifts[j][1]) }
+						})),
+						accList: []
+					}
+				});
+			});
+			idInd = diagrams.reduce((m, d) => Math.max(m, (parseInt(d.id.slice(1), 10) || 0) + 1), diagrams.length);
+			if (!diagrams.length) addDiagram();
+		},
+		reset() {
+			clearPage();
+			addDiagram();
+		}
+	});
+
+	addDiagram();
 })();
