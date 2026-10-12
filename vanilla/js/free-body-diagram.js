@@ -38,25 +38,50 @@
 	const ARROW = { strokeWidth: 3, pointerLength: 10, pointerWidth: 10 };
 	const DEG = Math.PI / 180;
 
+	/* The three layouts. A 1D grid has zero cells across, so it draws as a single number line. */
+	const MODES = {
+		'2d': { label: '2D', numCells: { x: 10, y: 10 }, origin: { x: 5, y: 5 } },
+		horizontal: { label: '1D horizontal', numCells: { x: 10, y: 0 }, origin: { x: 5, y: 0 } },
+		vertical: { label: '1D vertical', numCells: { x: 0, y: 10 }, origin: { x: 0, y: 5 } }
+	};
+	const MODE_ORDER = ['2d', 'horizontal', 'vertical'];
+
+	/* Arrows pointing the same way would lie on top of each other, so each extra one in the same
+	   direction is nudged sideways by this fraction of a cell, alternating sides: 0, +1, -1, +2, -2 … */
+	const OVERLAP_STEP = 0.3;
+	const gcd = (a, b) => (b ? gcd(b, a % b) : Math.abs(a));
+	const dirKey = (v) => {
+		const g = gcd(v.dx, v.dy) || 1;
+		return v.dx / g + ',' + v.dy / g;
+	};
+	function sideSlots(vectors) {
+		const seen = new Map();
+		return vectors.map((v) => {
+			const k = dirKey(v);
+			const n = seen.get(k) || 0;
+			seen.set(k, n + 1);
+			return n === 0 ? 0 : n % 2 ? (n + 1) / 2 : -n / 2;
+		});
+	}
+
 	/* Force ids look like "f3"; the number picks the colour */
 	const idNum = (id) => parseInt(String(id).slice(1), 10) || 0;
 	const colorOf = (id) => COLORS[idNum(id) % 12];
 
 	/*
 	 * One diagram's data — exactly what is saved in the file:
-	 *   { id, title, axes: { rotation }, forces: [{ id, type, label, agent, on, dx, dy }] }
+	 *   { id, title, mode, axes: { rotation }, forces: [{ id, type, label, agent, on, dx, dy }] }
+	 * mode is '2d', 'horizontal' or 'vertical'. In 1D every force lies on the line (dy = 0 or dx = 0).
 	 * dx, dy are integer grid components in the diagram's own (possibly rotated) axes, +y up.
-	 * rotation is in whole degrees, counterclockwise.
+	 * rotation is in whole degrees, counterclockwise; it is only used in 2D.
 	 */
-	function newDiagramData(id) {
-		return { id, title: 'Title', axes: { rotation: 0 }, forces: [] };
+	function newDiagramData(id, mode = '2d') {
+		return { id, title: 'Title', mode, axes: { rotation: 0 }, forces: [] };
 	}
 
 	class FreeBodyDiagram {
-		constructor(data, { numCells = { x: 10, y: 10 }, origin = { x: 5, y: 5 }, initCellSize = 20 } = {}) {
+		constructor(data, { initCellSize = 20 } = {}) {
 			this.data = data;
-			this.numCells = numCells;
-			this.origin = origin;
 			this.initCellSize = initCellSize;
 			this.nextId = data.forces.reduce((m, f) => Math.max(m, idNum(f.id) + 1), 0);
 			this.editing = new Set(); // force ids whose row is in edit mode (not saved)
@@ -71,8 +96,20 @@
 			return this.data.forces;
 		}
 
+		get mode() {
+			return MODES[this.data.mode] ? this.data.mode : '2d';
+		}
+
+		get numCells() {
+			return MODES[this.mode].numCells;
+		}
+
+		get origin() {
+			return MODES[this.mode].origin;
+		}
+
 		get rotation() {
-			return this.data.axes.rotation || 0;
+			return this.mode === '2d' ? this.data.axes.rotation || 0 : 0;
 		}
 
 		get net() {
@@ -125,9 +162,23 @@
 				this.rotOut,
 				button({ cls: 'btn-light', text: 'Reset', extra: 'btn-xs', onclick: () => this.setRotation(0) })
 			);
+			this.axesRow = axesRow;
 			this.paintRotation();
 
-			const left = el('div', { class: 'fbd-left' }, el('div', { class: 'label-bold', text: 'Free Body Diagram' }), stageBox, axesRow);
+			this.modeBtns = MODE_ORDER.map((m) =>
+				el('button', { type: 'button', class: 'btn btn-light btn-xs', text: MODES[m].label, 'aria-pressed': 'false', onclick: () => this.setMode(m) })
+			);
+			const modeRow = el('div', { class: 'fbd-modes ctrl-only', role: 'group', 'aria-label': 'Diagram type' }, this.modeBtns);
+			this.paintModes();
+
+			const left = (this.leftCol = el(
+				'div',
+				{ class: 'fbd-left' },
+				el('div', { class: 'label-bold', text: 'Free Body Diagram' }),
+				modeRow,
+				stageBox,
+				axesRow
+			));
 
 			this.chart = el('div', { class: 'tao-chart' });
 			this.root = el('main', { class: 'panel pad' }, title.el, el('div', { class: 'fbd-cols' }, left, this.chart));
@@ -135,10 +186,47 @@
 		}
 
 		layout() {
-			const { size, cellSize } = gridStageSize(this.numCells, this.initCellSize);
+			let { size, cellSize } = gridStageSize(this.numCells, this.initCellSize);
+			// a wide 1D line must still fit beside the force chart
+			const avail = this.leftCol.clientWidth - 32;
+			if (avail > 0 && size.x > avail) {
+				const f = avail / size.x;
+				size = { x: size.x * f, y: size.y * f };
+				cellSize *= f;
+			}
 			this.grid = new GridLogic({ numCells: { ...this.numCells }, origin: { ...this.origin }, cellSize });
 			this.stage.resize(size.x, size.y);
 			this.draw();
+		}
+
+		/* ---- layout mode ---- */
+
+		paintModes() {
+			MODE_ORDER.forEach((m, i) => {
+				const on = m === this.mode;
+				this.modeBtns[i].setAttribute('aria-pressed', String(on));
+				this.modeBtns[i].classList.toggle('btn-blue', on);
+				this.modeBtns[i].classList.toggle('btn-light', !on);
+			});
+			this.axesRow.hidden = this.mode !== '2d'; // rotating only makes sense in 2D
+		}
+
+		/* Switching to 1D keeps each force's part along the line; a force with nothing left is removed. */
+		setMode(mode) {
+			if (mode === this.mode) return;
+			if (mode !== '2d') {
+				this.data.forces = this.forces
+					.map((f) => ({ ...f, dx: mode === 'vertical' ? 0 : f.dx, dy: mode === 'horizontal' ? 0 : f.dy }))
+					.filter((f) => f.dx !== 0 || f.dy !== 0);
+				this.data.axes.rotation = 0;
+				for (const id of [...this.editing]) if (!this.forces.some((f) => f.id === id)) this.editing.delete(id);
+			}
+			this.data.mode = mode;
+			this.preview = { x: 0, y: 0 };
+			this.paintModes();
+			this.paintRotation();
+			this.layout();
+			this.renderChart();
 		}
 
 		/* ---- rotated axes ---- */
@@ -188,27 +276,41 @@
 			const min = -this.origin.x;
 			const maxY = this.numCells.y - this.origin.y;
 			const minY = -this.origin.y;
-			return { x: Math.max(min, Math.min(max, pt.x)), y: Math.max(minY, Math.min(maxY, pt.y)) };
+			// + 0 turns -0 into 0
+			return { x: Math.max(min, Math.min(max, pt.x)) + 0, y: Math.max(minY, Math.min(maxY, pt.y)) + 0 };
 		}
 
 		/* ---- drawing ---- */
 
-		drawForce(v, { opacity, color, strokeWidth }) {
+		/* slot = how many steps to nudge the arrow sideways (see sideSlots) */
+		drawForce(v, { opacity, color, strokeWidth }, slot = 0) {
 			const o = this.grid.getStageFromPoint({ x: 0, y: 0 });
 			const p = this.grid.getStageFromPoint({ x: v.dx, y: v.dy });
-			this.stage.arrow(o.x, o.y, p.x, p.y, { ...ARROW, opacity, fill: color, stroke: color, strokeWidth });
+			let ox = 0;
+			let oy = 0;
+			if (slot) {
+				const len = Math.hypot(p.x - o.x, p.y - o.y) || 1;
+				const d = slot * OVERLAP_STEP * this.grid.cellSize;
+				ox = (-(p.y - o.y) / len) * d; // perpendicular to the arrow
+				oy = ((p.x - o.x) / len) * d;
+			}
+			this.stage.arrow(o.x + ox, o.y + oy, p.x + ox, p.y + oy, { ...ARROW, opacity, fill: color, stroke: color, strokeWidth });
 		}
 
 		draw() {
 			const s = this.stage;
 			s.clear();
 			const net = this.net;
+			const preview = { dx: this.preview.x, dy: this.preview.y };
+			const showPreview = this.onStage && (preview.dx || preview.dy);
+			// the preview goes last so existing arrows never move while the mouse does
+			const slots = sideSlots(showPreview ? [...this.forces, preview] : this.forces);
 			this.withAxes(() => {
 				drawGridLines(s, this.grid);
-				if (this.onStage) {
-					this.drawForce({ dx: this.preview.x, dy: this.preview.y }, { opacity: 0.5, color: COLORS[this.nextId % 12].cc, strokeWidth: 3 });
+				this.forces.forEach((f, i) => this.drawForce(f, { opacity: 1, color: colorOf(f.id).cc, strokeWidth: 3 }, slots[i]));
+				if (showPreview) {
+					this.drawForce(preview, { opacity: 0.5, color: COLORS[this.nextId % 12].cc, strokeWidth: 3 }, slots[this.forces.length]);
 				}
-				for (const f of this.forces) this.drawForce(f, { opacity: 1, color: colorOf(f.id).cc, strokeWidth: 3 });
 				if (net.dx == 0 && net.dy == 0) {
 					const o = this.grid.getStageFromPoint({ x: 0, y: 0 });
 					s.circle(o.x, o.y, 8, { fill: 'black' });
@@ -314,9 +416,15 @@
 	let idInd = 0;
 
 	function addDiagram(data) {
-		if (!data) data = newDiagramData('d' + idInd++);
+		if (!data) {
+			// new diagrams start in the same layout as the last one on the page
+			const last = diagrams[diagrams.length - 1];
+			data = newDiagramData('d' + idInd++, last && MODES[last.mode] ? last.mode : '2d');
+		}
 		diagrams.push(data);
-		list.appendChild(el('li', null, new FreeBodyDiagram(data).root));
+		const fig = new FreeBodyDiagram(data);
+		list.appendChild(el('li', null, fig.root));
+		fig.layout(); // again, now that the column has a width
 	}
 
 	function clearPage() {
@@ -329,26 +437,30 @@
 	function cleanDiagram(d, i) {
 		const int = (v) => (Number.isFinite(Number(v)) ? Math.round(Number(v)) : 0);
 		const str = (v) => (v == null ? '' : String(v));
+		const mode = MODES[d.mode] ? d.mode : '2d';
 		return {
 			id: str(d.id) || 'd' + i,
 			title: str(d.title ?? 'Title'),
-			axes: { rotation: Math.max(-90, Math.min(90, int(d.axes && d.axes.rotation))) },
-			forces: (Array.isArray(d.forces) ? d.forces : []).map((f, j) => ({
-				id: /^f\d+$/.test(f.id) ? f.id : 'f' + j,
-				type: TYPE_NAME[f.type] ? f.type : '',
-				label: str(f.label),
-				agent: str(f.agent),
-				on: str(f.on),
-				dx: int(f.dx),
-				dy: int(f.dy)
-			}))
+			mode,
+			axes: { rotation: mode === '2d' ? Math.max(-90, Math.min(90, int(d.axes && d.axes.rotation))) : 0 },
+			forces: (Array.isArray(d.forces) ? d.forces : [])
+				.map((f, j) => ({
+					id: /^f\d+$/.test(f.id) ? f.id : 'f' + j,
+					type: TYPE_NAME[f.type] ? f.type : '',
+					label: str(f.label),
+					agent: str(f.agent),
+					on: str(f.on),
+					dx: mode === 'vertical' ? 0 : int(f.dx),
+					dy: mode === 'horizontal' ? 0 : int(f.dy)
+				}))
+				.filter((f) => f.dx !== 0 || f.dy !== 0)
 		};
 	}
 
 	HT.registerDoc({
 		tool: 'fbd',
 		defaultTitle: () => (diagrams[0] && diagrams[0].title !== 'Title' ? diagrams[0].title : 'Free body diagram'),
-		serialize: () => ({ data: { diagrams: HT.clone(diagrams) }, view: { grid: { numCells: { x: 10, y: 10 }, origin: { x: 5, y: 5 } } } }),
+		serialize: () => ({ data: { diagrams: HT.clone(diagrams) }, view: {} }),
 		load(file) {
 			const saved = Array.isArray(file.data.diagrams) ? file.data.diagrams : [];
 			const clean = saved.map(cleanDiagram);
