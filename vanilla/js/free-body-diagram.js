@@ -40,10 +40,14 @@
 
 	/* The three layouts. A 1D grid has zero cells across, so it draws as a single number line. */
 	const MODES = {
-		'2d': { label: '2D', numCells: { x: 10, y: 10 }, origin: { x: 5, y: 5 } },
-		horizontal: { label: '1D horizontal', numCells: { x: 10, y: 0 }, origin: { x: 5, y: 0 } },
-		vertical: { label: '1D vertical', numCells: { x: 0, y: 10 }, origin: { x: 0, y: 5 } }
+		'2d': { label: '2D' },
+		horizontal: { label: '1D horizontal' },
+		vertical: { label: '1D vertical' }
 	};
+
+	/* Grid extent in cells on each side of the origin (see HT.gridControls) */
+	const DEFAULT_GRID = { x: { min: -5, max: 5 }, y: { min: -5, max: 5 } };
+	const GRID_LIMITS = { x: { minCells: 2, maxCells: 24 }, y: { minCells: 2, maxCells: 24 } };
 	const MODE_ORDER = ['2d', 'horizontal', 'vertical'];
 
 	/* Arrows pointing the same way would lie on top of each other, so each extra one in the same
@@ -70,13 +74,14 @@
 
 	/*
 	 * One diagram's data — exactly what is saved in the file:
-	 *   { id, title, mode, axes: { rotation }, forces: [{ id, type, label, agent, on, dx, dy }] }
+	 *   { id, title, mode, grid, axes: { rotation }, forces: [{ id, type, label, agent, on, dx, dy }] }
+	 * grid = { x: { min, max }, y: { min, max } }: how many cells the grid has on each side of the origin.
 	 * mode is '2d', 'horizontal' or 'vertical'. In 1D every force lies on the line (dy = 0 or dx = 0).
 	 * dx, dy are integer grid components in the diagram's own (possibly rotated) axes, +y up.
 	 * rotation is in whole degrees, counterclockwise; it is only used in 2D.
 	 */
-	function newDiagramData(id, mode = '2d') {
-		return { id, title: 'Title', mode, axes: { rotation: 0 }, forces: [] };
+	function newDiagramData(id, mode = '2d', grid = DEFAULT_GRID) {
+		return { id, title: 'Title', mode, grid: HT.clone(grid), axes: { rotation: 0 }, forces: [] };
 	}
 
 	class FreeBodyDiagram {
@@ -100,12 +105,35 @@
 			return MODES[this.data.mode] ? this.data.mode : '2d';
 		}
 
+		/* The extent in use: a 1D line keeps only the axis along it */
+		get range() {
+			const g = this.data.grid;
+			const none = { min: 0, max: 0 };
+			if (this.mode === 'horizontal') return { x: g.x, y: none };
+			if (this.mode === 'vertical') return { x: none, y: g.y };
+			return g;
+		}
+
 		get numCells() {
-			return MODES[this.mode].numCells;
+			return HT.gridFromRange(this.range).numCells;
 		}
 
 		get origin() {
-			return MODES[this.mode].origin;
+			return HT.gridFromRange(this.range).origin;
+		}
+
+		buildGridControls() {
+			const axes = this.mode === 'horizontal' ? ['x'] : this.mode === 'vertical' ? ['y'] : ['x', 'y'];
+			this.gridCtrls = HT.gridControls({
+				axes,
+				limits: GRID_LIMITS,
+				get: () => this.data.grid,
+				set: (ax, r) => {
+					this.data.grid[ax] = r;
+					this.layout();
+				}
+			});
+			this.gridBox.replaceChildren(this.gridCtrls.el);
 		}
 
 		get rotation() {
@@ -171,12 +199,16 @@
 			const modeRow = el('div', { class: 'fbd-modes ctrl-only', role: 'group', 'aria-label': 'Diagram type' }, this.modeBtns);
 			this.paintModes();
 
+			this.gridBox = el('div');
+			this.buildGridControls();
+
 			const left = (this.leftCol = el(
 				'div',
 				{ class: 'fbd-left' },
 				el('div', { class: 'label-bold', text: 'Free Body Diagram' }),
 				modeRow,
 				stageBox,
+				this.gridBox,
 				axesRow
 			));
 
@@ -225,6 +257,7 @@
 			this.preview = { x: 0, y: 0 };
 			this.paintModes();
 			this.paintRotation();
+			this.buildGridControls();
 			this.layout();
 			this.renderChart();
 		}
@@ -245,8 +278,24 @@
 		/* Shrink the rotated grid so its corners stay on the canvas */
 		fitScale() {
 			const t = this.rotation * DEG;
-			const n = Math.max(this.numCells.x, this.numCells.y);
-			return Math.min(1, (n + 1) / (n * (Math.abs(Math.cos(t)) + Math.abs(Math.sin(t)))));
+			if (!t) return 1;
+			const r = this.range;
+			const c = Math.cos(t);
+			const sn = Math.sin(t);
+			// room from the origin to each canvas edge, in cells (the canvas has about 1 cell of margin)
+			const room = { left: -r.x.min + 1, right: r.x.max + 1, down: -r.y.min + 1, up: r.y.max + 1 };
+			let k = 1;
+			for (const x of [r.x.min, r.x.max]) {
+				for (const y of [r.y.min, r.y.max]) {
+					const rx = x * c - y * sn;
+					const ry = x * sn + y * c;
+					if (rx > 0) k = Math.min(k, room.right / rx);
+					if (rx < 0) k = Math.min(k, room.left / -rx);
+					if (ry > 0) k = Math.min(k, room.up / ry);
+					if (ry < 0) k = Math.min(k, room.down / -ry);
+				}
+			}
+			return k;
 		}
 
 		/* Apply the axis rotation (counterclockwise on screen) about the origin */
@@ -261,6 +310,16 @@
 			c.translate(-o.x, -o.y);
 			fn();
 			c.restore();
+		}
+
+		/* Grid-frame stage point -> where it lands on screen once the axes are rotated (inverse of snap's first step) */
+		toScreen(q) {
+			const o = this.grid.getStageFromPoint({ x: 0, y: 0 });
+			const t = this.rotation * DEG;
+			const k = this.fitScale();
+			const vx = q.x - o.x;
+			const vy = q.y - o.y;
+			return { x: o.x + k * (vx * Math.cos(t) + vy * Math.sin(t)), y: o.y + k * (-vx * Math.sin(t) + vy * Math.cos(t)) };
 		}
 
 		/* Pointer (stage px) -> nearest grid point in the rotated axes */
@@ -318,6 +377,8 @@
 					this.drawForce(net, { opacity: 0.5, color: 'black', strokeWidth: 6 });
 				}
 			});
+			// labels turn with the axes but stay upright
+			HT.drawAxisLabels(s, this.grid, { map: (q) => this.toScreen(q) });
 		}
 
 		/* ---- editing ---- */
@@ -419,7 +480,7 @@
 		if (!data) {
 			// new diagrams start in the same layout as the last one on the page
 			const last = diagrams[diagrams.length - 1];
-			data = newDiagramData('d' + idInd++, last && MODES[last.mode] ? last.mode : '2d');
+			data = newDiagramData('d' + idInd++, last && MODES[last.mode] ? last.mode : '2d', last ? last.grid : DEFAULT_GRID);
 		}
 		diagrams.push(data);
 		const fig = new FreeBodyDiagram(data);
@@ -442,6 +503,10 @@
 			id: str(d.id) || 'd' + i,
 			title: str(d.title ?? 'Title'),
 			mode,
+			grid: {
+				x: HT.cleanAxisRange(d.grid && d.grid.x, DEFAULT_GRID.x, GRID_LIMITS.x),
+				y: HT.cleanAxisRange(d.grid && d.grid.y, DEFAULT_GRID.y, GRID_LIMITS.y)
+			},
 			axes: { rotation: mode === '2d' ? Math.max(-90, Math.min(90, int(d.axes && d.axes.rotation))) : 0 },
 			forces: (Array.isArray(d.forces) ? d.forces : [])
 				.map((f, j) => ({

@@ -12,10 +12,11 @@
 	};
 	const NEXT_Y = { Position: 'Velocity', Velocity: 'Acceleration', Acceleration: 'Position' };
 
-	/* Grid in graph units: time 0..6 to the right, value -3..3 */
-	const COLS = 6;
-	const ROWS = 6;
-	const Y_MAX = 3;
+	/* Default grid in graph units: time 0..6 to the right, value -3..3. Each graph can change its own. */
+	const COLS = 6; // cells the card is sized for
+	const DEFAULT_AXES = { x: { min: 0, max: 6 }, y: { min: -3, max: 3 } };
+	const AXIS_LIMITS = { x: { minCells: 2, maxCells: 16 }, y: { minCells: 2, maxCells: 16 } };
+	const newAxes = () => HT.clone(DEFAULT_AXES);
 	/* Canvas padding around the grid (room for the axis arrowheads) */
 	const PAD = { l: 4, r: 16, t: 16, b: 4 };
 
@@ -23,7 +24,7 @@
 
 	class QualGraph {
 		constructor(graph, { onDelete = () => {} } = {}) {
-			this.graph = graph; // { title, graphID, groupID, pathList, labels }
+			this.graph = graph; // { title, graphID, groupID, pathList, labels, axes }
 			this.onDelete = onDelete;
 			this.onStage = false;
 			this.dotList = []; // endpoints being placed, in graph units
@@ -38,16 +39,31 @@
 			return Y_LABELS[this.graph.labels.y].color;
 		}
 
+		get axes() {
+			return this.graph.axes;
+		}
+		get cols() {
+			return this.axes.x.max - this.axes.x.min;
+		}
+		get rows() {
+			return this.axes.y.max - this.axes.y.min;
+		}
+		/* square cells; the longer side keeps the card's size */
+		get cell() {
+			return graphSize / Math.max(this.cols, this.rows);
+		}
+
 		/* graph units <-> canvas pixels */
 		toPx(p) {
-			const cs = graphSize / COLS;
-			return { x: PAD.l + p.x * cs, y: PAD.t + (Y_MAX - p.y) * cs };
+			const cs = this.cell;
+			return { x: PAD.l + (p.x - this.axes.x.min) * cs, y: PAD.t + (this.axes.y.max - p.y) * cs };
 		}
 		snap(px) {
-			const cs = graphSize / COLS;
-			const x = Math.round((px.x - PAD.l) / cs);
-			const y = Y_MAX - Math.round((px.y - PAD.t) / cs);
-			return { x: Math.min(COLS, Math.max(0, x)), y: Math.min(Y_MAX, Math.max(Y_MAX - ROWS, y)) };
+			const cs = this.cell;
+			const a = this.axes;
+			const x = a.x.min + Math.round((px.x - PAD.l) / cs);
+			const y = a.y.max - Math.round((px.y - PAD.t) / cs);
+			return { x: Math.min(a.x.max, Math.max(a.x.min, x)) + 0, y: Math.min(a.y.max, Math.max(a.y.min, y)) + 0 };
 		}
 
 		build() {
@@ -88,11 +104,26 @@
 
 			this.xLabel = el('div', { class: 'qg-xlabel', text: this.graph.labels.x });
 
+			this.gridCtrls = HT.gridControls({
+				axes: ['x', 'y'],
+				names: { x: 'Time', y: 'Value' },
+				limits: AXIS_LIMITS,
+				get: () => this.axes,
+				set: (ax, r) => {
+					this.axes[ax] = r;
+					this.dotList = []; // drop a half-placed segment
+					this.addingDot = true;
+					this.previewPath = null;
+					this.resize();
+				}
+			});
+
 			this.root = el(
 				'div',
 				{ class: 'qg-card' },
 				el('div', { class: 'qg-head' }, this.title.el, ctrls),
-				el('div', { class: 'qg-body' }, this.yLabel, stageBox, el('div'), this.xLabel)
+				el('div', { class: 'qg-body' }, this.yLabel, stageBox, el('div'), this.xLabel),
+				this.gridCtrls.el
 			);
 		}
 
@@ -102,8 +133,8 @@
 		}
 
 		resize() {
-			const w = PAD.l + graphSize + PAD.r;
-			const h = PAD.t + graphSize + PAD.b;
+			const w = PAD.l + this.cols * this.cell + PAD.r;
+			const h = PAD.t + this.rows * this.cell + PAD.b;
 			this.stage.resize(w, h);
 			// line the labels up with the grid itself, not the padded canvas
 			this.yLabel.style.marginTop = PAD.t + 'px';
@@ -166,20 +197,22 @@
 
 		drawGrid() {
 			const s = this.stage;
-			const cs = graphSize / COLS;
-			for (let i = 0; i <= COLS; i++) {
+			const cs = this.cell;
+			const W = this.cols * cs;
+			const H = this.rows * cs;
+			for (let i = 0; i <= this.cols; i++) {
 				const x = PAD.l + i * cs;
-				s.line(x, PAD.t, x, PAD.t + graphSize, { stroke: '#9ca3af', strokeWidth: 1 });
+				s.line(x, PAD.t, x, PAD.t + H, { stroke: '#9ca3af', strokeWidth: 1 });
 			}
-			for (let j = 0; j <= ROWS; j++) {
+			for (let j = 0; j <= this.rows; j++) {
 				const y = PAD.t + j * cs;
-				s.line(PAD.l, y, PAD.l + graphSize, y, { stroke: '#9ca3af', strokeWidth: 1 });
+				s.line(PAD.l, y, PAD.l + W, y, { stroke: '#9ca3af', strokeWidth: 1 });
 			}
-			// axes: time axis through value 0 with an arrow on the right; value axis with an arrow on top
+			// axes through the origin: time axis with an arrow on the right; value axis with an arrow on top
 			const o = this.toPx({ x: 0, y: 0 });
 			const axis = { stroke: 'black', fill: 'black', strokeWidth: 3, pointerLength: 9, pointerWidth: 9 };
-			s.arrow(o.x, o.y, PAD.l + graphSize + PAD.r - 2, o.y, axis);
-			s.arrow(o.x, PAD.t + graphSize, o.x, 2, axis);
+			s.arrow(PAD.l, o.y, PAD.l + W + PAD.r - 2, o.y, axis);
+			s.arrow(o.x, PAD.t + H, o.x, 2, axis);
 		}
 
 		drawPath(p, opacity = 1) {
@@ -240,7 +273,16 @@
 	}
 
 	function addNewGraph(groupID) {
-		graphs.push({ title: 'Title', graphID: ++graphIDIncrement, groupID, pathList: [], labels: { x: 'Time', y: 'Position' } });
+		// a new graph copies the grid of the last graph in its group
+		const prev = graphs.filter((g) => g.groupID === groupID).pop();
+		graphs.push({
+			title: 'Title',
+			graphID: ++graphIDIncrement,
+			groupID,
+			pathList: [],
+			labels: { x: 'Time', y: 'Position' },
+			axes: prev ? HT.clone(prev.axes) : newAxes()
+		});
 		render();
 	}
 
@@ -311,8 +353,8 @@
 
 	/*
 	 * Saved form:
-	 *   data.axes   = { x: { quantity, min, max }, y: { min, max } }   grid in graph units
-	 *   data.groups = [{ id, label, graphs: [{ id, title, quantity, segments }] }]
+	 *   data.groups = [{ id, label, graphs: [{ id, title, quantity, axes, segments }] }]
+	 *   axes        = { x: { quantity: 'Time', min, max }, y: { min, max } }   each graph's grid, in graph units
 	 *   segment     = { from: [t, v], to: [t, v], shape: 'line' | 'curve-up' | 'curve-down' }
 	 * Endpoints are whole grid points. The curve's control point is rebuilt from the shape on load.
 	 */
@@ -325,11 +367,11 @@
 		return { from: [p.a.x, p.a.y], to: [p.b.x, p.b.y], shape };
 	}
 
-	function fromSegment(seg) {
+	function fromSegment(seg, axes) {
 		const pt = (v) => {
 			const x = Math.round(Number(v && v[0]));
 			const y = Math.round(Number(v && v[1]));
-			return { x: Math.min(COLS, Math.max(0, x || 0)), y: Math.min(Y_MAX, Math.max(Y_MAX - ROWS, y || 0)) };
+			return { x: Math.min(axes.x.max, Math.max(axes.x.min, x || 0)), y: Math.min(axes.y.max, Math.max(axes.y.min, y || 0)) };
 		};
 		const a = pt(seg.from);
 		const b = pt(seg.to);
@@ -348,13 +390,18 @@
 		defaultTitle: () => 'Motion graphs',
 		serialize: () => ({
 			data: {
-				axes: { x: { quantity: 'Time', min: 0, max: COLS }, y: { min: Y_MAX - ROWS, max: Y_MAX } },
 				groups: groupIDs.map((gid) => ({
 					id: 'grp' + gid,
 					label: groupLabels.get(gid) ?? `Group ${groupIDs.indexOf(gid) + 1}`,
 					graphs: graphs
 						.filter((g) => g.groupID === gid)
-						.map((g) => ({ id: 'g' + g.graphID, title: g.title, quantity: g.labels.y, segments: g.pathList.map(toSegment) }))
+						.map((g) => ({
+							id: 'g' + g.graphID,
+							title: g.title,
+							quantity: g.labels.y,
+							axes: { x: { quantity: 'Time', ...g.axes.x }, y: { ...g.axes.y } },
+							segments: g.pathList.map(toSegment)
+						}))
 				}))
 			},
 			view: {}
@@ -371,11 +418,17 @@
 				groupIDs.push(gid);
 				groupLabels.set(gid, grp.label == null ? `Group ${i + 1}` : String(grp.label));
 				for (const g of Array.isArray(grp.graphs) ? grp.graphs : []) {
+					const a = g.axes || file.data.axes || {}; // older saves kept one set of axes for the page
+					const axes = {
+						x: HT.cleanAxisRange(a.x, DEFAULT_AXES.x, AXIS_LIMITS.x),
+						y: HT.cleanAxisRange(a.y, DEFAULT_AXES.y, AXIS_LIMITS.y)
+					};
 					graphs.push({
 						title: g.title == null ? '' : String(g.title),
 						graphID: nextGraph++,
 						groupID: gid,
-						pathList: (Array.isArray(g.segments) ? g.segments : []).map(fromSegment),
+						axes,
+						pathList: (Array.isArray(g.segments) ? g.segments : []).map((seg) => fromSegment(seg, axes)),
 						labels: { x: 'Time', y: Y_LABELS[g.quantity] ? g.quantity : 'Position' }
 					});
 				}
@@ -396,9 +449,9 @@
 	});
 
 	graphs = [
-		{ title: '', graphID: 0, groupID: 0, pathList: [], labels: { x: 'Time', y: 'Position' } },
-		{ title: '', graphID: 1, groupID: 0, pathList: [], labels: { x: 'Time', y: 'Velocity' } },
-		{ title: '', graphID: 2, groupID: 0, pathList: [], labels: { x: 'Time', y: 'Acceleration' } }
+		{ title: '', graphID: 0, groupID: 0, pathList: [], labels: { x: 'Time', y: 'Position' }, axes: newAxes() },
+		{ title: '', graphID: 1, groupID: 0, pathList: [], labels: { x: 'Time', y: 'Velocity' }, axes: newAxes() },
+		{ title: '', graphID: 2, groupID: 0, pathList: [], labels: { x: 'Time', y: 'Acceleration' }, axes: newAxes() }
 	];
 	graphIDIncrement = graphs.length;
 	render();

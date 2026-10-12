@@ -361,3 +361,13 @@ canvas.ht-stage { user-select: none; touch-action: none; }
 /* ---------- motion diagram ---------- */
 .md-modes, .fbd-modes { display: flex; justify-content: center; gap: 0.25rem; margin: 0.25rem 0 0.75rem; }
 .md-modes .btn, .fbd-modes .btn { padding: 0.375rem 0.75rem; }
+
+/* ---------- grid size + origin controls ---------- */
+.grid-ctrls { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.25rem 1rem; margin: 0.375rem 0; font-size: 0.75rem; color: #4b5563; }
+.grid-group { display: inline-flex; align-items: center; gap: 0.125rem; }
+.grid-name { font-weight: 600; margin-right: 0.25rem; }
+.grid-count { min-width: 1.5rem; text-align: center; font-variant-numeric: tabular-nums; }
+.grid-sep { width: 0.5rem; }
+.grid-btn { width: 1.5rem; height: 1.5rem; line-height: 1; border: 1px solid #d1d5db; border-radius: 0.375rem; background: #fff; color: #374151; font-size: 0.75rem; }
+.grid-btn:hover:not(:disabled) { background: #f3f4f6; color: #1d4ed8; }
+.grid-btn:disabled { opacity: 0.35; }

@@ -336,11 +336,11 @@ class Stage {
 		this._paint({ ...opts, fill: null });
 	}
 
-	text(str, x, y, { fontSize = 12, fill = 'black', stroke, strokeWidth = 0 }) {
+	text(str, x, y, { fontSize = 12, fill = 'black', stroke, strokeWidth = 0, italic = false, align = 'left', baseline = 'top' }) {
 		const c = this.ctx;
-		c.font = `${fontSize}px Arial`;
-		c.textBaseline = 'top';
-		c.textAlign = 'left';
+		c.font = `${italic ? 'italic ' : ''}${fontSize}px Arial`;
+		c.textBaseline = baseline;
+		c.textAlign = align;
 		c.fillStyle = fill;
 		c.fillText(str, x, y);
 		if (stroke && strokeWidth) {
@@ -450,6 +450,25 @@ HT.drawGridLines = function (stage, grid) {
 		const s = GRID_STYLES[g.type];
 		if (g.type === 'axis') stage.arrow(g.x0, g.y0, g.x1, g.y1, { ...s, fill: null });
 		else stage.line(g.x0, g.y0, g.x1, g.y1, s);
+	}
+};
+
+/*
+ * Label the axes "x" and "y" beside their arrowheads (just under the x arrow, just right of the y arrow).
+ * A 1D line only labels its own axis. map(p) turns a grid-frame stage point into the point to draw at,
+ * for figures that rotate their axes; the letters themselves stay upright.
+ */
+HT.drawAxisLabels = function (stage, grid, { map = (p) => p, x = 'x', y = 'y' } = {}) {
+	const axes = grid.gridList.filter((g) => g.type === 'axis'); // [y axis, x axis], each drawn toward its tip (x1, y1)
+	const cs = grid.cellSize;
+	const style = { fontSize: Math.max(12, Math.min(22, 0.5 * cs)), fill: 'black', italic: true, align: 'center', baseline: 'middle' };
+	if (grid.numCells.x > 0 && axes[1]) {
+		const p = map({ x: axes[1].x1 - 0.3 * cs, y: axes[1].y1 + 0.45 * cs });
+		stage.text(x, p.x, p.y, style);
+	}
+	if (grid.numCells.y > 0 && axes[0]) {
+		const p = map({ x: axes[0].x1 + 0.45 * cs, y: axes[0].y1 + 0.3 * cs });
+		stage.text(y, p.x, p.y, style);
 	}
 };
 
@@ -867,3 +886,123 @@ function openLoadDialog() {
 	]);
 	render();
 }
+
+/* ------------------------------------------------------------------ */
+/* Grid size + origin controls (shared by the figure tools)            */
+/*   A grid is described by its extent along each axis, in cells:      */
+/*   { x: { min, max }, y: { min, max } } with min <= 0 <= max, so the */
+/*   origin is always on the grid. numCells = max - min, origin = -min. */
+/* ------------------------------------------------------------------ */
+
+HT.gridFromRange = function (r) {
+	return {
+		numCells: { x: r.x.max - r.x.min, y: r.y.max - r.y.min },
+		origin: { x: -r.x.min, y: -r.y.min }
+	};
+};
+
+/* Clean a saved extent: whole numbers, origin inside, size within limits */
+HT.cleanAxisRange = function (a, fallback, { minCells = 1, maxCells = 30 } = {}) {
+	const int = (v, d) => (Number.isFinite(Number(v)) ? Math.round(Number(v)) : d);
+	let min = Math.min(0, int(a && a.min, fallback.min));
+	let max = Math.max(0, int(a && a.max, fallback.max));
+	while (max - min > maxCells) max > -min ? max-- : min++;
+	while (max - min < minCells) max - 0 <= -min ? max++ : min--;
+	return { min: min + 0, max: max + 0 };
+};
+
+/*
+ * HT.gridControls({ axes, get, set, limits, names })
+ *   axes:   which axes get controls, e.g. ['x', 'y'] or ['x']
+ *   get():  returns the current { x: {min,max}, y: {min,max} } (only the listed axes are read)
+ *   set(r): called with a new extent for one axis: set('x', { min, max })
+ *   limits: { x: { minCells, maxCells }, y: … }
+ *   names:  labels shown before each axis's buttons, e.g. { x: 'x', y: 'y' }
+ * Returns { el, refresh() }. The row is hidden unless element controls are on.
+ *
+ *   −/+  remove or add a grid cell. An origin on an edge stays on that edge; otherwise
+ *        cells go on the shorter side and come off the longer side, so a centred grid stays centred.
+ *   arrows move the origin (and the axes through it) one cell across the grid.
+ */
+HT.gridControls = function ({ axes = ['x', 'y'], get, set, limits = {}, names = {} }) {
+	const rows = {};
+	const lim = (ax) => ({ minCells: 1, maxCells: 30, ...(limits[ax] || {}) });
+
+	const change = (ax, fn) => {
+		const r = get()[ax];
+		const next = fn({ ...r });
+		if (!next || (next.min === r.min && next.max === r.max)) return;
+		set(ax, next);
+		refresh();
+	};
+	/* An origin on an edge stays there: cells come and go at the far end.
+	   Otherwise cells are added to the shorter side and removed from the longer side
+	   (ties go to the positive side), so a centred grid stays centred. */
+	const grow = (r, l) => {
+		if (r.max - r.min >= l.maxCells) return null;
+		if (r.max === 0) return { min: r.min - 1, max: r.max };
+		if (r.min === 0 || -r.min >= r.max) return { min: r.min, max: r.max + 1 };
+		return { min: r.min - 1, max: r.max };
+	};
+	const shrink = (r, l) => {
+		if (r.max - r.min <= l.minCells) return null;
+		if (r.max === 0) return { min: r.min + 1, max: r.max };
+		if (r.min === 0 || r.max >= -r.min) return { min: r.min, max: r.max - 1 };
+		return { min: r.min + 1, max: r.max };
+	};
+	// "toward min" moves the origin toward the low end of the grid (left / down)
+	const shiftOrigin = (r, towardMin) => {
+		if (towardMin) {
+			if (r.min >= 0) return null;
+			r.min++;
+			r.max++;
+		} else {
+			if (r.max <= 0) return null;
+			r.min--;
+			r.max--;
+		}
+		return r;
+	};
+
+	const btn = (text, label, onclick) => HT.el('button', { type: 'button', class: 'grid-btn', text, 'aria-label': label, title: label, onclick });
+
+	const groups = axes.map((ax) => {
+		const l = () => lim(ax);
+		const vertical = ax === 'y';
+		const count = HT.el('span', { class: 'grid-count' });
+		const minus = btn('−', `Fewer ${ax} grid cells`, () => change(ax, (r) => shrink(r, l())));
+		const plus = btn('+', `More ${ax} grid cells`, () => change(ax, (r) => grow(r, l())));
+		const lo = btn(vertical ? '▼' : '◀', `Move the origin ${vertical ? 'down' : 'left'}`, () => change(ax, (r) => shiftOrigin(r, true)));
+		const hi = btn(vertical ? '▲' : '▶', `Move the origin ${vertical ? 'up' : 'right'}`, () => change(ax, (r) => shiftOrigin(r, false)));
+		rows[ax] = { count, minus, plus, lo, hi };
+		return HT.el(
+			'span',
+			{ class: 'grid-group' },
+			HT.el('span', { class: 'grid-name', text: names[ax] || ax }),
+			minus,
+			count,
+			plus,
+			HT.el('span', { class: 'grid-sep', 'aria-hidden': 'true' }),
+			lo,
+			hi
+		);
+	});
+
+	function refresh() {
+		const r = get();
+		for (const ax of axes) {
+			const a = r[ax];
+			const l = lim(ax);
+			const w = rows[ax];
+			w.count.textContent = String(a.max - a.min);
+			w.minus.disabled = a.max - a.min <= l.minCells;
+			w.plus.disabled = a.max - a.min >= l.maxCells;
+			w.lo.disabled = a.min >= 0;
+			w.hi.disabled = a.max <= 0;
+		}
+	}
+
+	const el = HT.el('div', { class: 'grid-ctrls ctrl-only', role: 'group', 'aria-label': 'Grid size and origin' }, groups);
+	refresh();
+	return { el, refresh };
+};

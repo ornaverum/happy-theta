@@ -4,11 +4,16 @@
 (function () {
 	const { el, button, Stage, GridLogic, drawGridLines, gridStageSize } = HT;
 
+	/* One value scale for every card on the page, so bars can be compared across cards.
+	   min/max = whole blocks to the left/right of zero (see HT.gridControls). */
+	const DEFAULT_SCALE = { min: -5, max: 5 };
+	const SCALE_LIMITS = { minCells: 2, maxCells: 30 };
+	let scale = { ...DEFAULT_SCALE };
+
 	class EnergyDiagram {
-		constructor(data, { origin = { x: 5, y: 1 }, initCellSize = 20 } = {}) {
+		constructor(data, { originY = 1, initCellSize = 20 } = {}) {
 			this.data = data; // { id, title, data: { energyBars: EnergyBar[] } }
-			this.numCells = { x: 10, y: this.bars.length };
-			this.origin = origin;
+			this.originY = originY;
 			this.initCellSize = initCellSize;
 			this.onStage = false;
 			this.preview = { pos: undefined, value: 0, color: 'purple', opacity: 0.3 };
@@ -19,6 +24,14 @@
 
 		get bars() {
 			return this.data.data.energyBars;
+		}
+
+		get numCells() {
+			return { x: scale.max - scale.min, y: this.bars.length };
+		}
+
+		get origin() {
+			return { x: -scale.min, y: this.originY };
 		}
 
 		build() {
@@ -55,7 +68,7 @@
 		snap(p) {
 			const s = this.grid.getPointFromStage(p);
 			s.y = Math.floor(s.y);
-			s.x = Math.round(Math.min(Math.max(s.x, -5), 5));
+			s.x = Math.round(Math.min(Math.max(s.x, scale.min), scale.max));
 			return s;
 		}
 
@@ -98,7 +111,8 @@
 			if (!a) return;
 			const g = this.grid;
 			const cs = g.cellSize;
-			this.stage.text(bar.symbol, a.x - ((g.numCells.x + 1.7) / 2) * cs, a.y - 0.8 * cs, {
+			const left = g.getStageFromPoint({ x: scale.min, y: 0 }).x; // the grid's left edge
+			this.stage.text(bar.symbol, left - 0.85 * cs, a.y - 0.8 * cs, {
 				fontSize: 0.5 * cs,
 				fill: bar.color,
 				stroke: 'black',
@@ -130,10 +144,19 @@
 		state: { K: 1, Ug: 1, Uel: -1, Eth: 3, E: 2 },
 		transfer: { W: 1 }
 	};
-	const MIN = -5;
-	const MAX = 5;
-
 	const list = el('ul', { class: 'figure-list' });
+	let figs = [];
+	const scaleCtrls = HT.gridControls({
+		axes: ['x'],
+		names: { x: 'Scale' },
+		limits: { x: SCALE_LIMITS },
+		get: () => ({ x: scale }),
+		set: (ax, r) => {
+			scale = r;
+			figs.forEach((f) => f.layout());
+		}
+	});
+	HT.capture.append(scaleCtrls.el);
 	const addRow = el(
 		'div',
 		{ class: 'add-row' },
@@ -148,17 +171,19 @@
 	function add(kind, values, id, title) {
 		const bars = (kind === 'state' ? STATE_BARS : TRANSFER_BARS).map((b) => {
 			const v = values && Number.isFinite(Number(values[b.symbol])) ? Number(values[b.symbol]) : DEFAULT_VALUES[kind][b.symbol];
-			return { ...b, value: Math.max(MIN, Math.min(MAX, Math.round(v))) };
+			return { ...b, value: Math.max(scale.min, Math.min(scale.max, Math.round(v))) };
 		});
 		const data = { id: id || 'e' + idInd++, kind, title: title || 'Title', data: { energyBars: bars } };
 		cards.push(data);
 		// a transfer has a single row, so its origin sits on the grid's bottom edge
-		const opts = kind === 'transfer' ? { origin: { x: 5, y: 0 } } : undefined;
-		list.appendChild(el('li', null, new EnergyDiagram(data, opts).root));
+		const fig = new EnergyDiagram(data, kind === 'transfer' ? { originY: 0 } : undefined);
+		figs.push(fig);
+		list.appendChild(el('li', null, fig.root));
 	}
 
 	function clearPage() {
 		cards = [];
+		figs = [];
 		idInd = 0;
 		list.replaceChildren();
 	}
@@ -170,13 +195,15 @@
 	 *   data.stores    = the bar symbols a state shows, top to bottom
 	 *   data.sequence  = cards in page order:
 	 *     { id, kind: 'state', values: { K, Ug, Uel, Eth, E } }   or   { id, kind: 'transfer', values: { W } }
-	 *   Values are whole blocks from -5 to 5.
+	 *   data.scale     = { min, max }: the value range every card shows, in whole blocks (default -5 to 5)
+	 *   Values are whole blocks within the scale.
 	 */
 	HT.registerDoc({
 		tool: 'energy',
 		defaultTitle: () => 'Energy diagram',
 		serialize: () => ({
 			data: {
+				scale: { ...scale },
 				stores: STATE_BARS.map((b) => b.symbol),
 				sequence: cards.map((c) => ({ id: c.id, kind: c.kind, values: values(c) }))
 			},
@@ -184,6 +211,8 @@
 		}),
 		load(file) {
 			const seq = Array.isArray(file.data.sequence) ? file.data.sequence : [];
+			scale = HT.cleanAxisRange(file.data.scale, DEFAULT_SCALE, SCALE_LIMITS);
+			scaleCtrls.refresh();
 			clearPage();
 			seq.forEach((c, i) => {
 				const kind = c.kind === 'transfer' ? 'transfer' : 'state';
@@ -193,6 +222,8 @@
 			if (!cards.length) add('state');
 		},
 		reset() {
+			scale = { ...DEFAULT_SCALE };
+			scaleCtrls.refresh();
 			clearPage();
 			add('state');
 		}

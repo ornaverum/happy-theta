@@ -9,10 +9,14 @@
 
 	/* The three layouts. A 1D grid has zero cells across, so it draws as a single number line. */
 	const MODES = {
-		'2d': { label: '2D', numCells: { x: 10, y: 10 }, origin: { x: 5, y: 6 } },
-		horizontal: { label: '1D horizontal', numCells: { x: 10, y: 0 }, origin: { x: 5, y: 0 } },
-		vertical: { label: '1D vertical', numCells: { x: 0, y: 10 }, origin: { x: 0, y: 5 } }
+		'2d': { label: '2D' },
+		horizontal: { label: '1D horizontal' },
+		vertical: { label: '1D vertical' }
 	};
+
+	/* Grid extent in cells on each side of the origin (see HT.gridControls) */
+	const DEFAULT_GRID = { x: { min: -5, max: 5 }, y: { min: -5, max: 5 } };
+	const GRID_LIMITS = { x: { minCells: 2, maxCells: 24 }, y: { minCells: 2, maxCells: 24 } };
 	const MODE_ORDER = ['2d', 'horizontal', 'vertical'];
 
 	/* 1D dots step sideways by this fraction of a cell for each new lane */
@@ -43,7 +47,7 @@
 
 	class MotionDiagram {
 		constructor(data, { initCellSize = 20 } = {}) {
-			this.data = data; // { id, title, mode, dots: [{ x, y }] } — integer grid points
+			this.data = data; // { id, title, mode, grid, dots: [{ x, y }] } — integer grid points
 			this.initCellSize = initCellSize;
 			this.onStage = false;
 			this.preview = null; // grid point under the mouse
@@ -54,6 +58,29 @@
 
 		get mode() {
 			return MODES[this.data.mode] ? this.data.mode : '2d';
+		}
+
+		/* The extent in use: a 1D line keeps only the axis along it */
+		get range() {
+			const g = this.data.grid;
+			const none = { min: 0, max: 0 };
+			if (this.mode === 'horizontal') return { x: g.x, y: none };
+			if (this.mode === 'vertical') return { x: none, y: g.y };
+			return g;
+		}
+
+		buildGridControls() {
+			const axes = this.mode === 'horizontal' ? ['x'] : this.mode === 'vertical' ? ['y'] : ['x', 'y'];
+			this.gridCtrls = HT.gridControls({
+				axes,
+				limits: GRID_LIMITS,
+				get: () => this.data.grid,
+				set: (ax, r) => {
+					this.data.grid[ax] = r;
+					this.layout();
+				}
+			});
+			this.gridBox.replaceChildren(this.gridCtrls.el);
 		}
 
 		get is1D() {
@@ -98,9 +125,11 @@
 				{ class: 'panel center square pad' },
 				title.el,
 				modeRow,
-				el('div', { style: { display: 'flex' } }, el('div', { class: 'stage-container' }, stageBox))
+				el('div', { style: { display: 'flex' } }, el('div', { class: 'stage-container' }, stageBox)),
+				(this.gridBox = el('div'))
 			);
 			this.paintModes();
+			this.buildGridControls();
 		}
 
 		paintModes() {
@@ -121,11 +150,12 @@
 			this.data.mode = mode;
 			this.preview = null;
 			this.paintModes();
+			this.buildGridControls();
 			this.layout();
 		}
 
 		layout() {
-			const m = MODES[this.mode];
+			const m = HT.gridFromRange(this.range);
 			const { size, cellSize } = gridStageSize(m.numCells, this.initCellSize);
 			this.grid = new GridLogic({ numCells: { ...m.numCells }, origin: { ...m.origin }, cellSize });
 			// the grid draws from the top-left, so the extra room lands below (or right of) the line
@@ -138,9 +168,9 @@
 
 		/* Keep clicks on the grid (and on the line in 1D) */
 		snap(p) {
-			const m = MODES[this.mode];
+			const r = this.range;
 			const pt = this.grid.getSnappedPointFromStage(p);
-			const clamp = (v, axis) => Math.max(-m.origin[axis], Math.min(m.numCells[axis] - m.origin[axis], v));
+			const clamp = (v, axis) => Math.max(r[axis].min, Math.min(r[axis].max, v));
 			return { x: clamp(pt.x, 'x') + 0, y: clamp(pt.y, 'y') + 0 }; // + 0 turns -0 into 0
 		}
 
@@ -172,6 +202,7 @@
 			const s = this.stage;
 			s.clear();
 			drawGridLines(s, this.grid);
+			HT.drawAxisLabels(s, this.grid);
 			const dots = this.data.dots;
 			const showPreview = this.onStage && this.preview;
 			// place the preview with the real dots so it shows the lane it would land in
@@ -197,7 +228,7 @@
 		if (!data) {
 			// new diagrams start in the same layout as the last one on the page
 			const last = diagrams[diagrams.length - 1];
-			data = { id: 'm' + idInd++, title: 'Title', mode: last ? last.mode : '2d', dots: [] };
+			data = { id: 'm' + idInd++, title: 'Title', mode: last ? last.mode : '2d', grid: HT.clone(last ? last.grid : DEFAULT_GRID), dots: [] };
 		}
 		diagrams.push(data);
 		list.appendChild(el('li', null, new MotionDiagram(data).root));
@@ -213,7 +244,8 @@
 
 	/*
 	 * Saved form:
-	 *   data.diagrams[] = { id, title, mode, dims, dt, dots }
+	 *   data.diagrams[] = { id, title, mode, grid, dims, dt, dots }
+	 *     grid: { x: { min, max }, y: { min, max } } — cells on each side of the origin
 	 *     mode: '2d' | 'horizontal' | 'vertical'; dims: 2 or 1
 	 *     dots: integer grid positions in time order — { x, y } in 2D, { x } horizontal, { y } vertical
 	 * The sideways offsets of 1D dots are worked out from the dots, so they are not saved.
@@ -227,6 +259,7 @@
 					id: d.id,
 					title: d.title,
 					mode: d.mode,
+					grid: HT.clone(d.grid),
 					dims: d.mode === '2d' ? 2 : 1,
 					dt: 1,
 					dots: d.dots.map((p) => (d.mode === 'horizontal' ? { x: p.x } : d.mode === 'vertical' ? { y: p.y } : { x: p.x, y: p.y }))
@@ -243,6 +276,10 @@
 					id: d.id == null ? 'm' + i : String(d.id),
 					title: d.title == null ? 'Title' : String(d.title),
 					mode,
+					grid: {
+						x: HT.cleanAxisRange(d.grid && d.grid.x, DEFAULT_GRID.x, GRID_LIMITS.x),
+						y: HT.cleanAxisRange(d.grid && d.grid.y, DEFAULT_GRID.y, GRID_LIMITS.y)
+					},
 					dots: (Array.isArray(d.dots) ? d.dots : []).map((p) => ({
 						x: mode === 'vertical' ? 0 : int(p.x),
 						y: mode === 'horizontal' ? 0 : int(p.y)
