@@ -500,6 +500,7 @@ function cloneWithStyles(node) {
 
 	const cs = getComputedStyle(node);
 	if (cs.display === 'none') return null;
+	if (node.classList.contains('no-export')) return null; // on-page controls that don't belong in the picture
 
 	let copy;
 	if (node.tagName === 'CANVAS') {

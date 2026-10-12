@@ -350,12 +350,9 @@ canvas.ht-stage { user-select: none; touch-action: none; }
 /* ---------- FBD extras ---------- */
 .fbd-axes { display: flex; align-items: center; gap: 0.5rem; margin: 0.5rem 1rem; font-size: 0.875rem; }
 .fbd-axes[hidden] { display: none; }
+.fbd-net-toggle { justify-content: flex-end; margin: 0.5rem 0 0; }
 .fbd-axes input[type='range'] { flex: 1; }
 .fbd-axes output { min-width: 3rem; font-variant-numeric: tabular-nums; }
-.tao-row select {
-	display: block; width: 100%; margin: auto 0; font-size: 0.875rem; border-radius: 0.5rem; border: 1px solid #d1d5db;
-	background: #f9fafb; color: #111827; padding: 0.625rem 0.25rem; font-weight: 400;
-}
 .tao-row .placeholder { opacity: 0.6; font-style: italic; font-weight: 400; }
 
 /* ---------- motion diagram ---------- */

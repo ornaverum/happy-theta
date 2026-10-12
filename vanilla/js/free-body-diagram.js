@@ -19,21 +19,46 @@
 		{ bg: '#c026d3', cc: '#d946ef' } // fuchsia-600
 	];
 
-	/* Fixed list so answers can be matched exactly when grading */
+	/*
+	 * Suggested force types, in the order the list shows them. Students can also type their own.
+	 * A suggestion is saved by its key (e.g. 'friction-rolling') so answers can be matched when grading;
+	 * anything else is saved as the text typed.
+	 * Weight (w = mg, near a planet's surface) is listed apart from Gravitation (Fg = GMm/r²) on purpose.
+	 */
 	const FORCE_TYPES = [
-		['gravitational', 'Gravitational'],
+		['weight', 'Weight'],
 		['normal', 'Normal'],
 		['tension', 'Tension'],
 		['friction-kinetic', 'Kinetic friction'],
 		['friction-static', 'Static friction'],
+		['friction-rolling', 'Rolling friction'],
 		['applied', 'Applied'],
 		['spring', 'Spring'],
 		['air-resistance', 'Air resistance'],
 		['buoyant', 'Buoyant'],
+		['gravitation', 'Gravitation'],
 		['electric', 'Electric'],
 		['magnetic', 'Magnetic']
 	];
 	const TYPE_NAME = Object.fromEntries(FORCE_TYPES);
+	const MAX_TYPE_LENGTH = 40;
+
+	/* Typed text -> saved value: a suggestion's key when the text names one (any letter case), else the text */
+	const BY_TEXT = new Map();
+	for (const [key, name] of FORCE_TYPES) {
+		BY_TEXT.set(key, key);
+		BY_TEXT.set(name.toLowerCase(), key);
+	}
+	BY_TEXT.set('gravitational', 'gravitation'); // the old list's name for it
+	function typeFromText(text) {
+		const t = String(text ?? '').trim().slice(0, MAX_TYPE_LENGTH);
+		return BY_TEXT.get(t.toLowerCase().replace(/\s+/g, ' ')) || t;
+	}
+	const typeText = (type) => TYPE_NAME[type] || type || '';
+
+	/* One shared suggestion list for every type box on the page */
+	const typeList = el('datalist', { id: 'fbd-force-types' }, FORCE_TYPES.map(([, name]) => el('option', { value: name })));
+	document.body.appendChild(typeList);
 
 	const ARROW = { strokeWidth: 3, pointerLength: 10, pointerWidth: 10 };
 	const DEG = Math.PI / 180;
@@ -74,14 +99,15 @@
 
 	/*
 	 * One diagram's data — exactly what is saved in the file:
-	 *   { id, title, mode, grid, axes: { rotation }, forces: [{ id, type, label, agent, on, dx, dy }] }
+	 *   { id, title, mode, grid, showNet, axes: { rotation }, forces: [{ id, type, label, agent, on, dx, dy }] }
+	 * showNet: whether the net force is drawn and listed (display only, default true).
 	 * grid = { x: { min, max }, y: { min, max } }: how many cells the grid has on each side of the origin.
 	 * mode is '2d', 'horizontal' or 'vertical'. In 1D every force lies on the line (dy = 0 or dx = 0).
 	 * dx, dy are integer grid components in the diagram's own (possibly rotated) axes, +y up.
 	 * rotation is in whole degrees, counterclockwise; it is only used in 2D.
 	 */
-	function newDiagramData(id, mode = '2d', grid = DEFAULT_GRID) {
-		return { id, title: 'Title', mode, grid: HT.clone(grid), axes: { rotation: 0 }, forces: [] };
+	function newDiagramData(id, mode = '2d', grid = DEFAULT_GRID, showNet = true) {
+		return { id, title: 'Title', mode, grid: HT.clone(grid), showNet, axes: { rotation: 0 }, forces: [] };
 	}
 
 	class FreeBodyDiagram {
@@ -231,6 +257,28 @@
 			this.draw();
 		}
 
+		/* "Show Net Force" switch, under the Net Force box in the chart. Always shown on the page,
+		   but left out of exported images (no-export). */
+		buildNetToggle() {
+			const box = el('input', {
+				type: 'checkbox',
+				checked: this.data.showNet !== false,
+				onchange: (e) => {
+					this.data.showNet = e.target.checked;
+					this.update(); // rebuilds the chart, so put keyboard focus back on the new switch
+					const again = this.chart.querySelector('.fbd-net-toggle input');
+					if (again) again.focus();
+				}
+			});
+			return el(
+				'label',
+				{ class: 'toggle fbd-net-toggle no-export' },
+				box,
+				el('span', { class: 'track' }),
+				el('span', { class: 'toggle-label', text: 'Show Net Force' })
+			);
+		}
+
 		/* ---- layout mode ---- */
 
 		paintModes() {
@@ -370,7 +418,8 @@
 				if (showPreview) {
 					this.drawForce(preview, { opacity: 0.5, color: COLORS[this.nextId % 12].cc, strokeWidth: 3 }, slots[this.forces.length]);
 				}
-				if (net.dx == 0 && net.dy == 0) {
+				// with the net force hidden, the dot always marks the object so it doesn't hint at balance
+				if (this.data.showNet === false || (net.dx == 0 && net.dy == 0)) {
 					const o = this.grid.getStageFromPoint({ x: 0, y: 0 });
 					s.circle(o.x, o.y, 8, { fill: 'black' });
 				} else {
@@ -426,10 +475,13 @@
 			const items = el('div');
 			for (const force of this.forces) items.appendChild(this.taoRow(force));
 
-			items.appendChild(el('div', { class: 'hr-label' }, el('hr'), el('span', { text: '=' })));
-			const net = this.net;
-			const zero = net.dx == 0 && net.dy == 0;
-			items.appendChild(el('div', { class: 'net-force' }, el('div', { text: 'Net Force' + (zero ? ' = 0' : '') })));
+			if (this.data.showNet !== false) {
+				items.appendChild(el('div', { class: 'hr-label' }, el('hr'), el('span', { text: '=' })));
+				const net = this.net;
+				const zero = net.dx == 0 && net.dy == 0;
+				items.appendChild(el('div', { class: 'net-force' }, el('div', { text: 'Net Force' + (zero ? ' = 0' : '') })));
+			}
+			items.appendChild(this.buildNetToggle());
 			c.appendChild(items);
 		}
 
@@ -449,16 +501,19 @@
 			let cells;
 			if (editing) {
 				const text = (k, ph) => el('input', { value: force[k], placeholder: ph, oninput: (e) => (force[k] = e.target.value), onkeydown: done });
-				const type = el(
-					'select',
-					{ 'aria-label': 'Force type', onchange: (e) => (force.type = e.target.value), onkeydown: done },
-					el('option', { value: '', text: 'Type…' }),
-					FORCE_TYPES.map(([v, name]) => el('option', { value: v, text: name, selected: force.type === v }))
-				);
+				const type = el('input', {
+					value: typeText(force.type),
+					list: typeList.id,
+					placeholder: 'Type',
+					maxlength: MAX_TYPE_LENGTH,
+					'aria-label': 'Force type',
+					oninput: (e) => (force.type = typeFromText(e.target.value)),
+					onkeydown: done
+				});
 				cells = [text('label', 'Symbol'), type, text('agent', 'Agent'), text('on', 'Object')];
 			} else {
 				const show = (txt, ph) => el('div', { class: txt ? null : 'placeholder', text: txt || ph, ondblclick: () => toggle(true) });
-				cells = [show(force.label, 'symbol'), show(TYPE_NAME[force.type], 'type'), show(force.agent, 'agent'), show(force.on, 'object')];
+				cells = [show(force.label, 'symbol'), show(typeText(force.type), 'type'), show(force.agent, 'agent'), show(force.on, 'object')];
 			}
 			return el('div', { class: 'tao-row', style: { background: colorOf(force.id).bg } }, editBtn, cells, delBtn);
 		}
@@ -480,7 +535,12 @@
 		if (!data) {
 			// new diagrams start in the same layout as the last one on the page
 			const last = diagrams[diagrams.length - 1];
-			data = newDiagramData('d' + idInd++, last && MODES[last.mode] ? last.mode : '2d', last ? last.grid : DEFAULT_GRID);
+			data = newDiagramData(
+				'd' + idInd++,
+				last && MODES[last.mode] ? last.mode : '2d',
+				last ? last.grid : DEFAULT_GRID,
+				last ? last.showNet !== false : true
+			);
 		}
 		diagrams.push(data);
 		const fig = new FreeBodyDiagram(data);
@@ -507,11 +567,12 @@
 				x: HT.cleanAxisRange(d.grid && d.grid.x, DEFAULT_GRID.x, GRID_LIMITS.x),
 				y: HT.cleanAxisRange(d.grid && d.grid.y, DEFAULT_GRID.y, GRID_LIMITS.y)
 			},
+			showNet: d.showNet !== false, // older saves have no setting: show it
 			axes: { rotation: mode === '2d' ? Math.max(-90, Math.min(90, int(d.axes && d.axes.rotation))) : 0 },
 			forces: (Array.isArray(d.forces) ? d.forces : [])
 				.map((f, j) => ({
 					id: /^f\d+$/.test(f.id) ? f.id : 'f' + j,
-					type: TYPE_NAME[f.type] ? f.type : '',
+					type: typeFromText(f.type),
 					label: str(f.label),
 					agent: str(f.agent),
 					on: str(f.on),
