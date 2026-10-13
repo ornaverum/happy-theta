@@ -70,9 +70,8 @@ emails a day and doesn't ask for a credit card.
    `sudo systemctl restart happytheta-api`.
 5. Test: sign up with your own address. If nothing arrives, check spam, then `journalctl -u happytheta-api -e`.
 
-Other options: `MAIL_TRANSPORT=smtp` with `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`
-works with any provider whose SMTP port isn't blocked (or on a non-DigitalOcean host).
-`MAIL_TRANSPORT=log` (the default) only prints emails to the server log.
+`MAIL_TRANSPORT=log` (the default) only prints emails to the server log. Plain SMTP isn't
+supported: DigitalOcean blocks it, and dropping it kept the server free of the nodemailer package.
 
 If email isn't working yet, you can still let people in from the droplet: `teacher.js verify`
 confirms an account by hand, and `teacher.js reset-link` prints a reset link to pass on yourself.

@@ -4,7 +4,7 @@
      log   (default) print the email to the server console. For local testing.
      brevo Brevo's HTTPS API (free plan, no card). Works on DigitalOcean, which blocks the
            usual SMTP ports 25/465/587 on droplets. Needs BREVO_API_KEY.
-     smtp  any SMTP server, via nodemailer. Needs SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS.
+   (Plain SMTP was dropped along with the nodemailer dependency; DigitalOcean blocks it anyway.)
    MAIL_FROM is the sender, e.g. "Happy Theta <noreply@your-domain>"; the provider must have
    that address or domain verified. */
 
@@ -31,29 +31,13 @@ async function sendBrevo({ to, subject, text, html }) {
 	if (!res.ok) throw new Error(`Brevo API ${res.status}: ${(await res.text()).slice(0, 300)}`);
 }
 
-let smtpTransport;
-async function sendSmtp({ to, subject, text, html }) {
-	if (!smtpTransport) {
-		const nodemailer = require('nodemailer');
-		const port = Number(process.env.SMTP_PORT || 587);
-		smtpTransport = nodemailer.createTransport({
-			host: process.env.SMTP_HOST,
-			port,
-			secure: process.env.SMTP_SECURE ? process.env.SMTP_SECURE === '1' : port === 465,
-			auth: process.env.SMTP_USER ? { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS } : undefined,
-			connectionTimeout: 15000
-		});
-	}
-	await smtpTransport.sendMail({ from: FROM, to, subject, text, html });
-}
-
 function sendLog({ to, subject, text }) {
 	console.log(`\n----- email (MAIL_TRANSPORT=log, not actually sent) -----\nTo: ${to}\nSubject: ${subject}\n\n${text}\n----------------------------------------------------------\n`);
 }
 
 async function send(msg) {
 	if (TRANSPORT === 'brevo') return sendBrevo(msg);
-	if (TRANSPORT === 'smtp') return sendSmtp(msg);
+	if (TRANSPORT !== 'log') throw new Error(`Unknown MAIL_TRANSPORT "${TRANSPORT}" (use brevo or log)`);
 	return sendLog(msg);
 }
 
