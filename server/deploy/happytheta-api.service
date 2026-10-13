@@ -1,0 +1,25 @@
+# /etc/systemd/system/happytheta-api.service
+[Unit]
+Description=Happy Theta API (/phys/api)
+After=network.target
+
+[Service]
+User=happytheta
+WorkingDirectory=/opt/happytheta-server
+ExecStart=/usr/bin/node server.js
+Environment=NODE_ENV=production
+Environment=PORT=3000
+Environment=DB_PATH=/var/lib/happytheta/happytheta.db
+# Optional: only allow sign-up with these email domains (comma-separated).
+#Environment=ALLOWED_EMAIL_DOMAINS=asmsa.org
+# Only if the site has no HTTPS yet (cookies won't work over plain http otherwise):
+#Environment=COOKIE_SECURE=0
+StateDirectory=happytheta
+Restart=on-failure
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

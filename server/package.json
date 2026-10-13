@@ -1,0 +1,19 @@
+{
+  "name": "happytheta-server",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Accounts and messages API for Happy Theta, served at /phys/api",
+  "main": "server.js",
+  "type": "commonjs",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node dev.js",
+    "teacher": "node teacher.js",
+    "teacher:dev": "node teacher.js --dev"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.7.0",
+    "express": "^4.21.2"
+  }
+}

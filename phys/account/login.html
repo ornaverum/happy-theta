@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>Sign in · Happy Theta</title>
+		<link rel="icon" href="../assets/favicon.png" />
+		<link rel="stylesheet" href="../css/style.css" />
+		<link rel="stylesheet" href="../css/account.css" />
+	</head>
+	<body data-root="../">
+		<main class="acct-card">
+			<h1 id="title">Sign in</h1>
+			<p class="sub" id="subtitle">Use the email and password you registered with.</p>
+			<div class="tabs" role="tablist">
+				<button type="button" role="tab" id="tab-login" aria-selected="true">Sign in</button>
+				<button type="button" role="tab" id="tab-register" aria-selected="false">Create account</button>
+			</div>
+			<form id="auth-form" novalidate>
+				<label class="field">
+					<span>Email</span>
+					<input id="email" type="email" autocomplete="email" required maxlength="254" />
+				</label>
+				<label class="field">
+					<span>Password</span>
+					<input id="password" type="password" autocomplete="current-password" required minlength="8" maxlength="200" />
+					<span class="hint" id="pw-hint" hidden>At least 8 characters.</span>
+				</label>
+				<label class="field" id="confirm-field" hidden>
+					<span>Confirm password</span>
+					<input id="confirm" type="password" autocomplete="new-password" maxlength="200" />
+				</label>
+				<button type="submit" class="btn btn-blue w-full" id="submit">Sign in</button>
+				<p class="status" id="status" role="status" aria-live="polite"></p>
+			</form>
+		</main>
+		<script src="../js/core.js"></script>
+		<script src="../js/account.js"></script>
+		<script src="../js/login.js"></script>
+	</body>
+</html>

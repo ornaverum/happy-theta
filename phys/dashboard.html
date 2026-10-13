@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>Dashboard · Happy Theta</title>
+		<link rel="icon" href="./assets/favicon.png" />
+		<link rel="stylesheet" href="./css/style.css" />
+		<link rel="stylesheet" href="./css/account.css" />
+	</head>
+	<body data-root="./">
+		<main class="dash" id="page" hidden>
+			<div class="dash-head">
+				<div>
+					<h1>Student messages</h1>
+					<p class="sub" id="summary">Loading…</p>
+				</div>
+				<div class="dash-tools">
+					<input type="search" class="search" id="filter" placeholder="Filter by email or text" aria-label="Filter messages" />
+					<button type="button" class="btn btn-alt" id="refresh">Refresh</button>
+				</div>
+			</div>
+			<div class="table-wrap">
+				<table class="msg-table">
+					<thead>
+						<tr><th>When</th><th>Student</th><th>Message</th></tr>
+					</thead>
+					<tbody id="rows"></tbody>
+				</table>
+				<p class="empty" id="empty" hidden></p>
+			</div>
+		</main>
+		<script src="./js/core.js"></script>
+		<script src="./js/account.js"></script>
+		<script src="./js/dashboard.js"></script>
+	</body>
+</html>
