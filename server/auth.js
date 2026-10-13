@@ -20,6 +20,9 @@ function verifyPassword(password, stored) {
 	return crypto.timingSafeEqual(actual, expected);
 }
 
+// Placeholder hash for accounts whose email isn't confirmed yet; no password matches it.
+const UNVERIFIED_HASH = '!unconfirmed';
+
 // Used when the email doesn't exist, so a failed login takes the same time either way.
 const DUMMY_HASH = hashPassword(crypto.randomBytes(16).toString('hex'));
 
@@ -38,7 +41,15 @@ const q = {
 		 WHERE s.token_hash = ? AND s.expires_at > ?`
 	),
 	remove: db.prepare('DELETE FROM sessions WHERE token_hash = ?'),
-	purge: db.prepare('DELETE FROM sessions WHERE expires_at <= ?')
+	removeAllForUser: db.prepare('DELETE FROM sessions WHERE user_id = ?'),
+	purge: db.prepare('DELETE FROM sessions WHERE expires_at <= ?'),
+	tokenInsert: db.prepare('INSERT INTO email_tokens (token_hash, user_id, purpose, expires_at, pending_password) VALUES (?, ?, ?, ?, ?)'),
+	tokenFind: db.prepare(
+		`SELECT t.user_id, t.pending_password, u.email FROM email_tokens t JOIN users u ON u.id = t.user_id
+		 WHERE t.token_hash = ? AND t.purpose = ? AND t.expires_at > ?`
+	),
+	tokenClear: db.prepare('DELETE FROM email_tokens WHERE user_id = ? AND purpose = ?'),
+	tokenPurge: db.prepare('DELETE FROM email_tokens WHERE expires_at <= ?')
 };
 
 function cookieHeader(value, maxAgeSec) {
@@ -87,16 +98,49 @@ function requireTeacher(req, res, next) {
 	next();
 }
 
+function endAllSessions(userId) {
+	q.removeAllForUser.run(userId);
+}
+
+/* ---------- one-time email links ---------- */
+const TOKEN_TTL = { verify: 48 * 3600 * 1000, reset: 60 * 60 * 1000 }; // 48 hours, 1 hour
+
+function createEmailToken(userId, purpose, pendingPassword = null) {
+	const token = crypto.randomBytes(32).toString('base64url');
+	q.tokenInsert.run(sha256(token), userId, purpose, Date.now() + TOKEN_TTL[purpose], pendingPassword);
+	return token;
+}
+
+/* {user_id, email, pending_password} if the token is valid, without using it up. */
+function peekEmailToken(token, purpose) {
+	if (typeof token !== 'string' || token.length < 20 || token.length > 100) return null;
+	return q.tokenFind.get(sha256(token), purpose, Date.now()) || null;
+}
+
+/* Uses the token: returns {user_id, email} and cancels every link of that kind for the user. */
+const consumeEmailToken = db.transaction((token, purpose) => {
+	const row = peekEmailToken(token, purpose);
+	if (row) q.tokenClear.run(row.user_id, purpose);
+	return row;
+});
+
 function purgeExpired() {
 	q.purge.run(Date.now());
+	q.tokenPurge.run(Date.now());
 }
 
 module.exports = {
 	hashPassword,
 	verifyPassword,
 	DUMMY_HASH,
+	UNVERIFIED_HASH,
 	startSession,
 	endSession,
+	endAllSessions,
+	createEmailToken,
+	peekEmailToken,
+	consumeEmailToken,
+	TOKEN_TTL,
 	loadUser,
 	requireUser,
 	requireTeacher,

@@ -67,3 +67,16 @@ HT.showUserBar = function (user) {
 
 HT.formatTime = (iso) =>
 	new Date(iso).toLocaleString(undefined, { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+
+/* Emailed links carry their token after "#t=" so it never reaches server logs or other sites.
+   Read it once and wipe it from the address bar. */
+HT.takeLinkToken = function () {
+	const t = new URLSearchParams(location.hash.slice(1)).get('t');
+	if (location.hash) history.replaceState(null, '', location.pathname + location.search);
+	return t;
+};
+
+HT.setStatus = function (el, text, kind) {
+	el.textContent = text;
+	el.className = 'status' + (kind ? ' ' + kind : '');
+};
