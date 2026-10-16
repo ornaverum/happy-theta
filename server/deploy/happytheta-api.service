@@ -1,0 +1,24 @@
+# /etc/systemd/system/happytheta-api.service
+[Unit]
+Description=Happy Theta API (/phys/api)
+After=network.target
+
+[Service]
+User=happytheta
+WorkingDirectory=/opt/happytheta-server
+ExecStart=/usr/bin/node server.js
+Environment=NODE_ENV=production
+Environment=PORT=3000
+Environment=DB_PATH=/var/lib/happytheta/happytheta.db
+# Site address, email settings and the Brevo API key live here (root-only, chmod 600).
+# Copy deploy/api.env.example there and fill it in.
+EnvironmentFile=/etc/happytheta/api.env
+StateDirectory=happytheta
+Restart=on-failure
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

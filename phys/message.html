@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>Send a message · Happy Theta</title>
+		<link rel="icon" href="./assets/favicon.png" />
+		<link rel="stylesheet" href="./css/style.css" />
+		<link rel="stylesheet" href="./css/account.css" />
+	</head>
+	<body data-root="./">
+		<main class="acct-card wide" id="page" hidden>
+			<h1>Send a message</h1>
+			<p class="sub">Your teacher will see your message and your email address.</p>
+			<form id="msg-form">
+				<label class="field">
+					<span>Message</span>
+					<textarea id="body" maxlength="2000" required></textarea>
+				</label>
+				<div class="form-row">
+					<span class="counter" id="counter">0 / 2000</span>
+					<button type="submit" class="btn btn-blue" id="send">Send</button>
+				</div>
+				<p class="status" id="status" role="status" aria-live="polite"></p>
+			</form>
+		</main>
+		<script src="./js/core.js"></script>
+		<script src="./js/account.js"></script>
+		<script src="./js/message.js"></script>
+	</body>
+</html>
