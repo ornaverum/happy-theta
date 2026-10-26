@@ -189,7 +189,9 @@
 			lib.meError = '';
 		} catch (err) {
 			lib.me = null;
-			lib.meError = err.status === 0 ? 'offline' : err.message;
+			// why it failed decides what to tell the teacher (see gate())
+			lib.meError =
+				location.protocol === 'file:' ? 'file' : err.status === 0 ? 'offline' : err.status === 404 || err.status === 405 || err.status >= 500 ? 'no-api' : err.message;
 		}
 		return lib.me;
 	}
@@ -265,6 +267,34 @@
 		}
 	};
 
+	/* What to say when the library can't be used yet */
+	function serverHelp() {
+		const api = new URL(HT.root + 'api/', location.href).href;
+		const code = (t) => el('code', { text: t });
+		const setup = el(
+			'ol',
+			{ class: 'lib-steps' },
+			el('li', null, 'On the computer with the repo: ', code('cd server'), ', then ', code('npm install'), ' (once), then ', code('npm run dev'), '.'),
+			el('li', null, 'Open ', el('a', { href: 'http://localhost:3000/phys/teacher/scheduler.html', text: 'localhost:3000/phys/teacher/scheduler.html' }), ' (not the file, and not another local server).'),
+			el('li', null, 'Sign up on that site. The confirmation link is printed in the ', code('npm run dev'), ' window.'),
+			el('li', null, 'Make your account a teacher: ', code('node teacher.js add you@asmsa.org --dev'), ' in ', code('server/'), '.')
+		);
+		const keep = el('p', { class: 'sched-hint', text: 'Your course still works and saves in this browser. Courses are kept per web address, so a course made on one address (or as a file) won’t appear on another — use Download / Open… to move it.' });
+		switch (lib.meError) {
+			case 'file':
+				return [el('p', { text: 'This page is open as a file, so it can’t reach the Happy Theta server, where the shared library lives. To use the library on your own computer:' }), setup, keep];
+			case 'offline':
+				return [el('p', null, 'The library lives on the Happy Theta server, and nothing answered at ', code(api), '. Either you’re offline or the server (API) isn’t running there. To try it on your own computer:'), setup, keep];
+			case 'no-api':
+				return [el('p', null, 'This site is up, but its library server (the API at ', code(api), ') isn’t. On the droplet, start the ', code('happytheta-api'), ' service and check nginx forwards ', code('/phys/api/'), ' to it (server/README.md, “Install on the droplet”). Or try it on your own computer:'), setup, keep];
+			default:
+				return [
+					el('p', null, 'Sign in with a teacher account to search the shared library and share your activities. ', el('a', { href: HT.loginUrl ? HT.loginUrl() : '../account/login.html', text: 'Sign in' })),
+					lib.meError ? el('p', { class: 'sched-hint', text: 'Server said: ' + lib.meError }) : null
+				];
+		}
+	}
+
 	function gate() {
 		if (lib.me === undefined) return el('p', { class: 'sched-hint', text: 'Connecting to the library…' });
 		if (!lib.me)
@@ -272,9 +302,7 @@
 				'div',
 				{ class: 'card lib-gate' },
 				el('h2', { text: 'Activity library' }),
-				lib.meError === 'offline'
-					? el('p', { text: 'The library lives on the Happy Theta server, and it can’t be reached right now (offline, or the server isn’t running). Your course still works and saves in this browser.' })
-					: el('p', null, 'Sign in with a teacher account to search the shared library and share your activities. ', el('a', { href: HT.loginUrl ? HT.loginUrl() : '../account/login.html', text: 'Sign in' })),
+				...serverHelp(),
 				app.btn('Try again', () => ((lib.me = undefined), app.render()))
 			);
 		if (lib.me.role !== 'teacher')

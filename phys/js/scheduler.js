@@ -20,7 +20,7 @@
 		undo: [],
 		redo: [],
 		views: {}, // name -> { title, render(container) } (scheduler-views.js adds more)
-		VERSION: '2026-10-27'
+		VERSION: '2026-10-27b'
 	});
 
 	/* ------------------------------------------------------------------ */
