@@ -489,10 +489,6 @@
 		};
 
 		// Course
-		const meets = app.select([['A', 'A days'], ['B', 'B days']], c.meetsOn);
-		meets.addEventListener('change', () => set((dd) => (dd.course.meetsOn = meets.value)));
-		const first = app.select([['A', 'A day'], ['B', 'B day']], c.firstType);
-		first.addEventListener('change', () => set((dd) => (dd.course.firstType = first.value)));
 		const course = section(
 			'Course',
 			el(
@@ -501,10 +497,13 @@
 				inp('Course name', c.title, 'text', (v) => set((dd) => (dd.course.title = v.trim() || 'Course'))),
 				inp('First day of the term', c.termStart, 'date', (v, i) => (S.isDate(v) && v < c.termEnd ? set((dd) => (dd.course.termStart = v)) : (i.value = c.termStart))),
 				inp('Last day of the term', c.termEnd, 'date', (v, i) => (S.isDate(v) && v > c.termStart ? set((dd) => (dd.course.termEnd = v)) : (i.value = c.termEnd))),
-				app.field('Meets on', meets),
-				app.field('First day of the term is', first)
-			)
+				inp('Second semester starts (blank = none)', c.semester2Start, 'date', (v, i) =>
+					!v || (S.isDate(v) && v > c.termStart && v <= c.termEnd) ? set((dd) => (dd.course.semester2Start = v || null)) : (i.value = c.semester2Start || '')
+				)
+			),
+			app.btn('Step-by-step setup (School calendar…)', () => app.setupWizard({ isNew: false }))
 		);
+		const schedule = scheduleSection(d, set, inp);
 
 		// Days off
 		const breaks = el('div', { class: 'set-list' });
@@ -522,7 +521,7 @@
 		);
 		const daysOff = section(
 			'Days off',
-			el('p', { class: 'sched-hint', text: 'No class on these dates. The A/B rotation skips them. Single days can also be changed by clicking the Type cell on the calendar.' }),
+			el('p', { class: 'sched-hint', text: 'No class on these dates (they win over every schedule rule). Alternating days that switch each time they meet just skip them. Single days can also be changed by clicking the Type cell on the calendar.' }),
 			breaks,
 			app.btn('+ Add days off', () => set((dd) => dd.breaks.push({ id: S.newId('b'), start: dd.course.termStart, end: dd.course.termStart, note: '' })))
 		);
@@ -654,7 +653,178 @@
 			app.btn('+ Add tag set', () => set((dd) => dd.tagSets.push({ id: S.newId('set'), name: 'New tag set', tags: [] })))
 		);
 
-		container.replaceChildren(el('div', { class: 'sched-page settings' }, course, daysOff, goals, columns, tags));
+		container.replaceChildren(el('div', { class: 'sched-page settings' }, course, schedule, daysOff, goals, columns, tags));
+	}
+
+	/* ---- Schedule: meets on, class length, weekday pattern, repeat rules, preview ---- */
+	function scheduleSection(d, set, inp) {
+		const c = d.course;
+		const meets = app.select([['A', 'A days'], ['B', 'B days']], c.meetsOn);
+		meets.addEventListener('change', () => set((dd) => (dd.course.meetsOn = meets.value)));
+		const basics = el(
+			'div',
+			{ class: 'set-grid' },
+			app.field('This course meets on', meets),
+			inp('Usual class length (minutes)', c.classMinutes, 'number', (v) => set((dd) => (dd.course.classMinutes = Math.max(1, parseInt(v, 10) || dd.course.classMinutes))), { min: '1', step: '5' })
+		);
+
+		// Quick weekday pattern
+		const qp = app.quickPattern(c.rules);
+		const quick = el(
+			'div',
+			{ class: 'set-card' },
+			el('strong', { text: 'Quick weekly pattern' }),
+			qp.node,
+			el(
+				'div',
+				{ class: 'set-line' },
+				app.btn('Use this pattern', () => {
+					const fresh = qp.rules();
+					set((dd) => (dd.course.rules = fresh));
+				}, 'btn-blue'),
+				el('span', { class: 'sched-hint', text: 'Replaces the rules below. Undo works.' })
+			)
+		);
+
+		// Repeat rules
+		const list = el('div', { class: 'set-list' });
+		c.rules.forEach((r, i) => list.append(ruleCard(d, r, i, set)));
+		const rules = el(
+			'div',
+			{ class: 'set-card' },
+			el('strong', { text: 'Repeat rules' }),
+			el('span', {
+				class: 'sched-hint',
+				text: 'Like a repeating event in Google Calendar. Lower rules win where they overlap, so add exceptions (a semester change, every other Friday off) at the bottom. Weekdays no rule covers have no class. Days off and single-day changes still win over every rule.'
+			}),
+			list,
+			el(
+				'div',
+				{ class: 'set-line' },
+				app.btn('+ Add rule', () => set((dd) => dd.course.rules.push(S.newRule({ type: dd.course.meetsOn, days: [], from: null })))),
+				app.btn('+ Add a semester change', () =>
+					set((dd) => {
+						// copy the open-ended rules, starting mid-year, so the second half can be edited separately
+						const span = Math.round((Date.parse(dd.course.termEnd) - Date.parse(dd.course.termStart)) / 864e5);
+						const from = S.firstOnOrAfter(S.addDays(dd.course.termStart, Math.round(span / 2)), 1);
+						const copies = dd.course.rules.filter((x) => !x.until).map((x) => S.newRule({ ...x, id: S.newId('r'), from }));
+						dd.course.rules.push(...copies);
+					})
+				)
+			)
+		);
+
+		return el(
+			'section',
+			{ class: 'set-section', id: 'set-schedule' },
+			el('h2', { text: 'Schedule' }),
+			basics,
+			quick,
+			rules,
+			schedulePreview(d)
+		);
+	}
+
+	function ruleCard(d, r, i, set) {
+		const upd = (fn) => set((dd) => fn(dd.course.rules[i]));
+		const type = app.select(S.RULE_TYPES, r.type, { 'aria-label': 'Day type' });
+		type.addEventListener('change', () => upd((x) => (x.type = type.value)));
+		let how;
+		if (r.type === 'AB') {
+			const first = app.select([['A', 'starting with A'], ['B', 'starting with B']], r.first || 'A', { 'aria-label': 'First letter' });
+			first.addEventListener('change', () => upd((x) => (x.first = first.value)));
+			const by = app.select(
+				[
+					['meeting', 'switching each time it meets'],
+					['week', 'switching every week']
+				],
+				r.by || 'meeting',
+				{ 'aria-label': 'Switches' }
+			);
+			by.addEventListener('change', () => upd((x) => (x.by = by.value)));
+			how = [first, by];
+		} else {
+			const every = app.input({ type: 'number', min: '1', step: '1', value: r.every || 1, class: 'ht-input rule-every', 'aria-label': 'Every how many weeks' });
+			every.addEventListener('change', () => upd((x) => (x.every = Math.max(1, parseInt(every.value, 10) || 1))));
+			how = [el('span', { text: 'repeats every' }), every, el('span', { text: (r.every || 1) > 1 ? 'weeks' : 'week' })];
+		}
+		const days = el(
+			'div',
+			{ class: 'dow-pills', role: 'group', 'aria-label': 'Weekdays' },
+			[1, 2, 3, 4, 5].map((dw) =>
+				el('button', {
+					type: 'button',
+					class: 'dow-pill' + (r.days.includes(dw) ? ' on' : ''),
+					'aria-pressed': r.days.includes(dw) ? 'true' : 'false',
+					title: S.DOW_SHORT[dw],
+					text: S.DOW_LETTER[dw],
+					onclick: () => upd((x) => (x.days = x.days.includes(dw) ? x.days.filter((y) => y !== dw) : [...x.days, dw].sort()))
+				})
+			)
+		);
+		const date = (label, key) => {
+			const i2 = app.input({ type: 'date', value: r[key] || '' });
+			i2.addEventListener('change', () => upd((x) => (x[key] = i2.value || null)));
+			return app.field(label, i2);
+		};
+		const mins = app.input({ type: 'number', min: '1', step: '5', value: r.minutes || '', placeholder: String(d.course.classMinutes || '') });
+		mins.addEventListener('change', () => upd((x) => (x.minutes = parseInt(mins.value, 10) > 0 ? parseInt(mins.value, 10) : null)));
+		const n = d.course.rules.length;
+		return el(
+			'div',
+			{ class: 'rule-card' + (r.days.length ? '' : ' empty') },
+			el('div', { class: 'rule-line' }, type, ...how, el('span', { text: 'on' }), days),
+			el(
+				'div',
+				{ class: 'rule-line' },
+				date('Starting (blank = term start)', 'from'),
+				date('Ending (blank = term end)', 'until'),
+				app.field('Class length (blank = usual)', mins),
+				el('span', { class: 'ht-spacer' }),
+				app.btn('↑', () => i > 0 && set((dd) => dd.course.rules.splice(i - 1, 0, dd.course.rules.splice(i, 1)[0]))),
+				app.btn('↓', () => i < n - 1 && set((dd) => dd.course.rules.splice(i + 1, 0, dd.course.rules.splice(i, 1)[0]))),
+				app.btn('Remove', () => set((dd) => dd.course.rules.splice(i, 1)))
+			),
+			el('span', { class: 'sched-hint', text: r.days.length ? S.describeRule(r) : 'Pick at least one weekday.' })
+		);
+	}
+
+	/* Four weeks of the schedule, starting this week (or the first week of the term) */
+	function schedulePreview(d) {
+		const days = S.genDays(d);
+		if (!days.length) return el('span');
+		const t = S.today();
+		let start = t >= d.course.termStart && t <= d.course.termEnd ? t : d.course.termStart;
+		start = S.addDays(start, -((S.dow(start) + 6) % 7)); // Monday
+		const byDate = new Map(days.map((x) => [x.date, x]));
+		const table = el(
+			'table',
+			{ class: 'pv-table' },
+			el('thead', null, el('tr', null, el('th', { text: 'Week of' }), [1, 2, 3, 4, 5].map((dw) => el('th', { text: S.DOW_SHORT[dw] })))),
+			el(
+				'tbody',
+				null,
+				[0, 1, 2, 3].map((w) => {
+					const mon = S.addDays(start, w * 7);
+					return el(
+						'tr',
+						null,
+						el('td', { class: 'pv-week', text: S.fmtShort(mon) }),
+						[0, 1, 2, 3, 4].map((k) => {
+							const x = byDate.get(S.addDays(mon, k));
+							if (!x) return el('td', { class: 'pv-out', text: '' });
+							return el(
+								'td',
+								{ title: x.why + (x.note ? ' · ' + x.note : '') },
+								el('span', { class: 'type-badge t-' + x.type + (x.meet ? ' meet' : ''), text: x.type === 'none' ? '—' : x.type }),
+								x.meet && x.minutes ? el('small', { text: ' ' + x.minutes + 'm' }) : null
+							);
+						})
+					);
+				})
+			)
+		);
+		return el('div', { class: 'set-card' }, el('strong', { text: 'Preview' }), el('span', { class: 'sched-hint', text: `Outlined = days this course meets (${d.course.meetsOn} days).` }), table);
 	}
 
 	function section(title, ...kids) {

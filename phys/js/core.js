@@ -613,7 +613,7 @@ HT.copyDivAsImageToClipboard = async function () {
 const FILE_FORMAT = 'happytheta';
 const FILE_VERSION = 1;
 const STORE_PREFIX = 'happytheta:save:';
-const TOOLS = ['fbd', 'energy', 'motion', 'graph', 'scheduler'];
+const TOOLS = ['fbd', 'energy', 'motion', 'graph', 'scheduler', 'schedtemplate'];
 
 HT.files = {
 	FORMAT: FILE_FORMAT,
@@ -665,7 +665,7 @@ HT.files = {
 	},
 
 	toolName(tool) {
-		return { fbd: 'Free Body Diagram', energy: 'Energy Diagram', motion: 'Motion Diagram', graph: 'Graph Maker', scheduler: 'Theta Scheduler' }[tool] || tool;
+		return { fbd: 'Free Body Diagram', energy: 'Energy Diagram', motion: 'Motion Diagram', graph: 'Graph Maker', scheduler: 'Theta Scheduler', schedtemplate: 'Scheduler template' }[tool] || tool;
 	},
 
 	/* ---- localStorage (every call can throw: private mode, quota, blocked storage) ---- */

@@ -83,18 +83,21 @@
 		{ id: 'col-proj', title: 'Projects & labs', types: ['project', 'lab'], assessment: [] }
 	];
 
-	S.newCourse = function ({ title = 'New course', termStart, termEnd, meetsOn = 'A', firstType = 'A', seed } = {}) {
+	S.newCourse = function ({ title = 'New course', termStart, termEnd, semester2Start = null, meetsOn = 'A', firstType = 'A', classMinutes = 50, rules, seed } = {}) {
 		const y = new Date().getMonth() >= 6 ? new Date().getFullYear() : new Date().getFullYear() - 1;
+		const ts = termStart || `${y}-08-13`;
 		const data = {
 			course: {
 				title,
-				termStart: termStart || `${y}-08-13`,
+				termStart: ts,
 				termEnd: termEnd || `${y + 1}-05-21`,
+				semester2Start, // optional; splits the year into two semesters
 				meetsOn,
-				firstType
+				classMinutes,
+				rules: rules || [S.rotationRule(null, firstType)] // how each weekday becomes A, B or no class
 			},
 			breaks: [], // [{id, start, end, note}] — no class on these dates
-			overrides: {}, // { 'YYYY-MM-DD': { type: 'A'|'B'|'none', note } }
+			overrides: {}, // { 'YYYY-MM-DD': { type: 'A'|'B'|'none', note, minutes } }
 			units: [],
 			topics: [],
 			activities: [], // start === null → in the activity bank
@@ -141,6 +144,7 @@
 		objectiveIds: [],
 		links: [],
 		notes: '',
+		pinned: false, // keep on its date when catching up or applying a template
 		...o
 	});
 
@@ -148,36 +152,183 @@
 	/* Days: A / B / No class                                              */
 	/* ------------------------------------------------------------------ */
 
+	/* Schedule rules, Google-Calendar style. Each rule:
+	     { id, type: 'A'|'B'|'none'|'AB', days: [1..5], every: N (weeks), from, until, first: 'A'|'B', by: 'meeting'|'week', minutes }
+	   - A / B / none: applies on those weekdays every N weeks, counting weeks from the week of `from`.
+	   - AB alternates, starting with `first`: by 'meeting' it switches every time the rule applies to a
+	     school day (a day off doesn't count, so the alternation just continues); by 'week' it switches
+	     every calendar week, so all its weekdays in one week share a letter.
+	   Later rules win where rules overlap. `minutes` (optional) is the class length on those days. */
+	S.DOW_LETTER = ['Su', 'M', 'Tu', 'W', 'Th', 'F', 'Sa'];
+	S.RULE_TYPES = [
+		['A', 'A day'],
+		['B', 'B day'],
+		['AB', 'Alternating A / B'],
+		['none', 'No class']
+	];
+
+	S.newRule = (o = {}) => ({ id: S.newId('r'), type: 'A', days: [], every: 1, from: null, until: null, first: 'A', by: 'meeting', minutes: null, ...o });
+
+	/* The old behavior: every school day alternates A, B, A, B… */
+	S.rotationRule = (from, first = 'A') => S.newRule({ type: 'AB', days: [1, 2, 3, 4, 5], from, first, by: 'meeting' });
+
+	/* Monday of the week a date is in */
+	const weekStart = (s) => S.addDays(s, -((S.dow(s) + 6) % 7));
+	const weeksBetween = (a, b) => Math.round((toUTC(weekStart(b)) - toUTC(weekStart(a))) / (7 * 864e5));
+	S.firstOnOrAfter = (from, dow) => S.addDays(from, (dow - S.dow(from) + 7) % 7);
+
+	/* Quick weekly pattern → rules.  pattern = { 1: 'A'|'B'|'none'|'AB-A'|'AB-B', 2: …, … 5: … } */
+	S.QUICK = [
+		['A', 'A day'],
+		['B', 'B day'],
+		['AB-A', 'Alternates A, B, A…'],
+		['AB-B', 'Alternates B, A, B…'],
+		['none', 'No class']
+	];
+	S.rulesFromPattern = function (pattern, from, { by = 'meeting', minutes = {} } = {}) {
+		const groups = new Map();
+		for (let d = 1; d <= 5; d++) {
+			const v = pattern[d] || 'none';
+			const key = v + '|' + (minutes[d] || '');
+			if (!groups.has(key)) groups.set(key, { v, days: [], minutes: minutes[d] || null });
+			groups.get(key).days.push(d);
+		}
+		const rules = [];
+		for (const g of groups.values()) {
+			if (g.v.startsWith('AB')) {
+				// alternating weekdays each get their own rule so each keeps its own A/B sequence
+				for (const d of g.days) rules.push(S.newRule({ type: 'AB', first: g.v.slice(3), days: [d], from, by, minutes: g.minutes }));
+			} else rules.push(S.newRule({ type: g.v, days: g.days, from, minutes: g.minutes }));
+		}
+		return rules;
+	};
+
+	/* Best guess at a simple weekly pattern from rules (for pre-filling the quick picker) */
+	S.patternFromRules = function (rules) {
+		const p = {};
+		for (let dw = 1; dw <= 5; dw++) {
+			const r = [...(rules || [])].reverse().find((x) => x.days.includes(dw) && !x.until && (x.every || 1) === 1);
+			p[dw] = !r ? 'none' : r.type === 'AB' ? (r.days.length > 1 ? 'AB-' + (r.first || 'A') : 'AB-' + (r.first || 'A')) : r.type;
+		}
+		return p;
+	};
+	/* True when the rules are the old "every school day alternates" rotation */
+	S.isRotation = (rules) => rules.length === 1 && rules[0].type === 'AB' && rules[0].days.length === 5 && rules[0].by !== 'week' && !rules[0].until;
+
+	/* Plain-language summary, e.g. "A day · every week on Tu, Th" */
+	S.describeRule = function (r) {
+		const days = [...r.days].sort().map((d) => S.DOW_LETTER[d]).join(', ') || 'no days';
+		const range = (r.from ? ` from ${S.fmtShort(r.from)}` : '') + (r.until ? ` until ${S.fmtShort(r.until)}` : '');
+		const len = r.minutes ? ` · ${r.minutes} min` : '';
+		if (r.type === 'AB') {
+			const how = r.by === 'week' ? 'switching every week' : 'switching each time it meets';
+			return `Alternating A/B on ${days}, starting with ${r.first || 'A'}, ${how}${range}${len}`;
+		}
+		const label = { A: 'A day', B: 'B day', none: 'No class' }[r.type] || r.type;
+		const every = (r.every || 1) > 1 ? `every ${r.every} weeks` : 'every week';
+		return `${label} · ${every} on ${days}${range}${len}`;
+	};
+
+	/* Week counting starts at the first week the rule actually applies in (so "every 2 weeks" and
+	   "alternating by week, A first" both start on the rule's first real day). */
+	const firstHit = (r, termStart) => {
+		const from = r.from || termStart;
+		return r.days.map((dw) => S.firstOnOrAfter(from, dw)).sort()[0] || from;
+	};
+
+	/* Does the rule apply on this date (ignoring days off)? */
+	function ruleHits(r, d, dw, termStart) {
+		if (!r.days || !r.days.includes(dw)) return false;
+		const from = r.from || termStart;
+		if (d < from || (r.until && d > r.until)) return false;
+		if (r.type !== 'AB' && (r.every || 1) > 1 && weeksBetween(firstHit(r, termStart), d) % r.every !== 0) return false;
+		return true;
+	}
+
 	/* Every weekday of the term, in order:
-	   { date, dow, type: 'A'|'B'|'none', note, meet, school }
-	   The A/B rotation alternates on school days only, so a day off pushes the rotation back.
-	   An override forces a day's type; the rotation continues from it. */
+	   { date, dow, type: 'A'|'B'|'none', note, meet, school, minutes, why }
+	   Per-date overrides win, then days off, then the last matching rule. Weekdays no rule covers have no class. */
 	S.genDays = function (data) {
 		const c = data.course;
 		const out = [];
 		if (!S.isDate(c.termStart) || !S.isDate(c.termEnd) || c.termEnd < c.termStart) return out;
-		let next = c.firstType === 'B' ? 'B' : 'A';
+		const rules = (c.rules || []).filter((r) => r && r.days && r.days.length);
+		const count = new Map(rules.map((r) => [r.id, 0])); // AB-by-meeting position
 		const breaks = (data.breaks || []).filter((b) => S.isDate(b.start));
 		for (let d = c.termStart, guard = 0; d <= c.termEnd && guard < 800; d = S.addDays(d, 1), guard++) {
 			const dw = S.dow(d);
 			if (dw === 0 || dw === 6) continue;
 			const ov = (data.overrides || {})[d];
 			const br = breaks.find((b) => d >= b.start && d <= (b.end || b.start));
-			let type;
-			if (ov && ov.type) type = ov.type;
-			else if (br) type = 'none';
-			else type = next;
-			if (type !== 'none') next = type === 'A' ? 'B' : 'A';
+			let rule = null;
+			for (let i = rules.length - 1; i >= 0; i--)
+				if (ruleHits(rules[i], d, dw, c.termStart)) {
+					rule = rules[i];
+					break;
+				}
+			let type,
+				why;
+			const flip = (t) => (t === 'A' ? 'B' : 'A');
+			if (ov && ov.type) {
+				type = ov.type;
+				why = 'changed for this day';
+				// an alternating rule carries on from a forced A/B
+				if (rule && rule.type === 'AB' && rule.by !== 'week' && type !== 'none') {
+					const first = rule.first || 'A';
+					count.set(rule.id, type === first ? 1 : 0);
+				}
+			} else if (br) {
+				type = 'none';
+				why = 'day off';
+			} else if (!rule) {
+				type = 'none';
+				why = 'no rule covers this day';
+			} else if (rule.type === 'AB') {
+				const first = rule.first || 'A';
+				if (rule.by === 'week') type = weeksBetween(firstHit(rule, c.termStart), d) % 2 === 0 ? first : flip(first);
+				else {
+					const k = count.get(rule.id);
+					type = k % 2 === 0 ? first : flip(first);
+					count.set(rule.id, k + 1);
+				}
+				why = S.describeRule(rule);
+			} else {
+				type = rule.type;
+				why = S.describeRule(rule);
+			}
+			const minutes = (ov && ov.minutes) || (rule && rule.minutes) || c.classMinutes || null;
 			out.push({
 				date: d,
 				dow: dw,
 				type,
 				note: (ov && ov.note) || (br && br.note) || '',
 				school: type !== 'none',
-				meet: type === c.meetsOn
+				meet: type === c.meetsOn,
+				minutes: type === c.meetsOn ? minutes : null,
+				why
 			});
 		}
 		return out;
+	};
+
+	/* Planned in-class minutes per meeting date. An in-class activity's expected time is spread evenly
+	   over the meetings it spans. Returns Map date -> minutes. */
+	S.plannedMinutes = function (data, days) {
+		const meets = days.filter((d) => d.meet).map((d) => d.date);
+		const m = new Map();
+		for (const a of data.activities) {
+			if (!a.inClass || !a.start || !a.expectedMin) continue;
+			const end = a.end && a.end >= a.start ? a.end : a.start;
+			const span = meets.filter((d) => d >= a.start && d <= end);
+			for (const d of span) m.set(d, (m.get(d) || 0) + a.expectedMin / span.length);
+		}
+		return m;
+	};
+
+	/* Meetings and class minutes between two dates (for unit/topic summaries) */
+	S.meetingsBetween = function (days, start, end) {
+		const list = days.filter((d) => d.meet && d.date >= start && d.date <= (end || start));
+		return { meetings: list.length, minutes: list.reduce((s, d) => s + (d.minutes || 0), 0) };
 	};
 
 	/* ------------------------------------------------------------------ */
@@ -418,6 +569,12 @@
 		const base = S.newCourse();
 		const out = Object.assign(S.newCourse(), data || {});
 		out.course = Object.assign(base.course, (data && data.course) || {});
+		if (!Array.isArray(out.course.rules) || !(data && data.course && data.course.rules)) {
+			// courses saved before schedule rules: every school day alternated, starting with firstType
+			if (!(data && data.course && Array.isArray(data.course.rules))) out.course.rules = [S.rotationRule(null, (data && data.course && data.course.firstType) || 'A')];
+		}
+		delete out.course.firstType;
+		out.course.rules = out.course.rules.map((r) => S.newRule(r));
 		if (!out.overrides || typeof out.overrides !== 'object') out.overrides = {};
 		if (!out.suggestedSkills || typeof out.suggestedSkills !== 'object') out.suggestedSkills = {};
 		out.targets = Object.assign({}, base.targets, out.targets || {});

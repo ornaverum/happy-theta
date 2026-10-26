@@ -155,59 +155,68 @@
 		}
 	}
 
+	/* Weekday pattern picker: Mon–Fri each A / B / Alternates / No class, or "every school day alternates".
+	   Returns { node, rules() } — rules() builds schedule rules from the current choices. */
+	app.quickPattern = function (rules) {
+		const rot = rules && S.isRotation(rules);
+		const pat = rules ? S.patternFromRules(rules) : { 1: 'AB-A', 2: 'A', 3: 'B', 4: 'A', 5: 'B' };
+		const mode = app.select(
+			[
+				['week', 'Set by weekday'],
+				['rot', 'Every school day alternates A, B, A, B…']
+			],
+			rot ? 'rot' : 'week'
+		);
+		const first = app.select([['A', 'Starts with A'], ['B', 'Starts with B']], rot ? rules[0].first || 'A' : 'A');
+		const sels = {};
+		const grid = el(
+			'div',
+			{ class: 'qp-grid' },
+			[1, 2, 3, 4, 5].map((dw) => {
+				sels[dw] = app.select(S.QUICK, pat[dw], { 'aria-label': S.DOW_SHORT[dw] });
+				return app.field(S.DOW_SHORT[dw], sels[dw]);
+			})
+		);
+		const by = app.select(
+			[
+				['meeting', 'Alternating days switch each time they meet (a day off doesn’t count)'],
+				['week', 'Alternating days switch every calendar week']
+			],
+			(rules && (rules.find((r) => r.type === 'AB') || {}).by) || 'meeting'
+		);
+		const byField = app.field('', by);
+		const sync = () => {
+			const r = mode.value === 'rot';
+			grid.hidden = r;
+			first.hidden = !r;
+			byField.hidden = r || ![1, 2, 3, 4, 5].some((dw) => sels[dw].value.startsWith('AB'));
+		};
+		[mode, ...Object.values(sels)].forEach((x) => x.addEventListener('change', sync));
+		sync();
+		const node = el('div', { class: 'qp' }, el('div', { class: 'qp-top' }, mode, first), grid, byField);
+		return {
+			node,
+			rules: () =>
+				mode.value === 'rot'
+					? [S.rotationRule(null, first.value)]
+					: S.rulesFromPattern(Object.fromEntries([1, 2, 3, 4, 5].map((dw) => [dw, sels[dw].value])), null, { by: by.value })
+		};
+	};
+
 	/* ------------------------------------------------------------------ */
 	/* New course / open / download                                        */
 	/* ------------------------------------------------------------------ */
 
+	/* New course = the School calendar wizard (scheduler-wizard.js) with a blank course */
 	function newCourseDialog() {
-		const seeds = HT.schedulerSeeds || {};
-		const blank = S.newCourse();
-		const title = app.input({ type: 'text', value: 'AP Physics 1' });
-		const start = app.input({ type: 'date', value: blank.course.termStart });
-		const end = app.input({ type: 'date', value: blank.course.termEnd });
-		const meets = app.select([['A', 'A days'], ['B', 'B days']], 'A');
-		const first = app.select([['A', 'A day'], ['B', 'B day']], 'A');
-		const seedSel = app.select([...Object.values(seeds).map((s) => [s.id, s.title]), ['', 'None (start empty)']], Object.keys(seeds)[0] || '');
-		const draft = el('input', { type: 'checkbox', checked: true });
-		const bank = el('input', { type: 'checkbox', checked: true });
-		const body = el(
-			'div',
-			{ class: 'sched-form' },
-			app.field('Course name', title),
-			el('div', { class: 'sched-row2' }, app.field('First day of the term', start), app.field('Last day', end)),
-			el('div', { class: 'sched-row2' }, app.field('This course meets on', meets), app.field('The first day of the term is', first)),
-			app.field('Objectives', seedSel),
-			el('label', { class: 'sched-check' }, draft, ' Draft units and topics on the calendar from the framework'),
-			el('label', { class: 'sched-check' }, bank, ' Put the framework’s quizzes in the activity bank'),
-			el('p', { class: 'sched-hint', text: 'Days off (breaks, holidays) are added in Settings. Everything can be changed later.' })
-		);
-		const m = app.dialog('New course', body, [
-			el('span', { class: 'ht-spacer' }),
-			app.btn('Cancel', () => m.close()),
-			app.btn(
-				'Create',
-				() => {
-					if (!S.isDate(start.value) || !S.isDate(end.value) || end.value <= start.value) return m.error('Check the term dates.');
-					const seed = seeds[seedSel.value];
-					const data = S.newCourse({
-						title: title.value.trim() || 'New course',
-						termStart: start.value,
-						termEnd: end.value,
-						meetsOn: meets.value,
-						firstType: first.value,
-						seed
-					});
-					if (seed && !bank.checked) data.activities = [];
-					if (seed && draft.checked && data.objectiveTrees[0]) S.draftPlan(data, data.objectiveTrees[0], data.course.termStart);
-					m.close();
-					openCourse(HT.files.wrap(TOOL, { title: data.course.title, data, view: {} }));
-					saveNow();
-				},
-				'btn-blue'
-			)
-		]);
-		title.select();
+		app.setupWizard({ isNew: true });
 	}
+
+	/* Open freshly built course data as a new saved course */
+	app.openData = function (data) {
+		openCourse(HT.files.wrap(TOOL, { title: data.course.title, data, view: {} }));
+		saveNow();
+	};
 
 	function openDialog() {
 		const list = el('ul', { class: 'ht-save-list' });
@@ -412,8 +421,10 @@
 			}),
 			el('label', { class: 'sched-check' }, hide, ` Hide ${other} days`),
 			el('span', { class: 'ht-spacer' }),
+			app.btn('School calendar…', () => app.setupWizard({ isNew: false })),
+			app.btn('Templates…', () => app.templatesDialog()),
+			app.btn('Catch up…', () => app.catchUpDialog()),
 			app.btn('Shift dates…', shiftDialog),
-			app.btn('Draft from framework…', draftDialog),
 			el('span', { class: 'cal-legend', text: 'Click an empty cell to add · drag blocks to move · drag the bottom edge to lengthen' })
 		);
 	}
@@ -477,6 +488,7 @@
 		for (const c of cols) frag.append(head(c.title, c.line, c.lanes));
 
 		// Day cells
+		const planned = S.plannedMinutes(d, all);
 		let month = '';
 		rows.forEach((r, i) => {
 			const gr = i + 2;
@@ -487,9 +499,18 @@
 				month = m;
 			}
 			if (r.dow === 1) cls.push('week-start');
+			if (r.date === d.course.semester2Start || (i > 0 && d.course.semester2Start > rows[i - 1].date && d.course.semester2Start <= r.date)) {
+				cls.push('sem-start');
+				frag.append(el('div', { class: 'cal-note sem', style: { gridRow: gr, gridColumn: `4 / -1` }, text: 'Semester 2' }));
+			}
 			const c = cls.join(' ');
 			frag.append(
-				el('div', { class: c + ' cal-date sticky-l c1', style: { gridRow: gr, gridColumn: 1 }, 'data-row': i, text: S.fmtShort(r.date) }),
+				el(
+					'div',
+					{ class: c + ' cal-date sticky-l c1', style: { gridRow: gr, gridColumn: 1 }, 'data-row': i },
+					el('span', { text: S.fmtShort(r.date) }),
+					r.meet && r.minutes ? minutesBadge(planned.get(r.date) || 0, r.minutes) : null
+				),
 				el('div', { class: c + ' cal-dow sticky-l c2', style: { gridRow: gr, gridColumn: 2 }, text: S.DOW_SHORT[r.dow] }),
 				el(
 					'button',
@@ -497,7 +518,7 @@
 						type: 'button',
 						class: c + ' cal-type sticky-l c3',
 						style: { gridRow: gr, gridColumn: 3 },
-						title: 'Change this day',
+						title: `${r.type === 'none' ? 'No class' : r.type + ' day'} — ${r.why || ''}${r.minutes ? ` · ${r.minutes} min` : ''}\nClick to change this day`,
 						onclick: () => dayDialog(r)
 					},
 					el('span', { class: 'type-badge t-' + r.type, text: r.type === 'none' ? '—' : r.type })
@@ -542,6 +563,12 @@
 		measureRows();
 	}
 
+	function minutesBadge(p, len) {
+		const pr = Math.round(p);
+		const cls = pr > len ? 'over' : pr === 0 ? 'empty' : pr >= len * 0.9 ? 'full' : 'part';
+		return el('span', { class: 'min-badge ' + cls, title: `Planned in class: ${pr} of ${len} minutes`, text: `${pr}/${len}` });
+	}
+
 	function blockEl(col, it) {
 		const o = it.obj;
 		const isSel = app.sel && app.sel.id === o.id;
@@ -557,6 +584,7 @@
 			const t = typeTag(o);
 			b.style.borderLeftColor = (t && t.color) || '#9ca3af';
 			if (o.assessment === 'summative') b.classList.add('summative');
+			if (o.pinned) b.classList.add('pinned');
 		}
 		const sub = [];
 		if (it.kind === 'activity') {
@@ -841,6 +869,13 @@
 		];
 
 		if (kind !== 'activity' || o.start) parts.push(el('div', { class: 'sched-row2' }, date('Start', 'start'), date('End', 'end')));
+		if (o.start && kind !== 'activity') {
+			const days = S.genDays(d);
+			const mb = S.meetingsBetween(days, o.start, o.end);
+			const acts = d.activities.filter((a) => a.inClass && a.start && a.start <= (o.end || o.start) && (a.end || a.start) >= o.start);
+			const used = Math.round([...S.plannedMinutes({ activities: acts }, days).entries()].filter(([k]) => k >= o.start && k <= (o.end || o.start)).reduce((s2, [, v]) => s2 + v, 0));
+			parts.push(el('p', { class: 'sched-hint', text: `${mb.meetings} class meeting${mb.meetings === 1 ? '' : 's'} · ${mb.minutes} min of class · ${used} min planned in class` }));
+		}
 
 		if (kind === 'unit') {
 			const color = el('input', { type: 'color', value: o.color || '#e5e7eb', class: 'ed-color' });
@@ -860,10 +895,14 @@
 				time.addEventListener('change', () => setField('time', time.value));
 				const mins = app.input({ type: 'number', min: '0', step: '5', value: o.expectedMin ?? '' });
 				mins.addEventListener('change', () => setField('expectedMin', mins.value === '' ? null : Math.max(0, +mins.value)));
-				parts.push(el('div', { class: 'sched-row2' }, app.field('Due time', time), app.field('Expected work (min)', mins)));
+				parts.push(el('div', { class: 'sched-row2' }, app.field('Due time', time), app.field(o.inClass ? 'Class time (min, total)' : 'Expected work (min)', mins)));
 				const ic = el('input', { type: 'checkbox', checked: o.inClass });
 				ic.addEventListener('change', () => setField('inClass', ic.checked));
-				parts.push(el('label', { class: 'sched-check' }, ic, ' In-class activity'));
+				const pin = el('input', { type: 'checkbox', checked: !!o.pinned });
+				pin.addEventListener('change', () => setField('pinned', pin.checked));
+				parts.push(
+					el('div', { class: 'ed-checks' }, el('label', { class: 'sched-check' }, ic, ' In-class activity'), el('label', { class: 'sched-check', title: 'Catch up and templates won’t move it' }, pin, ' Fixed date'))
+				);
 			} else {
 				const mins = app.input({ type: 'number', min: '0', step: '5', value: o.expectedMin ?? '' });
 				mins.addEventListener('change', () => setField('expectedMin', mins.value === '' ? null : Math.max(0, +mins.value)));
@@ -1119,22 +1158,25 @@
 		const ov = d.overrides[r.date] || {};
 		const type = app.select(
 			[
-				['', `Automatic (${r.type === 'none' && !ov.type ? 'day off' : 'rotation'})`],
+				['', 'Automatic (from the schedule rules)'],
 				['A', 'A day'],
 				['B', 'B day'],
 				['none', 'No class']
 			],
 			ov.type || ''
 		);
-		const note = app.input({ type: 'text', value: ov.note || '', placeholder: 'e.g. Snow day, Pep rally' });
+		const note = app.input({ type: 'text', value: ov.note || '', placeholder: 'e.g. Snow day, Early release' });
+		const mins = app.input({ type: 'number', min: '1', step: '5', value: ov.minutes || '', placeholder: String(r.minutes || d.course.classMinutes || '') });
 		const body = el(
 			'div',
 			{ class: 'sched-form' },
+			el('p', { class: 'sched-hint', text: `Right now: ${r.type === 'none' ? 'no class' : r.type + ' day'} (${r.why || 'rotation'}).` }),
 			app.field('Schedule', type),
+			app.field(`Class length on this day (minutes; blank = usual)`, mins),
 			app.field('Note', note),
 			el('p', {
 				class: 'sched-hint',
-				text: 'Changing a day changes the A/B rotation for every school day after it. Plans stay on their dates — use Shift dates… to move them.'
+				text: 'Plans stay on their dates — use Shift dates… to move them. If this day belongs to an alternating rule, forcing A or B here makes the alternation continue from it.'
 			})
 		);
 		const m = app.dialog(`${S.DOW_SHORT[r.dow]} ${S.fmtShort(r.date)}`, body, [
@@ -1145,8 +1187,9 @@
 				() => {
 					m.close();
 					app.commit((dd) => {
-						const v = { type: type.value || undefined, note: note.value.trim() || undefined };
-						if (!v.type && !v.note) delete dd.overrides[r.date];
+						const m2 = parseInt(mins.value, 10);
+						const v = { type: type.value || undefined, note: note.value.trim() || undefined, minutes: m2 > 0 ? m2 : undefined };
+						if (!v.type && !v.note && !v.minutes) delete dd.overrides[r.date];
 						else dd.overrides[r.date] = JSON.parse(JSON.stringify(v));
 					});
 				},
@@ -1178,39 +1221,7 @@
 					let moved = 0;
 					m.close();
 					app.commit((d) => (moved = S.shift(d, from.value, k)));
-					statusEl.textContent = `Moved ${moved} item${moved === 1 ? '' : 's'}`;
-				},
-				'btn-blue'
-			)
-		]);
-	}
-
-	function draftDialog() {
-		const d = app.data;
-		const tree = d.objectiveTrees[0];
-		if (!tree) {
-			const m0 = app.dialog('Draft from framework', el('p', { text: 'This course has no objectives framework.' }), [app.btn('Close', () => m0.close())]);
-			return;
-		}
-		const from = app.input({ type: 'date', value: d.course.termStart });
-		const body = el(
-			'div',
-			{ class: 'sched-form' },
-			app.field('Start on', from),
-			el('p', {
-				class: 'sched-hint',
-				text: `Lays the units of “${tree.name}” end to end on ${d.course.meetsOn} days, using each unit’s length in meetings, and splits each unit evenly among its topics. This replaces the current ${d.units.length} units and ${d.topics.length} topics; activities are not changed. Undo works.`
-			})
-		);
-		const m = app.dialog('Draft units and topics', body, [
-			el('span', { class: 'ht-spacer' }),
-			app.btn('Cancel', () => m.close()),
-			app.btn(
-				'Draft',
-				() => {
-					if (!S.isDate(from.value)) return m.error('Pick a start date.');
-					m.close();
-					app.commit((dd) => S.draftPlan(dd, dd.objectiveTrees[0], from.value));
+					app.flash(`Moved ${moved} item${moved === 1 ? '' : 's'}`);
 				},
 				'btn-blue'
 			)
@@ -1252,5 +1263,19 @@
 		else app.render();
 	};
 	app.saveNow = saveNow;
+
+	/* A short message at the bottom of the screen, with Undo (status text is overwritten by autosave) */
+	let toastTimer = 0;
+	app.flash = function (text) {
+		let t = document.querySelector('.sched-toast');
+		if (!t) {
+			t = el('div', { class: 'sched-toast out', role: 'status' });
+			document.body.appendChild(t);
+		}
+		t.replaceChildren(el('span', { text }), el('button', { type: 'button', text: 'Undo', onclick: () => (undo(), t.classList.add('out')) }));
+		t.classList.remove('out');
+		clearTimeout(toastTimer);
+		toastTimer = setTimeout(() => t.classList.add('out'), 7000);
+	};
 	app.status = statusEl;
 })();

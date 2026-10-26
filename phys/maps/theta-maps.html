@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>Theta Maps · Happy Theta</title>
+		<link rel="icon" href="../assets/favicon.png" />
+		<link rel="stylesheet" href="../css/style.css" />
+		<link rel="stylesheet" href="../css/theta-maps.css" />
+	</head>
+	<body data-root="../" class="tm-body">
+		<div class="tm-app" id="app">
+		  <header class="topbar">
+		    <div class="brand" title="Theta Maps"><img src="../assets/favicon.png" alt=""><span class="hide-sm">Theta Maps</span></div>
+		    <input class="mapname" id="mapName" aria-label="Map name" spellcheck="false">
+		    <span class="tpl-badge" id="tplBadge"></span>
+		    <div class="top-actions">
+		      <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input id="searchIn" placeholder="Find node…" aria-label="Find node" autocomplete="off"></div>
+		      <button class="iconbtn" id="undoBtn" title="Undo (Ctrl+Z)" aria-label="Undo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 0 10h-3"/></svg></button>
+		      <button class="iconbtn" id="redoBtn" title="Redo (Ctrl+Shift+Z)" aria-label="Redo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m15 14 5-5-5-5"/><path d="M20 9H9a5 5 0 0 0 0 10h3"/></svg></button>
+		      <span class="savestate hide-sm" id="saveState">Saved</span>
+		      <button class="btn" id="mapsBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M9 4v16"/></svg>Maps</button>
+		      <button class="btn" id="newBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>New</button>
+		      <button class="btn" id="importBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3v12m0 0-4-4m4 4 4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>Import</button>
+		      <button class="btn" id="exportBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 15V3m0 0L8 7m4-4 4 4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>Export</button>
+		      <button class="iconbtn" id="inspToggle" title="Toggle inspector (I)" aria-label="Toggle inspector"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16"/></svg></button>
+		    </div>
+		  </header>
+		  <nav class="folderbar" id="folderBar" aria-label="Folders"></nav>
+		  <div class="main">
+		    <div class="stage" id="stage" tabindex="0" aria-label="Map canvas">
+		      <div class="world" id="world">
+		        <svg class="edges" id="edges"><defs id="defs"></defs><g id="eg"></g></svg>
+		        <div id="layer"></div>
+		      </div>
+		      <div class="rail" id="rail"></div>
+		      <div class="legend" id="legend"></div>
+		      <div class="hint">Drag field to pan · Ctrl/⌘ + scroll to zoom · Shift-drag to select · Tab adds child</div>
+		    </div>
+		    <aside class="inspector" id="inspector" aria-label="Inspector"></aside>
+		  </div>
+		</div>
+		<input type="file" id="fileIn" hidden multiple>
+		<script src="../js/core.js"></script>
+		<script src="../js/theta-maps.js"></script>
+	</body>
+</html>

@@ -218,3 +218,83 @@ textarea.ht-input { resize: vertical; font: inherit; font-size: 0.875rem; }
 .tag-line { align-items: center; }
 .tag-line .ht-field { min-width: 0; }
 .tag-line .ht-field span:empty { display: none; }
+
+/* ---------- schedule: weekday pattern, repeat rules, preview, minutes ---------- */
+.qp { display: flex; flex-direction: column; gap: 0.5rem; width: 100%; }
+.qp-top { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.qp-top .ht-input { width: auto; }
+.qp-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0.5rem; }
+.qp-grid[hidden], .qp [hidden] { display: none; }
+.qp-grid .ht-input { padding-left: 0.375rem; padding-right: 1.25rem; }
+
+.rule-card { width: 100%; border: 1px solid #e5e7eb; border-left: 4px solid #1d4ed8; border-radius: 0.5rem; background: #fff; padding: 0.625rem 0.75rem; display: flex; flex-direction: column; gap: 0.5rem; }
+.rule-card.empty { border-left-color: #f59e0b; }
+.rule-line { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; font-size: 0.875rem; }
+.rule-line > .ht-input { width: auto; }
+.rule-line .ht-field { min-width: 9rem; }
+.rule-line:nth-child(2) { align-items: flex-end; }
+.ht-input.rule-every { width: 4rem; }
+.dow-pills { display: inline-flex; gap: 0.25rem; }
+.dow-pill {
+	width: 2.25rem; height: 2.25rem; border-radius: 9999px; border: 1px solid #d1d5db; background: #fff;
+	font-size: 0.8125rem; font-weight: 600; color: #374151;
+}
+.dow-pill:hover { border-color: #1d4ed8; }
+.dow-pill.on { background: #1d4ed8; border-color: #1d4ed8; color: #fff; }
+
+.pv-table { border-collapse: collapse; font-size: 0.8125rem; }
+.pv-table th, .pv-table td { padding: 0.25rem 0.75rem; text-align: center; border-bottom: 1px solid #f3f4f6; }
+.pv-table th { font-size: 0.75rem; color: #6b7280; font-weight: 600; }
+.pv-table td.pv-week { text-align: left; color: #374151; white-space: nowrap; }
+.pv-table small { color: #6b7280; margin-left: 0.375rem; }
+.type-badge.meet { box-shadow: 0 0 0 2px #fff, 0 0 0 4px #111827; }
+
+.cal-date { flex-direction: column; gap: 0; line-height: 1.2; }
+.min-badge { font-size: 0.625rem; font-weight: 600; border-radius: 0.25rem; padding: 0 0.25rem; margin-top: 0.125rem; }
+.min-badge.empty { color: #9ca3af; }
+.min-badge.part { background: #fef9c3; color: #854d0e; }
+.min-badge.full { background: #dcfce7; color: #166534; }
+.min-badge.over { background: #fee2e2; color: #991b1b; }
+
+/* ---------- school calendar wizard, templates, catch up ---------- */
+.wiz { display: flex; flex-direction: column; gap: 1rem; }
+.wiz-steps { display: flex; gap: 0.25rem; flex-wrap: wrap; counter-reset: none; }
+.wiz-steps li button { padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.8125rem; font-weight: 600; color: #6b7280; background: #f3f4f6; }
+.wiz-steps li.done button { color: #1d4ed8; background: #dbeafe; }
+.wiz-steps li.on button { color: #fff; background: #1f2937; }
+.wiz-body { min-height: 18rem; max-height: 62vh; overflow-y: auto; padding-right: 0.25rem; }
+.sched-summary { font-size: 0.875rem; font-weight: 600; color: #111827; }
+.sched-summary.error { color: #b91c1c; }
+
+.hol-row { display: grid; grid-template-columns: 1.4fr 1fr 1fr auto; gap: 0.375rem; align-items: center; }
+.hol-row.head { font-size: 0.75rem; font-weight: 600; color: #6b7280; }
+.hol-row .ht-input { padding: 0.375rem 0.5rem; }
+.hol-row.suggested .ht-input { background: #fefce8; border-color: #fde68a; }
+
+.unit-checks { display: grid; grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr)); gap: 0.125rem 1rem; max-height: 12rem; overflow-y: auto; }
+
+.sched-row2.wide-first { grid-template-columns: 2fr 1fr; }
+.cu-wrap { max-height: 40vh; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 0.5rem; }
+.cu-table { width: 100%; border-collapse: collapse; font-size: 0.8125rem; }
+.cu-table th { position: sticky; top: 0; background: #f3f4f6; text-align: left; padding: 0.375rem 0.5rem; font-size: 0.75rem; }
+.cu-table td { padding: 0.25rem 0.5rem; border-top: 1px solid #f3f4f6; white-space: nowrap; }
+.cu-table td:first-child { white-space: normal; }
+.cu-table .num { text-align: center; }
+.cu-table tr.fin td { color: #166534; background: #f0fdf4; }
+.cu-table tr.shorter td:last-child { color: #b45309; font-weight: 600; }
+.cu-table tr.longer td:last-child { color: #1d4ed8; font-weight: 600; }
+
+.ed-checks { display: flex; gap: 1rem; flex-wrap: wrap; }
+.cal-block.pinned::after { content: '📌'; position: absolute; top: 1px; right: 3px; font-size: 0.6875rem; }
+.cal-row.sem-start { border-top: 3px solid #7c3aed; }
+.cal-note.sem { background: #7c3aed; }
+.wiz-steps { list-style: none; padding: 0; margin: 0; }
+/* [hidden] must win over display rules like .btn / .ht-field */
+.sched [hidden], .sched-dialog [hidden] { display: none !important; }
+.sched-toast {
+	position: fixed; left: 50%; bottom: 1.5rem; transform: translateX(-50%); z-index: 100; max-width: min(40rem, calc(100vw - 2rem));
+	background: #111827; color: #fff; padding: 0.625rem 1rem; border-radius: 0.5rem; font-size: 0.875rem;
+	box-shadow: 0 10px 25px rgb(0 0 0 / .25); transition: opacity .3s; display: flex; gap: 1rem; align-items: center;
+}
+.sched-toast.out { opacity: 0; pointer-events: none; }
+.sched-toast button { color: #93c5fd; font-weight: 600; }

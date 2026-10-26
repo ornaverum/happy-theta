@@ -39,12 +39,20 @@ teacher/scheduler.html      the page
 css/scheduler.css           its styles
 js/scheduler-model.js       data model + pure logic (A/B days, lane packing, shift, coverage); also runs in Node
 js/scheduler.js             app shell, saving, undo, calendar, editor panel, activity bank, dialogs
+js/scheduler-plan.js        semesters, holiday suggestions, spreading topics over meetings, templates, catch-up (also runs in Node)
+js/scheduler-wizard.js      School calendar wizard, Templates dialog, Catch up dialog
 js/scheduler-views.js       Objectives outline editor, Dashboard (content map), Settings
 js/scheduler-seed-ap1.js    AP Physics 1 framework + Unit 0 + science practices + quiz bank (seed for new courses)
 ```
 
-- Days: weekdays from term start to end. A/B alternate on school days only, so a day off pushes the
-  rotation back. Days off come from Settings → Days off, or click a day's Type cell to override it.
+- Days: weekdays from term start to end. Settings → Schedule (or the calendar's **A/B schedule…** button)
+  sets how each weekday becomes A, B or no class: a quick Mon–Fri pattern (A / B / alternates / no class,
+  or "every school day alternates"), and Google-Calendar-style repeat rules (type, every N weeks, weekdays,
+  start/end dates, class length). Lower rules win; days off and single-day changes win over all rules.
+  Alternating rules switch either each time they meet (a day off doesn't count) or every calendar week.
+- Class length: a course default, optional per rule, optional per day (early release). Meeting rows show
+  planned in-class minutes / class length; an in-class activity's time is spread over the meetings it spans.
+  Unit and topic panels show meetings, class minutes and minutes planned.
 - Calendar columns: Date, Day, Type, Unit, Topic, In class, the teacher's columns (Settings → Calendar
   columns: an activity goes in the first column whose types/assessment match), Other.
 - Blocks span start row → end row; overlapping blocks get side-by-side lanes. Drag to move, drag the
@@ -53,3 +61,16 @@ js/scheduler-seed-ap1.js    AP Physics 1 framework + Unit 0 + science practices 
 - Dashboard counts, per objective: Presented (activity types whose tag "counts as" presentation),
   Formative and Summative (the activity's Assessment field). "+n" = linked only to a broader objective.
 - The seed text includes College Board course-framework wording; the repo is public.
+- **School calendar…** (also New course): a 4-step wizard — school year and second-semester start; days off
+  (with suggested common US holidays to check against the district calendar); meets on, class length and the
+  A/B pattern with a preview; and optionally laying out a template over the year, a semester or custom dates.
+- **Templates…**: the built-in framework template (units at the spreadsheet's lengths, topics splitting each
+  unit, each quiz at the end of the last topic it covers), and templates saved from a course (`schedtemplate`
+  tool, `name.schedtemplate.json`). Activities are stored relative to their topic in class meetings, so they
+  stretch with it. Applying can replace what's in the range (fixed-date activities stay; topics of units not
+  being laid out, e.g. the end of a unit from last semester, stay and the layout starts after them).
+- **Catch up…**: pick the most recently finished topic and the date; later topics are squeezed into the rest
+  of the semester, spread over the rest of the year or up to a date (proportional to their planned lengths),
+  or pushed later keeping their lengths. Activities move with their topics; "Fixed date" activities don't.
+  A preview table shows old → new dates before anything changes. Undo works.
+
