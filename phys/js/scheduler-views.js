@@ -201,7 +201,7 @@
 							'data-id': n.id
 						},
 						caret,
-						el('span', { class: 'ol-level', text: tree.levels[depth] || '' }),
+						el('span', { class: 'ol-level', text: tree.levels[S.rankOf(tree, n, ix)] || '' }),
 						code,
 						text,
 						el('span', { class: 'ol-count', title: 'Linked activities, units and topics', text: c ? String(c) : '' }),
@@ -316,7 +316,8 @@
 		if (db.tree >= d.objectiveTrees.length) db.tree = 0;
 		const tree = d.objectiveTrees[db.tree];
 		const ix = S.treeIndex(tree);
-		const maxDepth = Math.max(0, ...tree.nodes.map((n) => ix.depth(n)));
+		const rank = (n) => S.rankOf(tree, n, ix);
+		const maxDepth = Math.max(0, ...tree.nodes.map(rank));
 		db.depth = Math.min(db.depth, maxDepth);
 		const cov = S.coverage(d, tree, { asOf: db.soFar ? S.today() : null });
 		const tgt = d.targets;
@@ -341,7 +342,7 @@
 		when.addEventListener('change', () => ((db.soFar = when.value === 'sofar'), app.render()));
 
 		// Summary: nodes at the chosen depth (or shallower leaves) that meet every target
-		const atDepth = tree.nodes.filter((n) => !n.hidden && !hiddenUp(ix, n) && (ix.depth(n) === db.depth || (ix.depth(n) < db.depth && !ix.kids(n.id).filter((k) => !k.hidden).length)));
+		const atDepth = tree.nodes.filter((n) => !n.hidden && !hiddenUp(ix, n) && (rank(n) === db.depth || (rank(n) < db.depth && !ix.kids(n.id).filter((k) => !k.hidden).length)));
 		const status = (n) => {
 			const c = cov.get(n.id).direct;
 			return CATS.map(([k]) => (tgt[k] ? Math.min(1, c[k].size / tgt[k]) : 1));
@@ -365,7 +366,8 @@
 		const addRows = (parentId) => {
 			for (const n of ix.kids(parentId)) {
 				if (n.hidden) continue;
-				const depth = ix.depth(n);
+				const depth = rank(n);
+				const indent = ix.depth(n);
 				const kids = ix.kids(n.id).filter((k) => !k.hidden);
 				const beyond = depth >= db.depth;
 				const canOpen = kids.length > 0 && beyond;
@@ -376,7 +378,7 @@
 					{ class: 'cm-d' + Math.min(depth, 4) + (beyond && depth > db.depth ? ' deeper' : '') },
 					el(
 						'td',
-						{ style: { paddingLeft: 0.5 + depth * 1.1 + 'rem' } },
+						{ style: { paddingLeft: 0.5 + indent * 1.1 + 'rem' } },
 						canOpen
 							? el('button', {
 									type: 'button',

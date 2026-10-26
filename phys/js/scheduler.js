@@ -19,7 +19,8 @@
 		showBank: true,
 		undo: [],
 		redo: [],
-		views: {} // name -> { title, render(container) } (scheduler-views.js adds more)
+		views: {}, // name -> { title, render(container) } (scheduler-views.js adds more)
+		VERSION: '2026-10-27'
 	});
 
 	/* ------------------------------------------------------------------ */
@@ -311,7 +312,7 @@
 			el(
 				'div',
 				{ class: 'sched-title' },
-				el('span', { class: 'sched-app', text: 'Theta Scheduler' }),
+				el('span', { class: 'sched-app', text: 'Theta Scheduler', title: 'Version ' + app.VERSION + ' · frameworks: ' + Object.values(HT.schedulerSeeds || {}).map((s) => s.title).join('; ') }),
 				el('strong', { text: d ? d.course.title : '' })
 			),
 			d ? tabs : el('span'),
@@ -401,6 +402,17 @@
 		renderGrid();
 		renderBank();
 		if (opts.editor !== false) renderEditor();
+		else refreshExtras();
+	}
+
+	function refreshExtras() {
+		const o = findItem(app.sel);
+		if (!o || !cal.extras) return;
+		for (const x of cal.extras) {
+			const n = x.extra(o, app.sel.kind) || el('span', { hidden: true });
+			x.node.replaceWith(n);
+			x.node = n;
+		}
 	}
 
 	function renderToolbar() {
@@ -933,6 +945,13 @@
 			parts.push(app.field('Notes', notes));
 		}
 
+		// extra lines from other modules (library status…); redrawn on their own after each edit
+		cal.extras = [];
+		for (const extra of app.editorExtras || []) {
+			const node = extra(o, kind) || el('span', { hidden: true });
+			cal.extras.push({ extra, node });
+			parts.push(node);
+		}
 		const footer = el('div', { class: 'ed-foot' });
 		if (kind === 'activity') {
 			footer.append(

@@ -100,8 +100,10 @@ api.use((req, res, next) => {
 	}
 	next();
 });
-api.use(express.json({ limit: '16kb' }));
 api.use(auth.loadUser);
+// Shared activity library for Theta Scheduler (teachers only; its own larger body limit)
+api.use('/library', require('./library'));
+api.use(express.json({ limit: '16kb' }));
 
 /* Create an account, or (for an email not yet confirmed) send a fresh confirmation link.
    The account can't sign in until a link is clicked, and the password chosen here only

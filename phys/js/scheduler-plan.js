@@ -240,17 +240,21 @@
 		ix.kids(null).forEach((u, ui) => {
 			const kids = ix.kids(u.id);
 			const m = (u.meta && u.meta.durationMeetings) || kids.length || 1;
-			tpl.units.push({ key: 'u' + ui, title: `Unit ${u.code}: ${u.text}`, color: S.UNIT_COLORS[ui % S.UNIT_COLORS.length], objectiveId: u.id, meetings: m });
+			const unitTitle = u.code === 'UX' ? u.text : /^U/.test(u.code) ? `${u.code.replace(/^U/, 'Unit ')}: ${u.text}` : `Unit ${u.code}: ${u.text}`;
+			tpl.units.push({ key: 'u' + ui, title: unitTitle, color: S.UNIT_COLORS[ui % S.UNIT_COLORS.length], objectiveId: u.id, meetings: m });
 			kids.forEach((t) => {
 				const key = 't' + tpl.topics.length;
 				topicKeyByNode.set(t.id, key);
-				tpl.topics.push({ key, unitKey: 'u' + ui, title: `${t.code} ${t.text}`, objectiveId: t.id, meetings: m / kids.length });
+				// a topic's own length if the seed gives one, else an even share of its unit
+				const tm = t.meta && t.meta.durationMeetings;
+				tpl.topics.push({ key, unitKey: 'u' + ui, title: `${t.code.replace(/^U/, '')} ${t.text}`, objectiveId: t.id, meetings: tm || m / kids.length });
 			});
 		});
 		const order = ix.flat().map((n) => n.id);
 		for (const q of d.activityBank || []) {
 			const topicsOf = (q.objectiveIds || []).map((id) => [id, ...ix.ancestors(id)].find((x) => topicKeyByNode.has(x))).filter(Boolean);
-			const last = topicsOf.sort((a, b) => order.indexOf(a) - order.indexOf(b)).pop();
+			// the seed may say exactly where an activity goes (placeTopic); otherwise the last topic it covers
+			const last = q.placeTopic && topicKeyByNode.has(q.placeTopic) ? q.placeTopic : topicsOf.sort((a, b) => order.indexOf(a) - order.indexOf(b)).pop();
 			const base = { title: q.code ? `${q.code} ${q.title}` : q.title, tags: q.tags || {}, assessment: q.assessment || 'none', objectiveIds: q.objectiveIds || [], inClass: false };
 			tpl.activities.push({ ...base, anchor: last ? { topicKey: topicKeyByNode.get(last), side: 'end', off: 0, delta: 0, spanM: 0, endDelta: 0 } : null });
 		}

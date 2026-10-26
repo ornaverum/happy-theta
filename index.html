@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jack's Launchpad</title>
+<link rel="icon" href="branding/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f4f7fb; --card: #ffffff; --ink: #1b2a4a; --muted: #5d6b85;
+    --line: #dde4ef; --accent: #2f6fd6; --accent-soft: #e6effc; --sun: #ffd23f;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0f1726; --card: #172238; --ink: #e8eefb; --muted: #9fb0cc;
+      --line: #263553; --accent: #7aa8ff; --accent-soft: #1d2d4d;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font: 15px/1.5 Inter, system-ui, sans-serif;
+  }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 32px 16px 64px; }
+  header { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
+  header img { width: 56px; height: 56px; }
+  h1 { font: 600 30px/1.1 Fredoka, system-ui, sans-serif; margin: 0; }
+  header p { margin: 2px 0 0; color: var(--muted); }
+  #q {
+    margin-left: auto; padding: 9px 14px; border: 1px solid var(--line); border-radius: 999px;
+    background: var(--card); color: var(--ink); font: inherit; width: 240px; max-width: 100%;
+  }
+  #q:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+  section { margin-top: 28px; }
+  h2 {
+    font: 500 13px/1 Inter, sans-serif; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--muted); margin: 0 0 12px;
+  }
+  h2 small { text-transform: none; letter-spacing: 0; font-size: 12px; margin-left: 6px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+  a.card {
+    display: block; padding: 14px 16px; background: var(--card); border: 1px solid var(--line);
+    border-radius: 12px; color: inherit; text-decoration: none;
+    transition: border-color .15s, transform .15s;
+  }
+  a.card:hover, a.card:focus-visible { border-color: var(--accent); transform: translateY(-1px); outline: none; }
+  a.card b { display: block; font: 500 17px/1.3 Fredoka, system-ui, sans-serif; }
+  a.card span { display: block; color: var(--muted); font-size: 13px; margin-top: 2px; }
+  a.card em {
+    display: inline-block; margin-top: 8px; font-style: normal; font-size: 11px;
+    padding: 2px 8px; border-radius: 999px; background: var(--accent-soft); color: var(--accent);
+  }
+  .server {
+    margin-top: 36px; padding: 18px 20px; border-radius: 12px; background: var(--card);
+    border: 1px solid var(--line); border-left: 4px solid var(--sun);
+  }
+  .server h2 { margin-bottom: 8px; }
+  .server p { margin: 8px 0; color: var(--muted); }
+  pre {
+    margin: 8px 0; padding: 12px 14px; border-radius: 8px; background: var(--bg);
+    border: 1px solid var(--line); overflow-x: auto; font: 13px/1.6 ui-monospace, Consolas, monospace;
+  }
+  .server a { color: var(--accent); }
+  code { font: 13px ui-monospace, Consolas, monospace; }
+  .hidden { display: none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <img src="branding/happy-theta-icon.svg" alt="">
+    <div>
+      <h1>Jack's Launchpad</h1>
+      <p>Everything in happy-theta, one click away.</p>
+    </div>
+    <input id="q" type="search" placeholder="Filter apps…" aria-label="Filter apps" autofocus>
+  </header>
+
+  <section>
+    <h2>Happy Theta · Physics figures</h2>
+    <div class="grid">
+      <a class="card" href="phys/index.html"><b>Happy Theta home</b><span>The live site's front page</span></a>
+      <a class="card" href="phys/figures/free-body-diagram.html"><b>Free Body Diagram</b><span>Forces, agents, net force; 1D / 2D</span></a>
+      <a class="card" href="phys/figures/motion-diagram.html"><b>Motion Diagram</b><span>Dots and velocity arrows</span></a>
+      <a class="card" href="phys/figures/energy-diagram.html"><b>Energy Diagram</b><span>Energy bar charts: states and transfers</span></a>
+      <a class="card" href="phys/figures/graph-maker.html"><b>Graph Maker</b><span>Qualitative x/v/a vs t graphs</span></a>
+      <a class="card" href="phys/figures/advanced-graph-maker.html"><b>Advanced Graph Maker</b><span>Freeform graphs</span></a>
+      <a class="card" href="phys/cv-apps/gif-maker.html"><b>GIF Maker</b><span>Make animated GIFs</span></a>
+    </div>
+  </section>
+
+  <section>
+    <h2>Teacher tools</h2>
+    <div class="grid">
+      <a class="card" href="phys/teacher/scheduler.html"><b>Theta Scheduler</b><span>Course planner</span></a>
+      <a class="card" href="phys/maps/theta-maps.html"><b>Theta Maps</b><span>Maps tool</span></a>
+    </div>
+  </section>
+
+  <section>
+    <h2>Accounts <small>need the local server running (see below)</small></h2>
+    <div class="grid">
+      <a class="card" href="http://localhost:3000/phys/account/login.html"><b>Sign in / Sign up</b><span>account/login.html</span><em>localhost:3000</em></a>
+      <a class="card" href="http://localhost:3000/phys/message.html"><b>Send a message</b><span>Sample signed-in page</span><em>localhost:3000</em></a>
+      <a class="card" href="http://localhost:3000/phys/dashboard.html"><b>Teacher dashboard</b><span>All messages (teachers only)</span><em>localhost:3000</em></a>
+      <a class="card" href="http://localhost:3000/phys/account/forgot.html"><b>Forgot password</b><span>Reset flow</span><em>localhost:3000</em></a>
+    </div>
+  </section>
+
+  <section>
+    <h2>Other apps</h2>
+    <div class="grid">
+      <a class="card" href="apps/crochet/index.html"><b>Stitch Sculpt</b><span>3D amigurumi → crochet pattern</span></a>
+      <a class="card" href="apps/countdown-game/index.html"><b>Countdown</b><span>Numbers game</span></a>
+      <a class="card" href="apps/maze2d/index.html"><b>Maze</b><span>2D maze</span></a>
+    </div>
+  </section>
+
+  <div class="server">
+    <h2>Run the server locally</h2>
+    <p>From a terminal in the repo (needs Node 20+; <code>npm install</code> only the first time or after package changes):</p>
+<pre>cd server
+npm install
+npm run dev</pre>
+    <p>Then open <a href="http://localhost:3000/phys/">http://localhost:3000/phys/</a>. Emails aren't sent; confirmation and reset links print in that terminal. Make yourself a teacher with
+    <code>npm run teacher:dev -- add you@example.com</code>. The dev database is <code>server/data/dev.db</code>; delete <code>server/data/</code> to start fresh. Stop with Ctrl+C.</p>
+  </div>
+</div>
+<script>
+  const q = document.getElementById('q');
+  q.addEventListener('input', () => {
+    const t = q.value.trim().toLowerCase();
+    document.querySelectorAll('section').forEach(sec => {
+      let any = false;
+      sec.querySelectorAll('a.card').forEach(a => {
+        const hit = !t || a.textContent.toLowerCase().includes(t);
+        a.classList.toggle('hidden', !hit); any ||= hit;
+      });
+      sec.classList.toggle('hidden', !any);
+    });
+  });
+  q.addEventListener('keydown', e => {
+    if (e.key === 'Enter') { const a = document.querySelector('a.card:not(.hidden)'); if (a) location.href = a.href; }
+  });
+</script>
+</body>
+</html>

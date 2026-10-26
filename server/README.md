@@ -49,6 +49,25 @@ Security: passwords are hashed with scrypt; sessions are random tokens in an Htt
 Secure cookie scoped to `/phys`; only SHA-256 hashes of session and email-link tokens are stored;
 email links put the token after `#` so it never reaches server logs; POSTs must be same-origin JSON.
 
+## Activity library (Theta Scheduler)
+
+`library.js` adds a shared library of activities, mounted at `/phys/api/library` (teachers only — students
+get 403). It creates its own table, `library_items` (owner, JSON item, version, forked_from, pulls), on start.
+
+- `GET /library` — search: `q`, `type`, `assessment`, `interaction`, `inClass` (1/0), `min`/`max` (minutes),
+  `codes` (comma list; matches items linked to the same, a more specific, or a broader objective code),
+  `mine=1`, `sort` (new|popular|title|minutes), `limit`, `offset`.
+- `GET /library/versions?ids=a,b` — current versions, so courses can show "update available".
+- `GET /library/:id`, `POST /library/:id/pull` (counts a pull, returns the item).
+- `POST /library` and `POST /library/batch` (`{entries:[{item, id?, baseVersion?}]}`, up to 500): with an id
+  you own, updates it (409/`conflict` if `baseVersion` is stale); otherwise creates a new item of yours (an
+  edited copy of someone else's becomes your own version, with `forked_from` set).
+- `PUT /library/:id`, `DELETE /library/:id` — owner only. DELETE needs a JSON body (`{}`) like every non-GET.
+
+Items keep only: title, type/interaction tags (id, label, color), assessment, expected minutes, in class,
+meetings spanned, objective codes (AP-style, e.g. `1.2.A`, `2.4.A.3`; science practices as `SP-1.A`), a
+topic hint, http(s) links and notes. Course dates are never sent.
+
 ## Email setup
 
 DigitalOcean blocks the usual email ports (25, 465, 587) on every droplet, so the server sends

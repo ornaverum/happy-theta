@@ -291,7 +291,8 @@
 		);
 		const bankBox = el('input', { type: 'checkbox', checked: true });
 		const stepPlan = () => {
-			pf = planForm(draft, { isNew });
+			// for a new course, start with the built-in template that matches the chosen objectives
+			pf = planForm(draft, { isNew, tplId: isNew && f.seed.value ? 'seed:' + f.seed.value : undefined });
 			const tplWrap = el('div', null, pf.node);
 			const bankWrap = isNew ? el('label', { class: 'sched-check' }, bankBox, ' Put the framework’s quizzes in the activity bank') : null;
 			const sync = () => {

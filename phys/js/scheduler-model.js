@@ -508,6 +508,14 @@
 		return { byId, kids, depth, ancestors, descendants, flat };
 	};
 
+	/* Level of a node for labels and the dashboard. Trees whose nodes have a `kind` (unit, topic, subtopic,
+	   lo, ek, detail) use tree.kindLevels, so a topic's objectives line up whether or not it has subtopics;
+	   other trees just use depth. */
+	S.rankOf = function (tree, n, ix) {
+		if (n.kind && tree.kindLevels && tree.kindLevels[n.kind] !== undefined) return tree.kindLevels[n.kind];
+		return ix.depth(n);
+	};
+
 	S.findNode = function (data, id) {
 		for (const t of data.objectiveTrees) {
 			const n = t.nodes.find((x) => x.id === id);
