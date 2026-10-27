@@ -20,7 +20,7 @@
 		undo: [],
 		redo: [],
 		views: {}, // name -> { title, render(container) } (scheduler-views.js adds more)
-		VERSION: '2026-10-27b'
+		VERSION: '2026-10-27c'
 	});
 
 	/* ------------------------------------------------------------------ */
@@ -956,7 +956,8 @@
 		if (kind === 'activity') {
 			footer.append(
 				app.btn('Duplicate', () => {
-					const copy = Object.assign(HT.clone(o), { id: S.newId('a'), title: o.title + ' (copy)' });
+					// an independent copy: not linked to the original's library item (see S.unlinkedCopy)
+					const copy = S.unlinkedCopy(o, { title: o.title + ' (copy)' });
 					app.commit((dd) => dd.activities.push(copy));
 					select('activity', copy.id, true);
 				})

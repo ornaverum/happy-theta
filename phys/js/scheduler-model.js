@@ -131,6 +131,18 @@
 		return data;
 	};
 
+	/* Fields that tie an activity to a shared library item. A copy of an activity must not carry them, or
+	   editing the copy would change (or be treated as) the original. `libraryForkedFrom` only remembers
+	   where a copy came from. */
+	S.LIBRARY_LINK = ['libraryId', 'libraryVersion', 'libraryOwner', 'librarySig'];
+	S.unlinkedCopy = function (a, extra = {}) {
+		const c = JSON.parse(JSON.stringify(a));
+		const from = c.libraryId || c.libraryForkedFrom;
+		for (const k of S.LIBRARY_LINK) delete c[k];
+		if (from) c.libraryForkedFrom = from;
+		return Object.assign(c, { id: S.newId('a') }, extra);
+	};
+
 	S.newActivity = (o = {}) => ({
 		id: S.newId('a'),
 		title: 'New activity',
@@ -588,6 +600,17 @@
 		out.targets = Object.assign({}, base.targets, out.targets || {});
 		for (const k of ['breaks', 'units', 'topics', 'activities', 'columns', 'tagSets', 'objectiveTrees']) if (!Array.isArray(out[k])) out[k] = base[k];
 		out.activities = out.activities.map((a) => Object.assign(S.newActivity(), a));
+		// Repair: only one activity per course may be linked to a library item (older versions' Duplicate
+		// copied the link). The first keeps it; the others become independent copies.
+		const seenLib = new Set();
+		out.activities = out.activities.map((a) => {
+			if (!a.libraryId) return a;
+			if (!seenLib.has(a.libraryId)) {
+				seenLib.add(a.libraryId);
+				return a;
+			}
+			return S.unlinkedCopy(a, { id: a.id });
+		});
 		for (const col of out.columns) {
 			col.types = col.types || [];
 			col.assessment = col.assessment || [];

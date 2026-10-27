@@ -229,6 +229,7 @@
 		p.set('sort', f.sort);
 		p.set('limit', '200');
 		lib.loading = true;
+		lib.searchedAt = Date.now();
 		draw();
 		try {
 			const r = await HT.api('library?' + p.toString());
@@ -257,6 +258,8 @@
 		render: (container) => {
 			root = container;
 			renderInto(container);
+			// coming back to the tab (or after an edit elsewhere): refresh, so shares made from the calendar show up
+			if (lib.me && lib.me.role === 'teacher' && Date.now() - (lib.searchedAt || 0) > 1500) search();
 			if (lib.me === undefined)
 				whoAmI().then(async (me) => {
 					if (me && me.role === 'teacher') {
@@ -452,7 +455,9 @@
 				entry = await HT.api('library/' + r.id + '/pull', { method: 'POST', body: {} });
 			} catch {}
 			app.commit((dd) => {
-				dd.activities.push(S.newActivity({ ...L.fields(dd, entry), ...datesFrom(dd, onDate ? date.value : null, entry.item.spanMeetings) }));
+				const a = S.newActivity({ ...L.fields(dd, entry), ...datesFrom(dd, onDate ? date.value : null, entry.item.spanMeetings) });
+				// already have a linked copy? then this one is a separate copy (one link per course)
+				dd.activities.push(dd.activities.some((x) => x.libraryId === entry.id) ? S.unlinkedCopy(a, { id: a.id }) : a);
 			});
 			lib.versions[r.id] = { version: entry.version, owner: entry.owner, mine: entry.mine };
 			app.flash(onDate ? `Added “${it.title}” on ${S.fmtShort(date.value)}` : `Added “${it.title}” to your activity bank`);
@@ -572,7 +577,7 @@
 	/* ------------------------------------------------------------------ */
 
 	const STATUS_TEXT = {
-		new: 'New — not in the library yet',
+		new: 'New — not in the library yet (a copy is added as its own activity)',
 		changed: 'Changed since you shared it',
 		'modified-copy': 'Your edited copy of someone else’s — shares as your own version',
 		synced: 'Up to date',
@@ -633,7 +638,7 @@
 			if (!picked.length) return m.error('Pick at least one activity.');
 			const entries = picked.map((x) => {
 				const item = L.toItem(d, x.a);
-				if (x.st === 'new') return { item };
+				if (x.st === 'new') return x.a.libraryForkedFrom ? { item, forkedFrom: x.a.libraryForkedFrom } : { item };
 				if (x.st === 'changed') return { id: x.a.libraryId, baseVersion: force ? undefined : x.a.libraryVersion, item };
 				return { id: x.a.libraryId, item }; // someone else's: the server makes it a new item of yours
 			});
@@ -686,7 +691,9 @@
 		const v = o.libraryId && lib.versions[o.libraryId];
 		const behind = v && v.version > (o.libraryVersion || 0);
 		const text = !o.libraryId
-			? 'Not in the shared library.'
+			? o.libraryForkedFrom
+				? 'A separate copy of a library activity — sharing it adds a new library activity; the original is not changed.'
+				: 'Not in the shared library.'
 			: st === 'synced'
 				? `Shared to the library (version ${o.libraryVersion}).`
 				: st === 'changed'
