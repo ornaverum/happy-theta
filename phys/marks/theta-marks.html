@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="referrer" content="no-referrer" />
+		<title>Theta Marks · Happy Theta</title>
+		<link rel="icon" href="../assets/favicon.png" />
+		<link rel="stylesheet" href="../css/style.css" />
+		<link rel="stylesheet" href="../css/theta-marks.css" />
+	</head>
+	<body data-root="../" class="mk-body">
+		<div class="mk-app" id="mkApp">
+			<header class="mk-top">
+				<div class="mk-brand" title="Theta Marks"><img src="../assets/favicon.png" alt="" /><span class="mk-hide-sm">Theta Marks</span></div>
+				<input class="mk-colname" id="mkName" aria-label="Collection name" spellcheck="false" />
+				<div class="mk-seg" role="group" aria-label="Arrange by">
+					<button type="button" id="mkModeWeb" data-mode="web" title="Arrange by tag similarity">Web</button>
+					<button type="button" id="mkModeTime" data-mode="time" title="Arrange by date">Timeline</button>
+				</div>
+				<div class="mk-actions">
+					<div class="mk-search">
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7" /><path d="m20 20-4-4" /></svg>
+						<input id="mkSearch" type="search" placeholder="Search…  ( / )" aria-label="Search nodes" autocomplete="off" />
+					</div>
+					<button type="button" class="mk-btn" id="mkFilterBtn" aria-expanded="false" aria-controls="mkFilters">
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 5h16l-6 8v5l-4 2v-7z" /></svg><span>Filter</span><b class="mk-badge" id="mkFilterCount" hidden></b>
+					</button>
+					<button type="button" class="mk-icon" id="mkUndo" title="Undo (Ctrl+Z)" aria-label="Undo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 14 4 9l5-5" /><path d="M4 9h11a5 5 0 0 1 0 10h-3" /></svg></button>
+					<button type="button" class="mk-icon" id="mkRedo" title="Redo (Ctrl+Shift+Z)" aria-label="Redo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m15 14 5-5-5-5" /><path d="M20 9H9a5 5 0 0 0 0 10h3" /></svg></button>
+					<span class="mk-save mk-hide-sm" id="mkSave">Saved</span>
+					<button type="button" class="mk-btn" id="mkCollections">Collections</button>
+					<button type="button" class="mk-btn" id="mkImport">Import</button>
+					<button type="button" class="mk-btn" id="mkExport">Export</button>
+					<button type="button" class="mk-btn mk-primary" id="mkAdd" title="Add a node (N)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14" /></svg>Add</button>
+				</div>
+			</header>
+			<div class="mk-main">
+				<aside class="mk-filters" id="mkFilters" aria-label="Filters" hidden></aside>
+				<div class="mk-stage" id="mkStage" tabindex="0" aria-label="Bookmark field">
+					<div class="mk-axis" id="mkAxis" aria-hidden="true"></div>
+					<div class="mk-world" id="mkWorld">
+						<svg class="mk-links" id="mkLinks" aria-hidden="true"></svg>
+						<div id="mkLayer"></div>
+					</div>
+					<div class="mk-empty" id="mkEmpty" hidden></div>
+					<div class="mk-zoom" role="group" aria-label="Zoom">
+						<button type="button" class="mk-icon" id="mkZoomOut" aria-label="Zoom out" title="Zoom out (−)">−</button>
+						<input type="range" id="mkZoomRange" min="0" max="100" aria-label="Zoom level" />
+						<button type="button" class="mk-icon" id="mkZoomIn" aria-label="Zoom in" title="Zoom in (+)">+</button>
+						<button type="button" class="mk-icon" id="mkFit" aria-label="Fit everything" title="Fit everything (F)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" /></svg></button>
+						<span class="mk-zoomlbl" id="mkZoomLbl">100%</span>
+					</div>
+					<div class="mk-viewopts" id="mkViewOpts"></div>
+					<div class="mk-hint mk-hide-sm">Drag to pan · Ctrl/⌘ + scroll or pinch to zoom · Double-click the field to add · Paste or drop a link</div>
+				</div>
+				<aside class="mk-insp" id="mkInsp" aria-label="Details"></aside>
+			</div>
+		</div>
+		<input type="file" id="mkFile" hidden />
+		<script src="../js/core.js"></script>
+		<script src="../js/theta-marks.js"></script>
+	</body>
+</html>
