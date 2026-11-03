@@ -1,6 +1,6 @@
 # Happy Theta server
 
-Accounts and messages API for the `phys/` site. Node.js + Express + SQLite (one database file).
+Accounts and messages API for the `phys/` site, plus the WishIMay wish list (`/wish/`). Node.js + Express + SQLite (one database file).
 nginx keeps serving the static pages in `phys/`; it forwards only `/phys/api/` to this app.
 
 ```
@@ -129,6 +129,77 @@ Add `deploy/nginx-phys-api.conf` to the site's nginx `server` block, then
 **HTTPS is required** for sign-in to work, because the session cookie is `Secure`. If the site
 isn't on HTTPS yet, `sudo certbot --nginx` sets it up; for a temporary http-only test, uncomment
 `COOKIE_SECURE=0` in `/etc/happytheta/api.env`.
+
+## WishIMay (family wish list)
+
+`wishlist.js` adds a separate app at `/wish/api` (pages in `apps/wish/`, served at `/wish/`). It has its
+own logins, cookie (`wish_session`, Path=/wish, 60 days) and tables (`wish_accounts`, `wish_sessions`,
+`wish_people`, `wish_items`, `wish_purchases`, plus `wish_offers`, `wish_offer_checks`, `wish_api_usage` for
+price comparison), all in the same database file. School accounts and
+wish-list logins never mix.
+
+- **Owner**: one shared login for the family. Switches between people ("personas") to manage each
+  person's items, and creates shopper logins. Owner responses never include purchase information.
+- **Shopper**: email + passphrase made by an owner. Sees every unbought item plus their own purchases.
+  Marking an item bought hides it from every other shopper (first one wins; a second gets 409).
+
+| Method | Path | Who | Does |
+|--------|------|-----|------|
+| POST | `/login` | anyone | `{email, passphrase}` → signs in |
+| POST | `/logout` | anyone | ends the session |
+| GET | `/me` | anyone | `{account: {role, email, name}}` or `{account: null}` |
+| GET | `/list` | signed in | `{people, items, compare}`; each item has `offers` + `offersCheckedAt`; shoppers also get `purchasedAt` on their own purchases |
+| POST/PUT/DELETE | `/people`, `/people/:id` | owner | add / rename+recolor / remove a person (removes their items) |
+| POST/PUT/DELETE | `/items`, `/items/:id` | owner | add / edit / delete a wish |
+| POST | `/preview` | owner | `{url}` → reads the shop page: `{title, image, description, price, currency}` |
+| POST/DELETE | `/items/:id/purchase` | shopper | mark bought / undo (own purchase only) |
+| POST | `/items/:id/offers` | signed in | look the item up at other stores → `{offers, checkedAt, error}` (saved results if recent) |
+| GET | `/compare-status` | owner | `{enabled, used, limit}` SerpApi searches this month |
+| GET/POST | `/shoppers` | owner | list / add shopper logins `{email, name, passphrase}` |
+| PUT/DELETE | `/shoppers/:id` | owner | rename or new passphrase (signs them out) / remove |
+| POST | `/passphrase` | signed in | `{current, next}` change your own passphrase |
+
+**Reading shop pages safely** (`wish-preview.js`): http/https only, ports 80/443/8080/8443, at most 5
+redirects, 12 s and 2 MB for the whole fetch. Every connection (redirects too) must go to a public
+address: private, loopback, link-local/metadata (169.254.x.x), CGNAT, IPv6 local/mapped forms and the
+droplet's own addresses are refused, checked at connect time so DNS tricks don't get around it.
+Tests: `node tests/wish-preview-test.js`.
+
+Limits: 200 sign-in requests per IP and 10 wrong passphrases per email per 15 min (then even the right
+one waits); 60 page reads per owner per 15 min.
+
+**Logins from the shell** (`wish.js`, same DB_PATH as the server):
+```
+cd /opt/happytheta-server
+alias wish='sudo -u happytheta DB_PATH=/var/lib/happytheta/happytheta.db node wish.js'
+wish owner family@example.com --name "The Waddells"   # create the shared owner login (asks for a passphrase)
+wish shopper aunt@example.com --name "Aunt Sue"       # owners can also do this on the site
+wish passphrase someone@example.com                   # new passphrase, signs them out
+wish list                                             # every login
+wish remove aunt@example.com                          # remove a shopper (their purchases stay hidden)
+```
+Locally: `npm run wish:dev -- owner you@example.com`, then `npm run dev` → http://localhost:3000/wish/.
+
+nginx: add `deploy/nginx-wish-api.conf` next to the `/phys/api/` block.
+
+**Other stores' prices** (`wish-compare.js`, optional): with `SERPAPI_KEY` in api.env, each item can be
+looked up on Google Shopping (`engine=google_shopping`) and eBay (`engine=ebay`, Buy It Now only)
+through [SerpApi](https://serpapi.com). One key covers both; eBay's own API (which needs eBay developer
+keys) isn't used. A check costs 2 SerpApi searches and runs:
+- in the background when an owner adds a wish, or changes its name or "words to search other stores with";
+- when someone presses **Compare other stores / Check again**. Owners get fresh results after 15 minutes,
+  shoppers after 24 hours (before that they see the saved ones). 20 checks per login per hour.
+
+Results are filtered so they're really the same item: most of the search words must be in the
+result's title, prices under 35% or over 4× the wish's own price are dropped (cases, accessories,
+bundles), one offer per store, up to 6 from Google and 4 from eBay, cheapest first. The card's
+headline is the cheapest *new* offer; used ones are listed and labeled. `SERPAPI_MONTHLY_LIMIT`
+(default 240) stops checks before the plan runs out; the count resets on the 1st (UTC). The key stays on
+the server; the browser only ever gets store names, prices and links. Without a key, nothing about this
+shows on the site. Tests (fake SerpApi, no searches used): `node tests/wish-compare-test.js`.
+
+Known limit: owners make the shoppers' passphrases, so an owner could sign in as a shopper and see
+what that shopper bought. Shoppers can change their own passphrase (the Passphrase button) to keep it private.
 
 ## Managing accounts (teacher.js)
 

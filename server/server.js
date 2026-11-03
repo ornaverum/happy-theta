@@ -237,10 +237,18 @@ api.use((err, req, res, _next) => {
 
 app.use(`${BASE}/api`, api);
 
+// WishIMay (family wish list): its own logins, cookie and tables; see wishlist.js.
+const wishlist = require('./wishlist');
+app.use(`${wishlist.WISH_BASE}/api`, wishlist);
+
 // Local development only: also serve the static pages (nginx does this in production).
 if (process.env.STATIC_DIR) {
 	app.get('/', (req, res) => res.redirect(`${BASE}/`));
 	app.use(BASE, express.static(process.env.STATIC_DIR));
+}
+if (process.env.WISH_STATIC_DIR) {
+	app.get(wishlist.WISH_BASE, (req, res, next) => (req.originalUrl === wishlist.WISH_BASE ? res.redirect(`${wishlist.WISH_BASE}/`) : next()));
+	app.use(wishlist.WISH_BASE, express.static(process.env.WISH_STATIC_DIR));
 }
 
 auth.purgeExpired();
