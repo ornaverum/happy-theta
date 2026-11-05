@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>Countdown</title>
+		<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2300594a'/%3E%3Ctext x='16' y='23' font-size='20' text-anchor='middle' fill='%23f8f9f3' font-family='sans-serif' font-weight='700'%3E%23%3C/text%3E%3C/svg%3E" />
+		<link rel="stylesheet" href="css/style.css" />
+	</head>
+	<body>
+		<div class="shell">
+			<header class="masthead">
+				<h1 class="wordmark">Countdown</h1>
+				<button type="button" class="link-btn" id="helpBtn">How to play</button>
+			</header>
+
+			<!-- Start screen -->
+			<main class="screen" id="startScreen">
+				<p class="lede">
+					Reach the target number by combining five numbers with +, −, and ×. Each number can be used once, and you don't have to use them all.
+				</p>
+				<h2 class="choose-title">How many big numbers?</h2>
+				<p class="choose-hint">Big numbers are 25, 50, 75 and 100. The rest are from 1 to 10.</p>
+				<div class="big-choices" id="bigChoices"></div>
+			</main>
+
+			<!-- Game screen -->
+			<main class="screen" id="playScreen" hidden>
+				<section class="board" aria-label="Target">
+					<span class="board-label">Target</span>
+					<div class="flaps" id="target" aria-live="polite"></div>
+				</section>
+
+				<p class="equation" id="equation" aria-live="polite"></p>
+
+				<div class="tiles" id="tiles" role="group" aria-label="Your numbers"></div>
+
+				<div class="ops" role="group" aria-label="Operations">
+					<button type="button" class="op" data-op="0" aria-label="Add" disabled>+</button>
+					<button type="button" class="op" data-op="1" aria-label="Subtract" disabled>−</button>
+					<button type="button" class="op" data-op="2" aria-label="Multiply" disabled>×</button>
+				</div>
+
+				<section class="log-wrap" aria-label="Your steps">
+					<ol class="log" id="log"></ol>
+				</section>
+
+				<footer class="controls">
+					<button type="button" class="ctl" id="undoBtn">Undo</button>
+					<button type="button" class="ctl" id="restartBtn">Restart</button>
+					<button type="button" class="ctl" id="solutionBtn">Show a solution</button>
+					<button type="button" class="ctl ctl-strong" id="newGameBtn">New game</button>
+				</footer>
+			</main>
+		</div>
+
+		<dialog class="sheet" id="resultDialog">
+			<div class="sheet-body">
+				<h2 class="sheet-title" id="resultTitle"></h2>
+				<p class="sheet-text" id="resultText"></p>
+				<ol class="log sheet-steps" id="resultSteps"></ol>
+				<div class="sheet-actions" id="resultActions"></div>
+			</div>
+		</dialog>
+
+		<dialog class="sheet" id="helpDialog">
+			<div class="sheet-body">
+				<h2 class="sheet-title">How to play</h2>
+				<ol class="howto">
+					<li>Choose how many big numbers you want. You get five numbers and a target between 101 and 999.</li>
+					<li>Click a number, then a second number, then +, −, or ×. The two numbers are replaced by the answer.</li>
+					<li>Keep combining until one of your numbers matches the target. Subtraction always takes the smaller number from the larger.</li>
+				</ol>
+				<p class="sheet-text keys">Keyboard: 1–5 picks a number, + − × (or x) picks an operation, Esc cancels a pick, U undoes.</p>
+				<div class="sheet-actions"><button type="button" class="ctl ctl-strong" data-close>Got it</button></div>
+			</div>
+		</dialog>
+
+		<script src="js/game.js"></script>
+		<script src="js/app.js"></script>
+	</body>
+</html>

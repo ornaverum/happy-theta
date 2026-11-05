@@ -23,5 +23,6 @@ vite.config.ts.timestamp-*
 
 # Happy Theta server (database lives here in dev)
 server/data/
+Claude outputs/
 *.db-wal
 *.db-shm

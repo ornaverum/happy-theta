@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Stitch Sculpt</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23f6efe3'/%3E%3Ccircle cx='16' cy='17' r='10' fill='%23e98a6b'/%3E%3Cpath d='M8 13c5 3 11 3 16 0M7 18c6 3 12 3 18 0M9 23c5 2 9 2 14 0' fill='none' stroke='%23fff' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="css/app.css" />
+</head>
+<body>
+  <header class="top">
+    <div class="brand">
+      <svg viewBox="0 0 32 32" width="28" height="28" aria-hidden="true"><circle cx="16" cy="17" r="11" fill="var(--accent)"/><path d="M7 13c6 3 12 3 18 0M6 18c7 3 13 3 20 0M8 23c6 2 10 2 16 0" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round"/></svg>
+      <span>Stitch Sculpt</span>
+    </div>
+
+    <div class="toolgroup" role="group" aria-label="Add a shape">
+      <span class="group-label">Add</span>
+      <div id="addButtons" class="add-buttons"></div>
+    </div>
+
+    <div class="toolgroup" role="group" aria-label="Tool">
+      <span class="group-label">Tool</span>
+      <div class="seg" id="modeButtons">
+        <button type="button" data-mode="translate" title="Move (W)" aria-pressed="true">Move</button>
+        <button type="button" data-mode="rotate" title="Rotate (E)">Rotate</button>
+        <button type="button" data-mode="scale" title="Scale (R)">Scale</button>
+        <button type="button" data-mode="sculpt" title="Sculpt (B)">Sculpt</button>
+      </div>
+    </div>
+
+    <div class="toolgroup" role="group" aria-label="Edit">
+      <button type="button" class="icon-btn" id="undoBtn" title="Undo (Ctrl+Z)" aria-label="Undo"><svg viewBox="0 0 24 24"><path d="M9 14 4 9l5-5M4 9h10a6 6 0 0 1 0 12h-3"/></svg></button>
+      <button type="button" class="icon-btn" id="redoBtn" title="Redo (Ctrl+Y)" aria-label="Redo"><svg viewBox="0 0 24 24"><path d="m15 14 5-5-5-5M20 9H10a6 6 0 0 0 0 12h3"/></svg></button>
+    </div>
+
+    <div class="toolgroup right" role="group" aria-label="File">
+      <button type="button" class="btn" id="newBtn">New</button>
+      <button type="button" class="btn" id="openBtn">Open…</button>
+      <button type="button" class="btn btn-strong" id="saveBtn">Save</button>
+      <input type="file" id="openFile" accept=".json,application/json" hidden />
+    </div>
+  </header>
+
+  <main class="layout">
+    <aside class="parts" aria-label="Parts">
+      <div class="panel-head">
+        <h2>Parts</h2>
+      </div>
+      <ul id="partList" class="part-list"></ul>
+      <div class="part-actions">
+        <button type="button" class="btn small" id="dupBtn" title="Duplicate (Ctrl+D)">Duplicate</button>
+        <button type="button" class="btn small" id="mirrorBtn" title="Mirrored copy across the middle (left ↔ right)">Mirror copy</button>
+        <button type="button" class="btn small danger" id="delBtn" title="Delete (Del)">Delete</button>
+      </div>
+      <p class="hint">Each part is one piece you crochet separately, worked in rounds from the bottom of its profile to the top.</p>
+    </aside>
+
+    <section class="viewport-wrap">
+      <div id="viewport" class="viewport"></div>
+      <div class="vp-overlay top-left">
+        <label class="chip"><input type="checkbox" id="showRounds" checked /> Show rounds</label>
+        <label class="chip"><input type="checkbox" id="showGrid" checked /> Grid</label>
+      </div>
+      <div class="vp-overlay bottom-right views" role="group" aria-label="Camera views">
+        <button type="button" class="chip" data-view="front" title="Front (1)">Front</button>
+        <button type="button" class="chip" data-view="right" title="Side (3)">Side</button>
+        <button type="button" class="chip" data-view="top" title="Top (7)">Top</button>
+        <button type="button" class="chip" data-view="persp" title="3/4 view (5)">3/4</button>
+        <button type="button" class="chip" data-view="frame" title="Frame all (F)">Frame</button>
+      </div>
+      <div class="vp-overlay bottom-left" id="vpHint">Drag to orbit · right-drag to pan · scroll to zoom · click a part to select</div>
+      <div class="vp-overlay top-right legend" id="legend" hidden>
+        <span><i class="dot inc"></i>increase</span><span><i class="dot dec"></i>decrease</span>
+      </div>
+    </section>
+
+    <aside class="inspector" aria-label="Inspector">
+      <div class="tabs" role="tablist">
+        <button type="button" role="tab" id="tab-shape" aria-controls="pane-shape" aria-selected="true">Shape</button>
+        <button type="button" role="tab" id="tab-pattern" aria-controls="pane-pattern" aria-selected="false">Pattern</button>
+        <button type="button" role="tab" id="tab-settings" aria-controls="pane-settings" aria-selected="false">Settings</button>
+      </div>
+
+      <section class="pane" id="pane-shape" role="tabpanel" aria-labelledby="tab-shape">
+        <div id="noSelection" class="empty">Add a shape from the toolbar, or click a part to edit it.</div>
+        <div id="shapeEditor" hidden>
+          <div class="row2">
+            <label class="field grow">Name <input type="text" id="partName" maxlength="40" /></label>
+            <label class="field">Color <input type="color" id="partColor" /></label>
+          </div>
+
+          <div class="section" id="sculptSection" hidden>
+            <h3>Sculpt brush</h3>
+            <div class="seg small" id="brushButtons">
+              <button type="button" data-brush="inflate" aria-pressed="true" title="Push the surface out">Inflate</button>
+              <button type="button" data-brush="deflate" title="Pull the surface in">Deflate</button>
+              <button type="button" data-brush="smooth" title="Even out bumps">Smooth</button>
+              <button type="button" data-brush="flatten" title="Press toward the average surface">Flatten</button>
+            </div>
+            <label class="field">Size <span class="val" id="brushSizeVal"></span><input type="range" id="brushSize" min="0.3" max="4" step="0.1" value="1.2" /></label>
+            <label class="field">Strength <span class="val" id="brushStrengthVal"></span><input type="range" id="brushStrength" min="0.05" max="1" step="0.05" value="0.4" /></label>
+            <label class="check"><input type="checkbox" id="brushMirror" checked /> Mirror left ↔ right (the part’s own x)</label>
+            <p class="hint">Hold Shift to invert Inflate/Deflate. Orbit with right-drag or Alt-drag while sculpting.</p>
+            <button type="button" class="btn small" id="clearSculpt">Clear sculpting on this part</button>
+          </div>
+
+          <div class="section">
+            <h3>Profile <span class="sub">side view of one half, cm</span></h3>
+            <canvas id="profileCanvas" class="profile-canvas" width="300" height="300" aria-label="Profile editor: drag points to reshape the part"></canvas>
+            <p class="hint">Drag points. Double-click the line to add a point; double-click a point to toggle a sharp corner (worked in BLO); select a point and press Delete to remove it. An end on the centre line is closed (magic ring or gathered); off it, the end stays open.</p>
+            <div class="row2">
+              <label class="check"><input type="checkbox" id="profileSmooth" checked /> Smooth curve</label>
+              <button type="button" class="btn small" id="toggleStart" title="Close or open the starting end">Start: closed</button>
+              <button type="button" class="btn small" id="toggleEnd" title="Close or open the finishing end">End: closed</button>
+            </div>
+          </div>
+
+          <div class="section">
+            <h3>Placement</h3>
+            <div class="xyz" id="xyzPos"><span>Position</span></div>
+            <div class="xyz" id="xyzRot"><span>Rotation °</span></div>
+            <div class="xyz" id="xyzScale"><span>Scale</span></div>
+            <p class="dims" id="partDims"></p>
+          </div>
+        </div>
+      </section>
+
+      <section class="pane" id="pane-pattern" role="tabpanel" aria-labelledby="tab-pattern" hidden>
+        <div class="pattern-tools">
+          <button type="button" class="btn small" id="copyPattern">Copy text</button>
+          <button type="button" class="btn small" id="downloadPattern">Download .txt</button>
+          <button type="button" class="btn small" id="printPattern">Print</button>
+        </div>
+        <div id="patternOut" class="pattern-out" aria-live="polite"></div>
+      </section>
+
+      <section class="pane" id="pane-settings" role="tabpanel" aria-labelledby="tab-settings" hidden>
+        <div class="section">
+          <h3>Gauge <span class="sub">single crochet, worked in the round</span></h3>
+          <div class="row2">
+            <label class="field">Stitches / 10 cm <input type="number" id="gaugeSts" min="4" max="60" step="0.5" /></label>
+            <label class="field">Rounds / 10 cm <input type="number" id="gaugeRows" min="4" max="60" step="0.5" /></label>
+          </div>
+          <label class="field">Yarn preset
+            <select id="yarnPreset">
+              <option value="">Choose…</option>
+              <option value="32,36">Fingering / sock, 2.25–2.75 mm hook</option>
+              <option value="26,29">Sport / DK, 2.75–3.25 mm hook</option>
+              <option value="20,22">Worsted, 3.5–4 mm hook (typical amigurumi)</option>
+              <option value="15,16">Bulky, 5–6 mm hook</option>
+              <option value="9,10">Chunky chenille / plush, 6–8 mm hook</option>
+            </select>
+          </label>
+          <p class="hint">Crochet a 10 cm square in sc rounds with your yarn and count. Amigurumi is worked tightly so stuffing doesn’t show.</p>
+          <label class="check"><input type="checkbox" id="tidyCounts" checked /> Tidy stitch counts (prefer +6 / −6 rounds when close)</label>
+        </div>
+        <div class="section">
+          <h3>Terms</h3>
+          <div class="seg small" id="termButtons">
+            <button type="button" data-terms="US" aria-pressed="true">US (sc)</button>
+            <button type="button" data-terms="UK">UK (dc)</button>
+          </div>
+        </div>
+        <div class="section">
+          <h3>Reference image</h3>
+          <p class="hint">Load a photo or drawing to model over. It stands behind the scene facing you.</p>
+          <div class="row2">
+            <button type="button" class="btn small" id="refLoad">Load image…</button>
+            <button type="button" class="btn small" id="refClear">Remove</button>
+          </div>
+          <input type="file" id="refFile" accept="image/*" hidden />
+          <label class="field">Height (cm) <span class="val" id="refSizeVal"></span><input type="range" id="refSize" min="2" max="60" step="0.5" value="15" /></label>
+          <label class="field">Opacity <span class="val" id="refOpacityVal"></span><input type="range" id="refOpacity" min="0.1" max="1" step="0.05" value="0.6" /></label>
+        </div>
+      </section>
+    </aside>
+  </main>
+
+  <div id="toast" class="toast" role="status" hidden></div>
+  <div id="printArea" class="print-area"></div>
+
+  <script src="vendor/three.bundle.js"></script>
+  <script src="js/shape.js"></script>
+  <script src="js/pattern.js"></script>
+  <script src="js/profile-editor.js"></script>
+  <script src="js/viewport.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
