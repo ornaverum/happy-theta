@@ -2,10 +2,14 @@
    Load after core.js. Pages call HT.requireLogin() before showing anything private. */
 'use strict';
 
+// This file is phys/js/account.js, so the site root (where /api/ lives) is two folders up,
+// whichever page (phys/, teacher/, apps/…) loaded it.
+HT.apiBase = HT.apiBase || new URL('../../api/', document.currentScript.src).href;
+
 HT.api = async function (path, { method = 'GET', body } = {}) {
 	let res;
 	try {
-		res = await fetch(HT.root + 'api/' + path, {
+		res = await fetch(HT.apiBase + path, {
 			method,
 			credentials: 'same-origin',
 			headers: body ? { 'Content-Type': 'application/json' } : {},
@@ -45,6 +49,7 @@ HT.requireLogin = async function () {
 };
 
 HT.signOut = async function () {
+	if (window.HTGate) return window.HTGate.signOut(); // also clears this account's copy of its work
 	try {
 		await HT.api('logout', { method: 'POST', body: {} });
 	} catch {}
@@ -58,7 +63,7 @@ HT.showUserBar = function (user) {
 		'div',
 		{ class: 'user-bar' },
 		HT.el('span', null, 'Signed in as ', HT.el('strong', { text: user.email }), user.role === 'teacher' ? ' (teacher)' : ''),
-		user.role === 'teacher' ? HT.el('a', { href: HT.root + 'dashboard.html', text: 'Dashboard' }) : null,
+		user.role === 'teacher' ? HT.el('a', { href: HT.root + 'index.html', text: 'Dashboard' }) : null,
 		HT.el('button', { type: 'button', class: 'link-btn', text: 'Sign out', onclick: HT.signOut })
 	);
 	const nav = document.querySelector('.navbar');

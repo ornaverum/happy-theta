@@ -2,7 +2,7 @@
   "name": "happytheta-server",
   "version": "0.1.0",
   "private": true,
-  "description": "Accounts and messages API for Happy Theta (/phys/api) and WishIMay (/wish/api)",
+  "description": "Accounts, saved work and messages API for Happy Theta (/api) and WishIMay (/apps/wish/api)",
   "main": "server.js",
   "type": "commonjs",
   "engines": {

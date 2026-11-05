@@ -104,7 +104,9 @@ window.addEventListener('resize', () => {
 /* Page layout: navbar, and (for figure pages) the toolbar + capture    */
 /* ------------------------------------------------------------------ */
 
-HT.root = document.body.dataset.root || './';
+HT.root = document.body.dataset.root || './'; // the phys/ folder: assets, css, js
+// Pages outside phys/ (teacher/, apps/marks/) use the same core.js but their own section's navbar.
+HT.navRoot = document.body.dataset.navRoot || HT.root;
 
 HT.actions = {
 	saveData: () => {},
@@ -116,20 +118,42 @@ HT.actions = {
 	const r = HT.root;
 	const pageContent = Array.from(document.body.childNodes).filter((n) => n.nodeName !== 'SCRIPT');
 
-	const links = [
-		['Home', 'index.html'],
-		['Free Body Diagram', 'figures/free-body-diagram.html'],
-		['Energy Diagram', 'figures/energy-diagram.html'],
-		['Motion Diagram', 'figures/motion-diagram.html'],
-		['Graph Maker', 'figures/graph-maker.html'],
-		['Advanced Graph Maker', 'figures/advanced-graph-maker.html'],
-		['GIF Maker', 'cv-apps/gif-maker.html']
-	];
-
+	const NAVS = {
+		phys: [
+			['Home', 'index.html'],
+			['Free Body Diagram', 'figures/free-body-diagram.html'],
+			['Energy Diagram', 'figures/energy-diagram.html'],
+			['Motion Diagram', 'figures/motion-diagram.html'],
+			['Graph Maker', 'figures/graph-maker.html'],
+			['Advanced Graph Maker', 'figures/advanced-graph-maker.html'],
+			['GIF Maker', 'cv-apps/gif-maker.html']
+		],
+		teacher: [
+			['Teacher home', 'index.html'],
+			['Theta Scheduler', 'scheduler.html'],
+			['Theta Maps', 'maps.html']
+		],
+		apps: [
+			['My apps', 'index.html'],
+			['Theta Marks', 'marks/index.html'],
+			['Wish I May', 'wish/']
+		]
+	};
+	const links = NAVS[document.body.dataset.nav] || NAVS.phys;
+	const nr = HT.navRoot;
+	const here = location.pathname.replace(/index\.html$/, '');
 	const navLinks = HT.el(
 		'div',
 		{ class: 'nav-links' },
-		HT.el('ul', null, links.map(([t, href]) => HT.el('li', null, HT.el('a', { href: r + href, text: t }))))
+		HT.el(
+			'ul',
+			null,
+			links.map(([t, href]) => {
+				const a = HT.el('a', { href: nr + href, text: t });
+				if (new URL(a.href).pathname.replace(/index\.html$/, '') === here) a.setAttribute('aria-current', 'page');
+				return HT.el('li', null, a);
+			})
+		)
 	);
 	const hamburger = HT.el(
 		'button',
@@ -142,7 +166,7 @@ HT.actions = {
 		HT.el(
 			'div',
 			{ class: 'navbar-inner' },
-			HT.el('a', { class: 'navbar-brand', href: r + 'index.html' }, HT.el('img', { src: r + 'assets/HappyThetaLogo.svg', alt: 'Happy Theta Logo', title: 'Happy Theta Logo' })),
+			HT.el('a', { class: 'navbar-brand', href: nr + 'index.html' }, HT.el('img', { src: r + 'assets/HappyThetaLogo.svg', alt: 'Happy Theta Logo', title: 'Happy Theta Logo' })),
 			hamburger,
 			navLinks
 		)
@@ -692,12 +716,15 @@ HT.files = {
 		return raw ? HT.files.parse(raw, tool) : null;
 	},
 
+	// window.HTSync (shared/gate.js) copies a signed-in user's saves to the server.
 	write(file) {
 		localStorage.setItem(HT.files.key(file.tool, file.id), JSON.stringify(file));
+		if (window.HTSync) window.HTSync.changed(file.tool, file.id);
 	},
 
 	remove(tool, id) {
 		localStorage.removeItem(HT.files.key(tool, id));
+		if (window.HTSync) window.HTSync.removed(tool, id);
 	},
 
 	/* ---- files on disk: name.fbd.json etc. ---- */

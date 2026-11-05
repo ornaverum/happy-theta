@@ -1,26 +1,35 @@
 # Happy Theta server
 
-Accounts and messages API for the `phys/` site, plus the WishIMay wish list (`/wish/`). Node.js + Express + SQLite (one database file).
-nginx keeps serving the static pages in `phys/`; it forwards only `/phys/api/` to this app.
+Accounts, saved work and messages API for the whole Happy Theta site (`phys/`, `teacher/`, `apps/`), plus the
+WishIMay wish list (`/apps/wish/`). Node.js + Express + SQLite (one database file).
+nginx serves the static site; it forwards only `/api/` (and the old `/phys/api/`, which still works) and
+`/apps/wish/api/` to this app.
 
 ```
 server.js     the API (routes below)
-auth.js       password hashing (scrypt), cookie sessions, one-time email links
-mail.js       sends the confirmation and password-reset emails
+auth.js       pass phrase hashing (scrypt), cookie sessions, one-time email links
+passphrase.js makes up pass phrases (4–6 word camelCase sentences) and checks a phrase is one of ours
+docs.js       signed-in users' saved work (/api/docs), synced from the browser by shared/gate.js
+mail.js       sends the confirmation and pass-phrase-reset emails
 db.js         SQLite tables: users, sessions, email_tokens, messages
 teacher.js    command-line account tool (teachers, confirm by hand, reset links)
-dev.js        local testing: serves ../phys and the API together
+dev.js        local testing: serves the whole site (repo root) and the API together
 deploy/       nginx snippet, systemd service, api.env.example (settings)
 ```
 
-Pages (in `phys/`): `account/login.html` (sign in / create account), `account/verify.html`
-(the emailed "confirm" link), `account/forgot.html` and `account/reset.html` (password reset),
-`message.html` (sample signed-in page), `dashboard.html` (teachers see every message).
-They share `js/account.js` and `css/account.css`.
+Signing in happens on each section's dashboard (`phys/index.html`, `teacher/index.html`, `apps/index.html`),
+drawn by `shared/gate.js`. The emailed links land on `phys/account/verify.html` and `phys/account/reset.html`;
+`phys/account/forgot.html` asks for a reset link; `phys/account/login.html` now just forwards to the right
+dashboard. `phys/dashboard.html` is the full table of student messages for teachers.
 
 ## How accounts work
 
-- **Sign up** with an email and password. We email a confirmation link (good for 48 hours); the
+- **Pass phrases, not passwords.** The site makes up a short silly sentence in camelCase
+  (`theSleepyOtterJugglesTheSilverLantern`, 4–6 words not counting the/a/an); "Another one" asks for a new one.
+  People can't type their own — `/register` and `/password/reset` only accept phrases `passphrase.js` could have
+  made. Signing in ignores spaces and capitals. Accounts made before this keep their old password until they
+  reset it. Strength: 32–50 bits depending on the sentence pattern (`node -e "console.log(require('./passphrase').bits())"`).
+- **Sign up** with an email and a pass phrase. We email a confirmation link (good for 48 hours); the
   account can't sign in until it's clicked. Clicking it confirms the email and signs you in.
 - The password chosen at sign-up only takes effect when *that sign-up's* link is clicked, so if
   someone else signs up with your email first, they can't pick your password.
@@ -30,28 +39,38 @@ They share `js/account.js` and `css/account.css`.
 - Limits: 10 failed sign-ins per email per 15 min; 5 emails to one address per hour; 300 account
   requests per network address per 15 min (high on purpose: a whole school shares one address).
 
-## API (all under `/phys/api/`)
+## API (all under `/api/`; `/phys/api/` is the same thing)
 
 | Method | Path               | Who       | Does |
 |--------|--------------------|-----------|------|
-| POST   | `/register`        | anyone    | `{email, password}` → emails a confirmation link (also how "send a new link" works) |
+| GET    | `/passphrase`      | anyone    | `{passphrase}` — a new made-up phrase for the sign-up and reset forms |
+| POST   | `/register`        | anyone    | `{email, password}` (a site-made phrase) → emails a confirmation link (also how "send a new link" works) |
 | POST   | `/verify`          | anyone    | `{token}` from the link → confirms the email and signs in |
 | POST   | `/login`           | anyone    | `{email, password}` → signs in (403 `{unverified: true}` if not confirmed yet) |
 | POST   | `/password/forgot` | anyone    | `{email}` → emails a reset link if the account exists |
 | POST   | `/password/check`  | anyone    | `{token}` → `{email}` if the reset link is still good |
 | POST   | `/password/reset`  | anyone    | `{token, password}` → sets the password and signs in |
 | POST   | `/logout`          | anyone    | ends the session |
-| GET    | `/me`              | anyone    | `{user: {email, role}}`, or `{user: null}` when signed out |
+| GET    | `/me`              | anyone    | `{user: {id, email, role}}`, or `{user: null}` when signed out |
 | POST   | `/messages`        | signed in | `{body}` (max 2000 chars) → saves a message |
 | GET    | `/messages`        | teacher   | every message with the sender's email, newest first |
+| GET    | `/docs`            | signed in | `{docs: [{tool, id, rev, title, modified, deleted}], tools}` — the account's saved work (no data) |
+| GET    | `/docs/:tool/:id`  | signed in | `{doc, rev}` |
+| PUT    | `/docs/:tool/:id`  | signed in | `{doc, baseRev}` → `{rev}`; 409 `{conflict, rev}` if another computer saved since `baseRev` |
+| DELETE | `/docs/:tool/:id`  | signed in | `{baseRev}` → leaves a tombstone so other computers delete it too |
+
+Saved work (`docs.js`, table `user_docs`): one row per save, the usual Happy Theta envelope. Students can store
+`fbd`, `energy`, `motion`, `graph`, `marks`; teachers also `scheduler`, `schedtemplate`, `mindmap`. Limits: 3 MB per
+save, 60 MB and 3000 saves per account (`DOC_MAX_BYTES`, `DOC_QUOTA_BYTES`). Pictures and files attached inside
+Theta Marks / Theta Maps live in the browser's IndexedDB and are not synced.
 
 Security: passwords are hashed with scrypt; sessions are random tokens in an HttpOnly, SameSite=Lax,
-Secure cookie scoped to `/phys`; only SHA-256 hashes of session and email-link tokens are stored;
+Secure cookie for the whole site (`Path=/`); only SHA-256 hashes of session and email-link tokens are stored;
 email links put the token after `#` so it never reaches server logs; POSTs must be same-origin JSON.
 
 ## Activity library (Theta Scheduler)
 
-`library.js` adds a shared library of activities, mounted at `/phys/api/library` (teachers only — students
+`library.js` adds a shared library of activities, mounted at `/api/library` (teachers only — students
 get 403). It creates its own table, `library_items` (owner, JSON item, version, forked_from, pulls), on start.
 
 - `GET /library` — search: `q`, `type`, `assessment`, `interaction`, `inClass` (1/0), `min`/`max` (minutes),
@@ -100,7 +119,7 @@ confirms an account by hand, and `teacher.js reset-link` prints a reset link to 
 ```
 cd server
 npm install
-npm run dev          # then open http://localhost:3000/phys/message.html
+npm run dev          # then open http://localhost:3000/
 ```
 Emails aren't sent in dev: they're printed in the terminal running `npm run dev`. Copy the link
 from there into the browser. To make yourself a teacher afterwards:
@@ -121,9 +140,9 @@ sudo mkdir -p /etc/happytheta && sudo cp deploy/api.env.example /etc/happytheta/
 sudo chmod 600 /etc/happytheta/api.env && sudo nano /etc/happytheta/api.env   # site address + email settings
 sudo cp deploy/happytheta-api.service /etc/systemd/system/
 sudo systemctl daemon-reload && sudo systemctl enable --now happytheta-api
-curl -s localhost:3000/phys/api/me           # → {"user":null}
+curl -s localhost:3000/api/me           # → {"user":null}
 ```
-Add `deploy/nginx-phys-api.conf` to the site's nginx `server` block, then
+Add `deploy/nginx-phys-api.conf` (the `/api/` and `/phys/api/` blocks) to the site's nginx `server` block, then
 `sudo nginx -t && sudo systemctl reload nginx`.
 
 **HTTPS is required** for sign-in to work, because the session cookie is `Secure`. If the site
@@ -132,8 +151,8 @@ isn't on HTTPS yet, `sudo certbot --nginx` sets it up; for a temporary http-only
 
 ## WishIMay (family wish list)
 
-`wishlist.js` adds a separate app at `/wish/api` (pages in `apps/wish/`, served at `/wish/`). It has its
-own logins, cookie (`wish_session`, Path=/wish, 60 days) and tables (`wish_accounts`, `wish_sessions`,
+`wishlist.js` adds a separate app at `/apps/wish/api` (pages in `apps/wish/`, served at `/apps/wish/`). It has its
+own logins, cookie (`wish_session`, Path=/apps/wish, 60 days) and tables (`wish_accounts`, `wish_sessions`,
 `wish_people`, `wish_items`, `wish_purchases`, plus `wish_offers`, `wish_offer_checks`, `wish_api_usage` for
 price comparison), all in the same database file. School accounts and
 wish-list logins never mix.
@@ -178,9 +197,11 @@ wish passphrase someone@example.com                   # new passphrase, signs th
 wish list                                             # every login
 wish remove aunt@example.com                          # remove a shopper (their purchases stay hidden)
 ```
-Locally: `npm run wish:dev -- owner you@example.com`, then `npm run dev` → http://localhost:3000/wish/.
+Locally: `npm run wish:dev -- owner you@example.com`, then `npm run dev` → http://localhost:3000/apps/wish/.
+Without signing in, `apps/wish/?demo=1` (the My Apps guest preview) runs a made-up list in the browser only
+(`apps/wish/js/wish-demo.js`), with an Owner / Shopper switch.
 
-nginx: add `deploy/nginx-wish-api.conf` next to the `/phys/api/` block.
+nginx: add `deploy/nginx-wish-api.conf` next to the `/api/` block.
 
 **Other stores' prices** (`wish-compare.js`, optional): with `SERPAPI_KEY` in api.env, each item can be
 looked up on Google Shopping (`engine=google_shopping`) and eBay (`engine=ebay`, Buy It Now only)
@@ -212,13 +233,14 @@ ht add jack@asmsa.org          # make a teacher (they sign up on the site first)
 ht remove someone@asmsa.org    # back to student
 ht list                        # teachers
 ht users                       # every account, and whether it's confirmed
-ht verify someone@asmsa.org    # confirm an email by hand (their sign-up password then works)
+ht verify someone@asmsa.org    # confirm an email by hand (their sign-up pass phrase then works)
 ht reset-link someone@asmsa.org   # print a 1-hour reset link to send them yourself
 ```
 
 ## Updating and backups
 
-- Static pages: zip and deploy `phys/` as usual. Server code: copy the changed files to
+- Static pages: the web root now holds `index.html`, `apps/`, `teacher/`, `phys/`, `shared/` and `branding/`
+  (zip those from the repo root and unzip them into the web root). Server code: copy the changed files to
   `/opt/happytheta-server`, run `sudo npm ci --omit=dev` if `package.json` changed, then
   `sudo systemctl restart happytheta-api`. Database changes are applied automatically on start.
 - The whole database is `/var/lib/happytheta/happytheta.db`. Safe live backup:

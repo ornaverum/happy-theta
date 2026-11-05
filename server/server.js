@@ -1,10 +1,11 @@
 'use strict';
-/* Happy Theta API. Runs behind nginx, which serves the static phys/ pages and
-   forwards /phys/api/ here. See README.md for setup. */
+/* Happy Theta API. Runs behind nginx, which serves the static site (index.html, apps/, teacher/, phys/)
+   and forwards /api/ here (and /phys/api/, the old address, which still works). See README.md for setup. */
 const express = require('express');
 const { db } = require('./db');
 const auth = require('./auth');
 const mail = require('./mail');
+const passphrase = require('./passphrase');
 
 const BASE = process.env.BASE_PATH || '/phys';
 const PORT = Number(process.env.PORT || 3000);
@@ -33,16 +34,21 @@ const q = {
 
 /* ---------- small helpers ---------- */
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const publicUser = (u) => ({ email: u.email, role: u.role });
+const publicUser = (u) => ({ id: u.id, email: u.email, role: u.role });
 const domainOk = (email) => !ALLOWED_DOMAINS.length || ALLOWED_DOMAINS.includes(email.split('@')[1]);
 const readEmail = (req) => String(req.body?.email || '').trim().toLowerCase();
 const TOO_MANY = { error: 'Too many attempts. Try again in a few minutes.' };
 
+/* New pass phrases must be ones the site made up (GET /passphrase). They're stored by their letters
+   only, lower case, so "theSleepyOtter…" and "the sleepy otter…" both work when signing in. */
 function passwordProblem(password) {
-	if (password.length < 8) return 'Password must be at least 8 characters.';
-	if (password.length > 200) return 'Password is too long.';
-	return null;
+	if (password.length > 200) return 'That pass phrase is too long.';
+	return passphrase.check(password);
 }
+const hashPhrase = (p) => auth.hashPassword(passphrase.canonical(p));
+// Accounts made before pass phrases kept their old password, which is checked as typed.
+const phraseMatches = (typed, stored) =>
+	auth.verifyPassword(passphrase.canonical(typed), stored) || auth.verifyPassword(typed, stored);
 
 // Simple in-memory limiter: at most `max` hits per key per window.
 function limiter(max, windowMs) {
@@ -103,6 +109,8 @@ api.use((req, res, next) => {
 api.use(auth.loadUser);
 // Shared activity library for Theta Scheduler (teachers only; its own larger body limit)
 api.use('/library', require('./library'));
+// Signed-in users' saved work (synced from the browser; its own larger body limit)
+api.use('/docs', require('./docs'));
 api.use(express.json({ limit: '16kb' }));
 
 /* Create an account, or (for an email not yet confirmed) send a fresh confirmation link.
@@ -121,7 +129,7 @@ api.post(
 
 		let user = q.userByEmail.get(email);
 		if (user && user.email_verified_at)
-			return res.status(409).json({ error: 'An account with that email already exists. Sign in, or use "Forgot password?".' });
+			return res.status(409).json({ error: 'An account with that email already exists. Sign in, or use "Forgot your pass phrase?".' });
 		if (!mailLimit(email))
 			return res.status(429).json({ error: "We've sent several emails to that address recently. Check your inbox (and spam folder), or try again in an hour." });
 		if (!user) {
@@ -129,7 +137,7 @@ api.post(
 			user = { id: info.lastInsertRowid, email };
 		}
 		try {
-			await sendVerification(user, auth.hashPassword(password));
+			await sendVerification(user, hashPhrase(password));
 		} catch (err) {
 			console.error('verification email failed:', err.message);
 			return res.status(502).json({ error: "Your account was created, but the confirmation email couldn't be sent. Try signing in in a few minutes to get a new one." });
@@ -145,10 +153,10 @@ api.post('/login', (req, res) => {
 	const user = q.userByEmail.get(email);
 	if (user && !user.email_verified_at)
 		return res.status(403).json({ error: "This email hasn't been confirmed yet. Use the link we emailed you, or send a new one.", unverified: true });
-	const ok = auth.verifyPassword(password, user ? user.password_hash : auth.DUMMY_HASH) && !!user;
+	const ok = phraseMatches(password, user ? user.password_hash : auth.DUMMY_HASH) && !!user;
 	if (!ok) {
 		if (!emailLimit(email)) return res.status(429).json(TOO_MANY);
-		return res.status(401).json({ error: 'Email or password is incorrect.' });
+		return res.status(401).json({ error: 'Email or pass phrase is incorrect.' });
 	}
 	auth.startSession(res, user.id);
 	res.json({ user: publicUser(user) });
@@ -181,7 +189,7 @@ api.post(
 				console.error('reset email failed:', err.message);
 			}
 		}
-		res.json({ ok: true, message: "If there's an account for that email, we've sent a link to reset its password. It works for 1 hour. Check your spam folder too." });
+		res.json({ ok: true, message: "If there's an account for that email, we've sent a link to get a new pass phrase. It works for 1 hour. Check your spam folder too." });
 	})
 );
 
@@ -200,7 +208,7 @@ api.post('/password/reset', (req, res) => {
 	if (pwErr) return res.status(400).json({ error: pwErr });
 	const row = auth.consumeEmailToken(String(req.body?.token || ''), 'reset');
 	if (!row) return res.status(400).json({ error: 'This reset link is invalid, already used, or expired. Ask for a new one.' });
-	q.setPassword.run(auth.hashPassword(password), row.user_id);
+	q.setPassword.run(hashPhrase(password), row.user_id);
 	q.markVerified.run(row.user_id); // they just proved they read this inbox
 	auth.endAllSessions(row.user_id); // sign out everywhere else
 	auth.startSession(res, row.user_id);
@@ -210,6 +218,12 @@ api.post('/password/reset', (req, res) => {
 api.post('/logout', (req, res) => {
 	auth.endSession(req, res);
 	res.json({ ok: true });
+});
+
+/* A fresh pass phrase for the sign-up and reset forms ("Another one" asks again). */
+api.get('/passphrase', (req, res) => {
+	if (!ipLimit(req.ip)) return res.status(429).json(TOO_MANY);
+	res.json({ passphrase: passphrase.generate() });
 });
 
 // Never 401s, so pages can ask "am I signed in?" without a console error.
@@ -235,20 +249,23 @@ api.use((err, req, res, _next) => {
 	res.status(500).json({ error: 'Server error.' });
 });
 
-app.use(`${BASE}/api`, api);
+app.use('/api', api);
+app.use(`${BASE}/api`, api); // old address, used before the site was split into apps/ teacher/ phys/
 
 // WishIMay (family wish list): its own logins, cookie and tables; see wishlist.js.
 const wishlist = require('./wishlist');
 app.use(`${wishlist.WISH_BASE}/api`, wishlist);
 
-// Local development only: also serve the static pages (nginx does this in production).
-if (process.env.STATIC_DIR) {
-	app.get('/', (req, res) => res.redirect(`${BASE}/`));
-	app.use(BASE, express.static(process.env.STATIC_DIR));
-}
-if (process.env.WISH_STATIC_DIR) {
-	app.get(wishlist.WISH_BASE, (req, res, next) => (req.originalUrl === wishlist.WISH_BASE ? res.redirect(`${wishlist.WISH_BASE}/`) : next()));
-	app.use(wishlist.WISH_BASE, express.static(process.env.WISH_STATIC_DIR));
+// Local development only: also serve the static site (nginx does this in production).
+// SITE_DIR is the repo root; only the site's own folders are served, never server/ or tools/.
+if (process.env.SITE_DIR) {
+	const path = require('path');
+	const site = process.env.SITE_DIR;
+	app.get('/', (req, res) => res.sendFile(path.join(site, 'index.html')));
+	for (const dir of ['phys', 'teacher', 'apps', 'shared', 'branding']) {
+		app.get(`/${dir}`, (req, res, next) => (req.originalUrl === `/${dir}` ? res.redirect(`/${dir}/`) : next()));
+		app.use(`/${dir}`, express.static(path.join(site, dir)));
+	}
 }
 
 auth.purgeExpired();
@@ -256,7 +273,7 @@ setInterval(auth.purgeExpired, 60 * 60 * 1000).unref();
 
 if (require.main === module) {
 	app.listen(PORT, HOST, () => {
-		console.log(`Happy Theta API on http://${HOST}:${PORT}${BASE}/api (${mail.describe()})`);
+		console.log(`Happy Theta API on http://${HOST}:${PORT}/api (${mail.describe()})`);
 		if (process.env.NODE_ENV === 'production' && mail.TRANSPORT === 'log')
 			console.warn('WARNING: MAIL_TRANSPORT is "log", so confirmation and reset emails are only printed here, not sent.');
 		if (process.env.NODE_ENV === 'production' && !process.env.PUBLIC_URL)

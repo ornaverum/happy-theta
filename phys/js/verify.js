@@ -18,7 +18,7 @@
 		$('title').textContent = "That link didn't work";
 		$('msg').textContent = err.message;
 		$('continue').textContent = 'Go to sign in';
-		$('continue').href = 'login.html';
+		$('continue').href = '../index.html';
 		$('actions').hidden = false;
 	}
 })();

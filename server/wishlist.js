@@ -1,5 +1,5 @@
 'use strict';
-/* WishIMay — a family wish list, served at /wish/ with its API at /wish/api/.
+/* WishIMay — a family wish list, served at /apps/wish/ with its API at /apps/wish/api/.
 
    Two kinds of login, both separate from the Happy Theta school accounts:
    - owner: one shared account for the family. Inside it you switch "persona" (a person on the list)
@@ -14,7 +14,7 @@ const { db } = require('./db');
 const auth = require('./auth'); // reuses scrypt hashing only; sessions here are separate
 const { preview } = require('./wish-preview');
 
-const WISH_BASE = process.env.WISH_BASE_PATH || '/wish';
+const WISH_BASE = process.env.WISH_BASE_PATH || '/apps/wish';
 const COOKIE = 'wish_session';
 const SESSION_DAYS = Number(process.env.WISH_SESSION_DAYS || 60);
 const SECURE = process.env.COOKIE_SECURE !== '0';

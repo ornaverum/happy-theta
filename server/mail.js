@@ -70,12 +70,12 @@ function verifyEmail(to, token, basePath) {
 
 function resetEmail(to, token, basePath) {
 	const link = `${PUBLIC_URL}${basePath}/account/reset.html#t=${token}`;
-	const footer = "This link works for 1 hour and can be used once. If you didn't ask to reset your password, you can ignore this email; your password won't change.";
+	const footer = "This link works for 1 hour and can be used once. If you didn't ask for a new pass phrase, you can ignore this email; your pass phrase won't change.";
 	return {
 		to,
-		subject: 'Reset your Happy Theta password',
-		text: `Someone (hopefully you) asked to reset the password for this Happy Theta account. Choose a new password here:\n\n${link}\n\n${footer}\n`,
-		html: layout('Reset your password', 'Someone (hopefully you) asked to reset the password for this Happy Theta account. Click the button to choose a new one.', link, 'Choose a new password', footer)
+		subject: 'A new Happy Theta pass phrase',
+		text: `Someone (hopefully you) asked for a new pass phrase for this Happy Theta account. Get one here:\n\n${link}\n\n${footer}\n`,
+		html: layout('Get a new pass phrase', 'Someone (hopefully you) asked for a new pass phrase for this Happy Theta account. Click the button to get one.', link, 'Get a new pass phrase', footer)
 	};
 }
 

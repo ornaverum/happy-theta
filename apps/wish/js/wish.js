@@ -57,6 +57,7 @@
 	};
 
 	async function api(path, { method = 'GET', body } = {}) {
+		if (window.WishDemo) return window.WishDemo.handle(path, { method, body }); // guest demo (js/wish-demo.js)
 		const opts = { method, credentials: 'same-origin', headers: {} };
 		if (method !== 'GET') {
 			opts.headers['Content-Type'] = 'application/json';

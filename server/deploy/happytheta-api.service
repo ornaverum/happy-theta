@@ -1,6 +1,6 @@
 # /etc/systemd/system/happytheta-api.service
 [Unit]
-Description=Happy Theta API (/phys/api)
+Description=Happy Theta API (/api, /apps/wish/api)
 After=network.target
 
 [Service]

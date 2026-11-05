@@ -1,4 +1,4 @@
-/* Builds phys/js/scheduler-seed-waddell.js: the AP Physics 1 learning objectives and essential knowledge
+/* Builds teacher/js/scheduler-seed-waddell.js: the AP Physics 1 learning objectives and essential knowledge
    reorganized into the Waddell sequence (Unit 0, 1D uniform motion, accelerating motion, 1D non-equilibrium,
    2D motion, rotation).
    Run from the repo root:  node tools/build-waddell-seed.js
@@ -11,7 +11,7 @@ const path = require('path');
 
 global.window = global;
 global.HT = {};
-eval(fs.readFileSync(path.join(__dirname, '../phys/js/scheduler-seed-ap1.js'), 'utf8'));
+eval(fs.readFileSync(path.join(__dirname, '../teacher/js/scheduler-seed-ap1.js'), 'utf8'));
 const AP = HT.schedulerSeeds['ap-physics-1'].data;
 const apTree = AP.objectiveTrees[0];
 
@@ -307,7 +307,7 @@ const seed = {
 	title: 'Waddell sequence (AP Physics 1 reorganized)',
 	data: { objectiveTrees: [tree, AP.objectiveTrees[1]], suggestedSkills: suggested, activityBank: bank }
 };
-const out = path.join(__dirname, '../phys/js/scheduler-seed-waddell.js');
+const out = path.join(__dirname, '../teacher/js/scheduler-seed-waddell.js');
 fs.writeFileSync(
 	out,
 	`/* Theta Scheduler seed: the Waddell sequence — AP Physics 1 LOs and EKs reorganized into

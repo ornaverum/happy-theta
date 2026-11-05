@@ -67,3 +67,11 @@
 .notice p { margin-bottom: 0.75rem; }
 .acct-card .sub strong { color: #111827; }
 .btn-row .link-btn { font-size: 0.875rem; }
+
+/* pass phrase (reset page) */
+.phrase {
+	padding: 0.625rem 0.75rem; margin-bottom: 0.5rem; background: #fffbea; border: 1px dashed #e7c64a; border-radius: 0.5rem;
+	font: 600 1.0625rem/1.4 ui-monospace, Consolas, monospace; color: #1e3a8a; overflow-wrap: anywhere;
+}
+.check-row { display: flex; gap: 0.5rem; align-items: flex-start; font-size: 0.875rem; margin: 0.25rem 0 1rem; }
+.check-row input { margin-top: 0.2rem; }

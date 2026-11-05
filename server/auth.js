@@ -29,7 +29,8 @@ const DUMMY_HASH = hashPassword(crypto.randomBytes(16).toString('hex'));
 /* ---------- sessions ---------- */
 const COOKIE = 'ht_session';
 const SESSION_DAYS = Number(process.env.SESSION_DAYS || 30);
-const BASE = process.env.BASE_PATH || '/phys';
+// The whole site (phys/, teacher/, apps/) shares one sign-in, so the cookie covers every path.
+const COOKIE_PATH = process.env.COOKIE_PATH || '/';
 const SECURE = process.env.COOKIE_SECURE !== '0'; // set COOKIE_SECURE=0 only for local http testing
 
 const sha256 = (s) => crypto.createHash('sha256').update(s).digest('hex');
@@ -53,7 +54,7 @@ const q = {
 };
 
 function cookieHeader(value, maxAgeSec) {
-	const parts = [`${COOKIE}=${value}`, `Path=${BASE}`, 'HttpOnly', 'SameSite=Lax', `Max-Age=${maxAgeSec}`];
+	const parts = [`${COOKIE}=${value}`, `Path=${COOKIE_PATH}`, 'HttpOnly', 'SameSite=Lax', `Max-Age=${maxAgeSec}`];
 	if (SECURE) parts.push('Secure');
 	return parts.join('; ');
 }

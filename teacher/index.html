@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Teacher Tools · Happy Theta</title>
+<link rel="icon" href="../branding/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/site.css">
+</head>
+<body>
+<div id="bar"></div>
+<div class="wrap" id="page" hidden>
+  <header class="site-head">
+    <img src="../branding/happy-theta-icon.svg" alt="">
+    <div>
+      <h1>Teacher Tools</h1>
+      <p id="hello">Plan courses and map out ideas.</p>
+    </div>
+    <a class="crumb" href="../index.html">← All Happy Theta apps</a>
+  </header>
+
+  <div class="banner" id="importBanner" hidden>
+    <p id="importText"></p>
+    <button class="btn" id="importBtn" type="button">Copy into my account</button>
+    <button class="btn ghost" id="importNo" type="button">Not now</button>
+  </div>
+
+  <div class="cols">
+    <div class="panel teal">
+      <div class="panel-head">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4M7 13h4M7 17h7"/></svg></div>
+        <div><h3>Theta Scheduler</h3><p>Plan a course day by day: A/B schedules, units, topics, the shared activity library.</p></div>
+        <a class="btn open" href="scheduler.html">Open</a>
+      </div>
+      <ul class="recent" id="schedList"></ul>
+      <p class="empty-note" id="schedEmpty" hidden>No courses yet. Open the scheduler and use the School calendar wizard to start one.</p>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><circle cx="4" cy="5" r="2"/><circle cx="20" cy="5" r="2"/><circle cx="4" cy="19" r="2"/><circle cx="20" cy="19" r="2"/><path d="M6 6l4 4M18 6l-4 4M6 18l4-4M18 18l-4-4"/></svg></div>
+        <div><h3>Theta Maps</h3><p>Mind maps, debate maps and flow charts, with notes and attachments.</p></div>
+        <a class="btn open" href="maps.html">Open</a>
+      </div>
+      <ul class="recent" id="mapsList"></ul>
+      <p class="empty-note" id="mapsEmpty" hidden>No maps yet. Three examples are added the first time you open Theta Maps.</p>
+    </div>
+  </div>
+
+  <section id="more">
+    <h2 class="label">Also for teachers</h2>
+    <div class="grid">
+      <a class="card" href="../phys/"><b>Physics dashboard</b><span>Student messages and the physics figure tools</span></a>
+    </div>
+  </section>
+
+  <p class="foot" id="foot"></p>
+</div>
+<script src="../shared/gate.js"></script>
+<script>
+(async () => {
+  const $ = (id) => document.getElementById(id);
+  const ctx = await HTGate.start({ section: 'teacher' });
+  $('bar').append(HTGate.userBar());
+  $('page').hidden = false;
+  const el = HTGate.el;
+  const when = (iso) => { const d = new Date(iso); return isNaN(d) ? '' : d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: d.getFullYear() === new Date().getFullYear() ? undefined : 'numeric' }); };
+  const draw = () => {
+    for (const [list, empty, tools] of [['schedList', 'schedEmpty', ['scheduler']], ['mapsList', 'mapsEmpty', ['mindmap']]]) {
+      const saves = HTGate.listSaves(tools);
+      $(list).replaceChildren(...saves.slice(0, 6).map((s) => el('li', null, el('span', { text: s.title }), el('span', { class: 'when', text: when(s.modified) }))));
+      $(empty).hidden = saves.length > 0;
+    }
+  };
+  draw();
+
+  if (ctx.kind === 'guest') {
+    $('more').hidden = true;
+    $('foot').textContent = 'Guest preview: courses and maps are saved in this browser only. The shared activity library needs a teacher account.';
+  } else {
+    $('hello').textContent = 'Signed in as ' + ctx.user.email + '. Your courses and maps are saved to your account.';
+    $('foot').textContent = 'Files attached to Theta Maps nodes stay on the computer you attached them on.';
+    const tools = ['scheduler', 'schedtemplate', 'mindmap'];
+    const g = HTGate.guestSaves(tools);
+    if (g.length) {
+      const c = g.filter((f) => f.tool === 'scheduler').length, m = g.filter((f) => f.tool === 'mindmap').length, t = g.length - c - m;
+      const parts = [c && `${c} course${c === 1 ? '' : 's'}`, m && `${m} map${m === 1 ? '' : 's'}`, t && `${t} template${t === 1 ? '' : 's'}`].filter(Boolean);
+      $('importText').textContent = `This browser has ${parts.join(', ')} from a guest preview. Copy them into your account?`;
+      $('importBanner').hidden = false;
+      $('importNo').onclick = () => ($('importBanner').hidden = true);
+      $('importBtn').onclick = async () => {
+        $('importBtn').disabled = true;
+        const n = await HTGate.importGuest(tools);
+        $('importText').textContent = `Copied ${n}. They’re in your account now.`;
+        $('importBtn').hidden = true;
+        $('importNo').textContent = 'OK';
+        draw();
+      };
+    }
+  }
+})();
+</script>
+</body>
+</html>

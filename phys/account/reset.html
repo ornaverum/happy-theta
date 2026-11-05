@@ -4,30 +4,32 @@
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="referrer" content="no-referrer" />
-		<title>Choose a new password · Happy Theta</title>
+		<title>New pass phrase · Happy Theta</title>
 		<link rel="icon" href="../assets/favicon.png" />
 		<link rel="stylesheet" href="../css/style.css" />
 		<link rel="stylesheet" href="../css/account.css" />
 	</head>
 	<body data-root="../">
 		<main class="acct-card">
-			<h1>Choose a new password</h1>
+			<h1>Get a new pass phrase</h1>
 			<p class="sub" id="intro">Checking your link…</p>
 			<form id="reset-form" novalidate hidden>
 				<input type="email" id="username" autocomplete="username" hidden />
-				<label class="field">
-					<span>New password</span>
-					<input id="password" type="password" autocomplete="new-password" required minlength="8" maxlength="200" />
-					<span class="hint">At least 8 characters.</span>
-				</label>
-				<label class="field">
-					<span>Confirm new password</span>
-					<input id="confirm" type="password" autocomplete="new-password" required maxlength="200" />
-				</label>
-				<button type="submit" class="btn btn-blue w-full" id="save">Save password</button>
+				<input id="password" type="password" autocomplete="new-password" hidden />
+				<div class="field">
+					<span>Your new pass phrase</span>
+					<div class="phrase" id="phrase" aria-live="polite">Making one up…</div>
+					<div class="btn-row">
+						<button type="button" class="btn btn-alt" id="another">Another one</button>
+						<button type="button" class="btn btn-alt" id="copy">Copy</button>
+					</div>
+					<span class="hint">The site makes it up for you. Type it in camelCase as shown, or with spaces; capitals don't matter.</span>
+				</div>
+				<label class="check-row"><input type="checkbox" id="saved" /> <span>I've written it down or saved it in my password manager.</span></label>
+				<button type="submit" class="btn btn-blue w-full" id="save" disabled>Save pass phrase</button>
 			</form>
 			<p class="status" id="status" role="status" aria-live="polite"></p>
-			<p class="small back-link" id="links" hidden><a href="forgot.html">Get a new reset link</a> · <a href="login.html">Sign in</a></p>
+			<p class="small back-link" id="links" hidden><a href="forgot.html">Get a new reset link</a> · <a href="../../index.html">Sign in</a></p>
 		</main>
 		<script src="../js/core.js"></script>
 		<script src="../js/account.js"></script>

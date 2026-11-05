@@ -486,3 +486,16 @@ dialog::backdrop { background: #1a1238b3; }
 .offers-none { display: flex; flex-wrap: wrap; gap: 4px 8px; align-items: baseline; color: var(--muted); }
 .linkish { background: none; border: 0; padding: 0; font: inherit; color: var(--focus); text-decoration: underline; cursor: pointer; }
 .linkish:disabled { color: var(--muted); text-decoration: none; cursor: default; }
+
+/* guest demo bar (js/wish-demo.js) */
+.demo-bar {
+	display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px 16px;
+	padding: 8px 16px; background: var(--star); color: var(--dusk); font-size: 14px;
+}
+.demo-views { display: inline-flex; align-items: center; gap: 4px; }
+.demo-views button {
+	padding: 3px 10px; border-radius: 999px; border: 1px solid var(--dusk); background: transparent; color: var(--dusk);
+	font: inherit; font-weight: 600; cursor: pointer;
+}
+.demo-views button[aria-pressed='true'] { background: var(--dusk); color: #fff; }
+.demo-link { background: none; border: 0; padding: 0; font: inherit; font-weight: 600; color: var(--dusk); text-decoration: underline; cursor: pointer; }

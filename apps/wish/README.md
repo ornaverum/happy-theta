@@ -1,6 +1,6 @@
 # Wish I May
 
-A family wish list. Lives at `/wish/` on the Happy Theta site; its API is part of the Happy Theta
+A family wish list. Lives at `/apps/wish/` on the Happy Theta site (linked from the My Apps dashboard); its API is part of the Happy Theta
 server (`server/wishlist.js`, `server/wish-preview.js`, `server/wish-compare.js`, `server/wish.js`).
 
 ## Who does what
@@ -46,12 +46,12 @@ set the key in the same PowerShell window before starting: `$env:SERPAPI_KEY="yo
 cd server
 npm install
 npm run wish:dev -- owner you@example.com      # asks for a passphrase
-npm run dev                                     # then open http://localhost:3000/wish/
+npm run dev                                     # then open http://localhost:3000/apps/wish/
 ```
 
 ## Deploy
 
-1. Copy the contents of `apps/wish/` into a `wish/` folder next to `phys/` in the web root.
+1. `apps/wish/` goes to the web root with the rest of the site (see the root README), so it's served at `/apps/wish/`.
 2. Update the server code on the droplet (`server/`: wishlist.js, wish-preview.js, wish.js, server.js,
    wish-compare.js, package.json) and `sudo systemctl restart happytheta-api`. The tables are created on start.
 3. Add `server/deploy/nginx-wish-api.conf` to the site's nginx `server` block and reload nginx.
@@ -65,5 +65,6 @@ Needs HTTPS like the rest of the site (the sign-in cookie is `Secure`).
 index.html      page shell (twilight band + app area)
 css/wish.css    all styles (light + dark)
 js/wish.js      the app: sign in, owner view, shopper view, dialogs
+js/wish-demo.js guest demo (?demo=1): a made-up list in localStorage, Owner/Shopper switch, no server
 star.svg        favicon
 ```

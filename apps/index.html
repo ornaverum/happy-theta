@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>My Apps · Happy Theta</title>
+<link rel="icon" href="../branding/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/site.css">
+</head>
+<body>
+<div id="bar"></div>
+<div class="wrap" id="page" hidden>
+  <header class="site-head">
+    <img src="../branding/happy-theta-icon.svg" alt="">
+    <div>
+      <h1>My Apps</h1>
+      <p id="hello">Bookmarks, notes and wish lists.</p>
+    </div>
+    <a class="crumb" href="../index.html">← All Happy Theta apps</a>
+  </header>
+
+  <div class="banner" id="importBanner" hidden>
+    <p id="importText"></p>
+    <button class="btn" id="importBtn" type="button">Copy into my account</button>
+    <button class="btn ghost" id="importNo" type="button">Not now</button>
+  </div>
+
+  <div class="cols">
+    <div class="panel plum">
+      <div class="panel-head">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-6-4-6 4z"/></svg></div>
+        <div><h3>Theta Marks</h3><p>Bookmarks and notes arranged by tag, or on a timeline.</p></div>
+        <a class="btn open" href="marks/">Open</a>
+      </div>
+      <ul class="recent" id="marksList"></ul>
+      <p class="empty-note" id="marksEmpty" hidden>No collections yet. Open Theta Marks to start one (an example collection is added the first time).</p>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1.8l2.6 6.6 7 .5-5.4 4.5 1.7 6.9L12 16.5l-5.9 3.8 1.7-6.9L2.4 8.9l7-.5z"/></svg></div>
+        <div><h3>Wish I May</h3><p>The family wish list: wish as different people, shoppers buy without spoiling the surprise.</p></div>
+        <a class="btn open" id="wishLink" href="wish/">Open</a>
+      </div>
+      <p class="empty-note" id="wishNote"></p>
+    </div>
+  </div>
+
+  <p class="foot" id="foot"></p>
+</div>
+<script src="../shared/gate.js"></script>
+<script>
+(async () => {
+  const $ = (id) => document.getElementById(id);
+  const ctx = await HTGate.start({ section: 'apps' });
+  $('bar').append(HTGate.userBar());
+  $('page').hidden = false;
+  const guest = ctx.kind === 'guest';
+  const when = (iso) => { const d = new Date(iso); return isNaN(d) ? '' : d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: d.getFullYear() === new Date().getFullYear() ? undefined : 'numeric' }); };
+
+  function drawMarks() {
+    const list = HTGate.listSaves(['marks']);
+    $('marksList').replaceChildren(...list.slice(0, 6).map((s) => HTGate.el('li', null, HTGate.el('span', { text: s.title }), HTGate.el('span', { class: 'when', text: when(s.modified) }))));
+    $('marksEmpty').hidden = list.length > 0;
+  }
+  drawMarks();
+
+  if (guest) {
+    $('wishLink').href = 'wish/?demo=1';
+    $('wishLink').textContent = 'Try the demo';
+    $('wishNote').textContent = 'Guest preview opens a made-up family list that lives only in this browser. The real list has its own family sign-in (owners and shoppers).';
+    $('foot').textContent = 'Guest preview: everything you do here is saved in this browser only.';
+  } else {
+    $('hello').textContent = 'Signed in as ' + ctx.user.email + '. Your Theta Marks collections are saved to your account.';
+    $('wishNote').textContent = 'Wish I May uses its own family sign-in (owner and shopper pass phrases), separate from this account.';
+    $('foot').textContent = 'Pictures you add to a Theta Marks node stay on the computer you added them on.';
+    const g = HTGate.guestSaves(['marks']);
+    if (g.length) {
+      $('importText').textContent = `This browser has ${g.length} Theta Marks collection${g.length === 1 ? '' : 's'} from a guest preview. Copy ${g.length === 1 ? 'it' : 'them'} into your account?`;
+      $('importBanner').hidden = false;
+      $('importNo').onclick = () => ($('importBanner').hidden = true);
+      $('importBtn').onclick = async () => {
+        $('importBtn').disabled = true;
+        const n = await HTGate.importGuest(['marks']);
+        $('importText').textContent = `Copied ${n}. They’re in your account now.`;
+        $('importBtn').hidden = true;
+        $('importNo').textContent = 'OK';
+        drawMarks();
+      };
+    }
+  }
+})();
+</script>
+</body>
+</html>
