@@ -700,6 +700,112 @@
 		);
 	}
 
+	/* ---------------- backup files: export / import everything ---------------- */
+	// Pictures in Theta Marks and attachments in Theta Maps live in IndexedDB (never on the server), keyed
+	// "<docId>/<assetId>", with a localStorage fallback "happytheta:<tool>:asset:<docId>/<assetId>".
+	// The backup format is described in server/bundle.js; keep the two in step.
+	const ASSET_DB = { marks: 'happytheta-marks', mindmap: 'happytheta-mindmap' };
+	const ID_RE = /^[A-Za-z0-9_-]{1,64}$/;
+	const KNOWN_TOOLS = Object.keys(TOOL_NAMES);
+	const newId = () => 's_' + Math.random().toString(36).slice(2, 10);
+
+	function idb(tool) {
+		return new Promise((res, rej) => {
+			if (!ASSET_DB[tool] || !('indexedDB' in window)) return rej(new Error('no idb'));
+			let r;
+			try {
+				r = indexedDB.open(ASSET_DB[tool], 1);
+			} catch (e) {
+				return rej(e);
+			}
+			r.onupgradeneeded = () => r.result.createObjectStore('assets');
+			r.onsuccess = () => res(r.result);
+			r.onerror = () => rej(r.error);
+		});
+	}
+	async function readAssets(tool, docId) {
+		const out = {};
+		const pre = PREFIX + tool + ':asset:' + docId + '/';
+		for (const k of ls.keys(pre)) {
+			const v = json(ls.get(k), null);
+			if (v) out[k.slice(pre.length)] = v;
+		}
+		try {
+			const db = await idb(tool);
+			await new Promise((res, rej) => {
+				const t = db.transaction('assets', 'readonly');
+				const req = t.objectStore('assets').openCursor(IDBKeyRange.bound(docId + '/', docId + '/￿'));
+				req.onsuccess = () => {
+					const c = req.result;
+					if (!c) return;
+					out[String(c.key).slice(docId.length + 1)] = c.value;
+					c.continue();
+				};
+				t.oncomplete = res;
+				t.onerror = () => rej(t.error);
+			});
+			db.close();
+		} catch {}
+		return out;
+	}
+	async function writeAssets(tool, docId, assets) {
+		const entries = Object.entries(assets || {}).filter(([, v]) => v && typeof v === 'object' && typeof v.data === 'string');
+		if (!entries.length) return 0;
+		try {
+			const db = await idb(tool);
+			await new Promise((res, rej) => {
+				const t = db.transaction('assets', 'readwrite');
+				for (const [k, v] of entries) t.objectStore('assets').put(v, docId + '/' + k);
+				t.oncomplete = res;
+				t.onerror = () => rej(t.error);
+				t.onabort = () => rej(t.error);
+			});
+			db.close();
+		} catch {
+			for (const [k, v] of entries) ls.set(PREFIX + tool + ':asset:' + docId + '/' + k, JSON.stringify(v));
+		}
+		return entries.length;
+	}
+
+	/* Accepts a backup file, or any single tool file (name.fbd.json, name.mindmap.json …). */
+	function readBackup(text) {
+		const f = json(text, undefined);
+		if (f === undefined) throw new Error('isn’t a Happy Theta file (not valid JSON).');
+		const raw = f && f.format === 'happytheta-backup' ? f.docs || [] : f && f.format === 'happytheta' ? [f] : null;
+		if (!raw) throw new Error('isn’t a Happy Theta backup or save file.');
+		const assets = {};
+		for (const [k, v] of Object.entries((f.format === 'happytheta-backup' && f.assets) || {})) if (v && typeof v === 'object') assets[k] = v;
+		const docs = [];
+		for (const d of raw) {
+			if (!d || d.format !== 'happytheta' || !KNOWN_TOOLS.includes(d.tool) || !d.data || typeof d.data !== 'object') continue;
+			const doc = { ...d, meta: d.meta && typeof d.meta === 'object' ? d.meta : {}, view: d.view && typeof d.view === 'object' ? d.view : {} };
+			const oldId = String(doc.id || '');
+			if (!ID_RE.test(oldId)) doc.id = newId();
+			if (doc.data.assets && typeof doc.data.assets === 'object') {
+				const { assets: inner, ...rest } = doc.data; // a Theta Maps / Marks export carries its pictures inside
+				assets[doc.tool + ':' + oldId] = { ...(assets[doc.tool + ':' + oldId] || {}), ...inner };
+				doc.data = rest;
+			}
+			docs.push({ doc, assets: assets[doc.tool + ':' + oldId] || null });
+		}
+		return docs;
+	}
+
+	function download(name, text) {
+		const url = URL.createObjectURL(new Blob([text], { type: 'application/json' }));
+		const a = el('a', { href: url, download: name });
+		document.body.append(a);
+		a.click();
+		a.remove();
+		setTimeout(() => URL.revokeObjectURL(url), 2000);
+	}
+	const plural = (n, word) => `${n} ${word}${n === 1 ? '' : 's'}`;
+	function describe(counts) {
+		return Object.entries(counts)
+			.map(([t, n]) => `${n} ${TOOL_NAMES[t] || t}`)
+			.join(', ');
+	}
+
 	/* ---------------- public ---------------- */
 	const Gate = {
 		SITE,
@@ -798,13 +904,135 @@
 			for (const f of Gate.guestSaves(tools)) {
 				if (!Sync.allowed.includes(f.tool)) continue;
 				const exists = ls.get(saveKey(f.tool, f.id));
-				const copy = exists ? { ...f, id: 's_' + Math.random().toString(36).slice(2, 10) } : f;
+				const copy = exists ? { ...f, id: newId() } : f;
 				ls.set(saveKey(copy.tool, copy.id), JSON.stringify(copy));
+				if (exists && ASSET_DB[f.tool]) await writeAssets(f.tool, copy.id, await readAssets(f.tool, f.id));
 				mark(copy.tool, copy.id, 'put');
 				n++;
 			}
 			await queue(pushAll);
 			return n;
+		},
+
+		/* Download one backup file with every save in this browser's current space (signed-in account or guest),
+		   including the pictures/attachments that only live in this browser. Resolves to the number of saves. */
+		async exportAll() {
+			const ctx = Gate.ctx || {};
+			const docs = [];
+			const assets = {};
+			for (const [, { tool, id }] of localSaves()) {
+				const f = json(ls.get(saveKey(tool, id)), null);
+				if (!f || !f.data) continue;
+				docs.push(f);
+				if (ASSET_DB[tool]) {
+					const a = await readAssets(tool, id);
+					if (Object.keys(a).length) assets[tool + ':' + id] = a;
+				}
+			}
+			const who = ctx.kind === 'user' ? ctx.user.email : 'guest';
+			const backup = { format: 'happytheta-backup', version: 1, exported: new Date().toISOString(), who, from: 'browser', docs, assets };
+			const stamp = new Date().toISOString().slice(0, 10);
+			const name = (ctx.kind === 'user' ? ctx.user.email.split('@')[0] : 'guest').replace(/[^\w.-]+/g, '-');
+			download(`happytheta-backup-${name}-${stamp}.json`, JSON.stringify(backup));
+			return docs.length;
+		},
+
+		/* Add the saves from backup / tool files to this space. Nothing is overwritten: an identical save is
+		   skipped, a different one with the same id comes in as a copy. Signed in, they then sync up. */
+		async importFiles(files) {
+			const added = {};
+			const notes = [];
+			let same = 0;
+			let notAllowed = 0;
+			let full = false;
+			const allowed = Gate.ctx && Gate.ctx.kind === 'user' ? Sync.allowed : KNOWN_TOOLS;
+			for (const file of files) {
+				let items;
+				try {
+					items = readBackup(await file.text());
+				} catch (err) {
+					notes.push(`${file.name} ${err.message}`);
+					continue;
+				}
+				if (!items.length) notes.push(`${file.name} had no saves in it.`);
+				for (const { doc, assets } of items) {
+					if (!allowed.includes(doc.tool)) {
+						notAllowed++;
+						continue;
+					}
+					const text = JSON.stringify(doc);
+					const existing = ls.get(saveKey(doc.tool, doc.id));
+					if (existing === text) {
+						same++;
+						continue;
+					}
+					if (existing) doc.id = newId();
+					if (!ls.set(saveKey(doc.tool, doc.id), JSON.stringify(doc))) {
+						full = true;
+						continue;
+					}
+					if (ASSET_DB[doc.tool] && assets) await writeAssets(doc.tool, doc.id, assets);
+					mark(doc.tool, doc.id, 'put');
+					added[doc.tool] = (added[doc.tool] || 0) + 1;
+				}
+			}
+			if (Sync.active) await queue(pushAll);
+			const n = Object.values(added).reduce((a, b) => a + b, 0);
+			const parts = [n ? `Added ${describe(added)}.` : 'Nothing new was added.'];
+			if (same) parts.push(`${plural(same, 'save')} ${same === 1 ? 'was' : 'were'} already here.`);
+			if (notAllowed) parts.push(`${plural(notAllowed, 'save')} for Teacher Tools ${notAllowed === 1 ? 'was' : 'were'} skipped (they need a teacher account).`);
+			if (full) parts.push('This browser ran out of storage space, so some saves were left out.');
+			return { added: n, message: parts.concat(notes).join(' ') };
+		},
+
+		/* "Your data" box for the dashboards: Export all my work / Import… */
+		dataPanel({ onImported } = {}) {
+			const ctx = Gate.ctx || {};
+			const status = el('p', { class: 'htg-status', role: 'status', 'aria-live': 'polite' });
+			const say = (t, kind) => {
+				status.textContent = t;
+				status.className = 'htg-status' + (kind ? ' ' + kind : '');
+			};
+			const input = el('input', { type: 'file', accept: '.json,application/json', multiple: true, hidden: true });
+			const exp = el('button', { type: 'button', class: 'htg-btn htg-ghost', text: 'Export all my work' });
+			const imp = el('button', { type: 'button', class: 'htg-btn htg-ghost', text: 'Import…' });
+			exp.onclick = async () => {
+				exp.disabled = true;
+				try {
+					const n = await Gate.exportAll();
+					say(n ? `Downloaded a backup with ${plural(n, 'save')}.` : 'Downloaded a backup (there’s nothing saved yet).', 'ok');
+				} catch (err) {
+					say('Couldn’t make the backup: ' + err.message, 'error');
+				}
+				exp.disabled = false;
+			};
+			imp.onclick = () => input.click();
+			input.onchange = async () => {
+				if (!input.files.length) return;
+				imp.disabled = true;
+				say('Importing…');
+				try {
+					const r = await Gate.importFiles([...input.files]);
+					say(r.message, r.added ? 'ok' : '');
+					if (r.added && onImported) onImported(r);
+				} catch (err) {
+					say('Import failed: ' + err.message, 'error');
+				}
+				input.value = '';
+				imp.disabled = false;
+			};
+			return el(
+				'div',
+				{ class: 'htg-data' },
+				el('div', null,
+					el('h3', { text: 'Your data' }),
+					el('p', { class: 'htg-muted', text: ctx.kind === 'user'
+						? 'Download everything you’ve saved (all sections, with pictures and attachments) as one backup file, or bring in a backup or any saved tool file.'
+						: 'Guest work lives only in this browser. Download a backup to keep it, or bring in a backup or any saved tool file.' })
+				),
+				el('div', { class: 'htg-row' }, exp, imp, input),
+				status
+			);
 		},
 
 		/* "Signed in as … · Sign out" for dashboards. */

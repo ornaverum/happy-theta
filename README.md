@@ -34,6 +34,13 @@ browser's copy of the account's work (school computers are shared). Guest work i
 copied into an account from the dashboards. If the same save was changed on two computers, both versions are kept.
 Not synced: pictures and files attached inside Theta Marks / Theta Maps (they stay in IndexedDB on that computer).
 
+**Your data** (on every dashboard): **Export all my work** downloads one backup file
+(`happytheta-backup-<name>-<date>.json`) with every save in this browser's space — all sections, including the
+Marks pictures and Maps attachments the server doesn't have. **Import…** takes such a backup, or any single tool
+file (`name.fbd.json`, `name.mindmap.json` …). Nothing is overwritten: identical saves are skipped, and a different
+save with the same id comes in as a copy. Signed in, imported work then syncs to the account. The format is
+described at the top of `server/bundle.js`.
+
 How it works: `shared/gate.js` keeps one "space" of `happytheta:*` localStorage keys visible at a time (guest, or
 one account) and moves the others aside, so the tools themselves didn't change. Tool pages load it right after
 `core.js` with `data-gate="tool"` and write their own scripts as `<script type="text/x-ht-deferred" data-src="…">`;

@@ -10,6 +10,7 @@ server.js     the API (routes below)
 auth.js       pass phrase hashing (scrypt), cookie sessions, one-time email links
 passphrase.js makes up pass phrases (4–6 word camelCase sentences) and checks a phrase is one of ours
 docs.js       signed-in users' saved work (/api/docs), synced from the browser by shared/gate.js
+bundle.js     the backup-file format ("Export all my work"), used by teacher.js export / import
 mail.js       sends the confirmation and pass-phrase-reset emails
 db.js         SQLite tables: users, sessions, email_tokens, messages
 teacher.js    command-line account tool (teachers, confirm by hand, reset links)
@@ -235,6 +236,8 @@ ht list                        # teachers
 ht users                       # every account, and whether it's confirmed
 ht verify someone@asmsa.org    # confirm an email by hand (their sign-up pass phrase then works)
 ht reset-link someone@asmsa.org   # print a 1-hour reset link to send them yourself
+ht export someone@asmsa.org > /root/their-work.json   # all their saved work as one backup file
+ht import someone@asmsa.org /tmp/their-work.json      # add a backup (or tool file) to their account
 ```
 
 ## Updating and backups
@@ -243,6 +246,14 @@ ht reset-link someone@asmsa.org   # print a 1-hour reset link to send them yours
   (zip those from the repo root and unzip them into the web root). Server code: copy the changed files to
   `/opt/happytheta-server`, run `sudo npm ci --omit=dev` if `package.json` changed, then
   `sudo systemctl restart happytheta-api`. Database changes are applied automatically on start.
+- **Code and data are separate.** `git pull` + the deploy script only write `/var/www/…/public` and
+  `/opt/happytheta-server`; the database (`/var/lib/happytheta/`) and settings (`/etc/happytheta/api.env`) are never
+  in git and never touched by a deploy. Keep `DB_PATH` outside the repo, the web root and `/opt`.
+- Nightly backups: `deploy/happytheta-backup` (install steps at its top) keeps 30 days of compressed copies plus
+  `api.env` in `/var/backups/happytheta/`. Restore: stop the service, `gunzip -c` a copy over `happytheta.db`, delete
+  `happytheta.db-wal` / `-shm`, `chown happytheta:`, start the service.
+- One user's work: `ht export someone@… > file.json` / `ht import someone@… file.json` (same backup format as the
+  dashboards' "Export all my work", minus pictures/attachments, which only live in their browser).
 - The whole database is `/var/lib/happytheta/happytheta.db`. Safe live backup:
   `sudo sqlite3 /var/lib/happytheta/happytheta.db ".backup '/root/happytheta-$(date +%F).db'"`
 - Logs: `journalctl -u happytheta-api -e`

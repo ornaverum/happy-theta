@@ -26,3 +26,12 @@ server/data/
 Claude outputs/
 *.db-wal
 *.db-shm
+
+# Never commit credentials: any SQLite database (holds pass phrase hashes, sessions, wish lists),
+# real settings files (API keys, email login), or private keys.
+*.db
+*.db-journal
+*.sqlite
+api.env
+*.pem
+*.key

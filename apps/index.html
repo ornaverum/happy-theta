@@ -48,6 +48,8 @@
     </div>
   </div>
 
+  <section id="data"></section>
+
   <p class="foot" id="foot"></p>
 </div>
 <script src="../shared/gate.js"></script>
@@ -66,6 +68,7 @@
     $('marksEmpty').hidden = list.length > 0;
   }
   drawMarks();
+  $('data').append(HTGate.dataPanel({ onImported: () => setTimeout(() => location.reload(), 1800) }));
 
   if (guest) {
     $('wishLink').href = 'wish/?demo=1';

@@ -132,3 +132,17 @@
 	:root:not([data-theme='light']) .htg-check { background: #1d2d4d; }
 	:root:not([data-theme='light']) .htg-warn { background: #2e2512; border-color: #6b5a1d; }
 }
+
+/* dashboards: "Your data" (export / import) */
+.htg-data {
+	display: grid; gap: 10px; padding: 16px 18px; border-radius: 14px; font: 15px/1.5 Inter, system-ui, sans-serif;
+	background: #fff; border: 1px solid #dbe3ef; color: var(--htg-ink);
+}
+.htg-data h3 { margin: 0; font: 600 18px/1.3 Fredoka, Inter, system-ui, sans-serif; }
+.htg-data p { margin: 2px 0 0; font-size: 14px; }
+.htg-data .htg-status { margin: 0 !important; }
+@media (prefers-color-scheme: dark) {
+	:root:not([data-theme='light']) .htg-data { background: #172238; border-color: #263553; color: #e8eefb; }
+	:root:not([data-theme='light']) .htg-data .htg-ghost { background: #172238; border-color: #33466b; color: #e8eefb !important; }
+}
+.htg-data .htg-status:empty { display: none; }

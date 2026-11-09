@@ -181,6 +181,7 @@
 		}
 	}
 
+	page.append(el('div', { class: 'pd-data' }, HTGate.dataPanel({ onImported: () => setTimeout(() => location.reload(), 1800) })));
 	page.append(el('p', { class: 'pd-foot' }, el('a', { href: '../index.html', text: '← All Happy Theta apps' })));
 	page.hidden = false;
 })();
