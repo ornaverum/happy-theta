@@ -1,0 +1,3188 @@
+{
+ "topics": {
+  "1.1": {
+   "code": "1.1",
+   "title": "Change in Tandem",
+   "page": 35,
+   "extra": false
+  },
+  "1.2": {
+   "code": "1.2",
+   "title": "Rates of Change",
+   "page": 37,
+   "extra": false
+  },
+  "1.3": {
+   "code": "1.3",
+   "title": "Rates of Change in Linear and Quadratic Functions",
+   "page": 38,
+   "extra": false
+  },
+  "1.4": {
+   "code": "1.4",
+   "title": "Polynomial Functions and Rates of Change",
+   "page": 39,
+   "extra": false
+  },
+  "1.5": {
+   "code": "1.5",
+   "title": "Polynomial Functions and Complex Zeros",
+   "page": 41,
+   "extra": false
+  },
+  "1.6": {
+   "code": "1.6",
+   "title": "Polynomial Functions and End Behavior",
+   "page": 43,
+   "extra": false
+  },
+  "1.7": {
+   "code": "1.7",
+   "title": "Rational Functions and End Behavior",
+   "page": 44,
+   "extra": false
+  },
+  "1.8": {
+   "code": "1.8",
+   "title": "Rational Functions and Zeros",
+   "page": 46,
+   "extra": false
+  },
+  "1.9": {
+   "code": "1.9",
+   "title": "Rational Functions and Vertical Asymptotes",
+   "page": 47,
+   "extra": false
+  },
+  "1.10": {
+   "code": "1.10",
+   "title": "Rational Functions and Holes",
+   "page": 48,
+   "extra": false
+  },
+  "1.11": {
+   "code": "1.11",
+   "title": "Equivalent Representations of Polynomial and Rational Expressions",
+   "page": 49,
+   "extra": false
+  },
+  "1.12": {
+   "code": "1.12",
+   "title": "Transformations of Functions",
+   "page": 51,
+   "extra": false
+  },
+  "1.13": {
+   "code": "1.13",
+   "title": "Function Model Selection and Assumption Articulation",
+   "page": 52,
+   "extra": false
+  },
+  "1.14": {
+   "code": "1.14",
+   "title": "Function Model Construction and Application",
+   "page": 54,
+   "extra": false
+  },
+  "2.1": {
+   "code": "2.1",
+   "title": "Change in Arithmetic and Geometric Sequences",
+   "page": 61,
+   "extra": false
+  },
+  "2.2": {
+   "code": "2.2",
+   "title": "Change in Linear and Exponential Functions",
+   "page": 62,
+   "extra": false
+  },
+  "2.3": {
+   "code": "2.3",
+   "title": "Exponential Functions",
+   "page": 64,
+   "extra": false
+  },
+  "2.4": {
+   "code": "2.4",
+   "title": "Exponential Function Manipulation",
+   "page": 66,
+   "extra": false
+  },
+  "2.5": {
+   "code": "2.5",
+   "title": "Exponential Function Context and Data Modeling",
+   "page": 67,
+   "extra": false
+  },
+  "2.6": {
+   "code": "2.6",
+   "title": "Competing Function Model Validation",
+   "page": 69,
+   "extra": false
+  },
+  "2.7": {
+   "code": "2.7",
+   "title": "Composition of Functions",
+   "page": 70,
+   "extra": false
+  },
+  "2.8": {
+   "code": "2.8",
+   "title": "Inverse Functions",
+   "page": 72,
+   "extra": false
+  },
+  "2.9": {
+   "code": "2.9",
+   "title": "Logarithmic Expressions",
+   "page": 74,
+   "extra": false
+  },
+  "2.10": {
+   "code": "2.10",
+   "title": "Inverses of Exponential Functions",
+   "page": 75,
+   "extra": false
+  },
+  "2.11": {
+   "code": "2.11",
+   "title": "Logarithmic Functions",
+   "page": 76,
+   "extra": false
+  },
+  "2.12": {
+   "code": "2.12",
+   "title": "Logarithmic Function Manipulation",
+   "page": 77,
+   "extra": false
+  },
+  "2.13": {
+   "code": "2.13",
+   "title": "Exponential and Logarithmic Equations and Inequalities",
+   "page": 78,
+   "extra": false
+  },
+  "2.14": {
+   "code": "2.14",
+   "title": "Logarithmic Function Context and Data Modeling",
+   "page": 79,
+   "extra": false
+  },
+  "2.15": {
+   "code": "2.15",
+   "title": "Semi-log Plots",
+   "page": 80,
+   "extra": false
+  },
+  "3.1": {
+   "code": "3.1",
+   "title": "Periodic Phenomena",
+   "page": 88,
+   "extra": false
+  },
+  "3.2": {
+   "code": "3.2",
+   "title": "Sine, Cosine, and Tangent",
+   "page": 89,
+   "extra": false
+  },
+  "3.3": {
+   "code": "3.3",
+   "title": "Sine and Cosine Function Values",
+   "page": 91,
+   "extra": false
+  },
+  "3.4": {
+   "code": "3.4",
+   "title": "Sine and Cosine Function Graphs",
+   "page": 92,
+   "extra": false
+  },
+  "3.5": {
+   "code": "3.5",
+   "title": "Sinusoidal Functions",
+   "page": 93,
+   "extra": false
+  },
+  "3.6": {
+   "code": "3.6",
+   "title": "Sinusoidal Function Transformations",
+   "page": 94,
+   "extra": false
+  },
+  "3.7": {
+   "code": "3.7",
+   "title": "Sinusoidal Function Context and Data Modeling",
+   "page": 96,
+   "extra": false
+  },
+  "3.8": {
+   "code": "3.8",
+   "title": "The Tangent Function",
+   "page": 97,
+   "extra": false
+  },
+  "3.9": {
+   "code": "3.9",
+   "title": "Inverse Trigonometric Functions",
+   "page": 99,
+   "extra": false
+  },
+  "3.10": {
+   "code": "3.10",
+   "title": "Trigonometric Equations and Inequalities",
+   "page": 100,
+   "extra": false
+  },
+  "3.11": {
+   "code": "3.11",
+   "title": "The Secant, Cosecant, and Cotangent Functions",
+   "page": 101,
+   "extra": false
+  },
+  "3.12": {
+   "code": "3.12",
+   "title": "Equivalent Representations of Trigonometric Functions",
+   "page": 102,
+   "extra": false
+  },
+  "3.13": {
+   "code": "3.13",
+   "title": "Trigonometry and Polar Coordinates",
+   "page": 104,
+   "extra": false
+  },
+  "3.14": {
+   "code": "3.14",
+   "title": "Polar Function Graphs",
+   "page": 106,
+   "extra": false
+  },
+  "3.15": {
+   "code": "3.15",
+   "title": "Rates of Change in Polar Functions",
+   "page": 107,
+   "extra": false
+  },
+  "4.1": {
+   "code": "4.1",
+   "title": "Parametric Functions",
+   "page": 115,
+   "extra": true
+  },
+  "4.2": {
+   "code": "4.2",
+   "title": "Parametric Functions Modeling Planar Motion",
+   "page": 116,
+   "extra": true
+  },
+  "4.3": {
+   "code": "4.3",
+   "title": "Parametric Functions and Rates of Change",
+   "page": 117,
+   "extra": true
+  },
+  "4.4": {
+   "code": "4.4",
+   "title": "Parametrically Defined Circles and Lines",
+   "page": 118,
+   "extra": true
+  },
+  "4.5": {
+   "code": "4.5",
+   "title": "Implicitly Defined Functions",
+   "page": 119,
+   "extra": true
+  },
+  "4.6": {
+   "code": "4.6",
+   "title": "Conic Sections",
+   "page": 120,
+   "extra": true
+  },
+  "4.7": {
+   "code": "4.7",
+   "title": "Parametrization of Implicitly Defined Functions",
+   "page": 121,
+   "extra": true
+  },
+  "4.8": {
+   "code": "4.8",
+   "title": "Vectors",
+   "page": 122,
+   "extra": true
+  },
+  "4.9": {
+   "code": "4.9",
+   "title": "Vector-Valued Functions",
+   "page": 124,
+   "extra": true
+  },
+  "4.10": {
+   "code": "4.10",
+   "title": "Matrices",
+   "page": 125,
+   "extra": true
+  },
+  "4.11": {
+   "code": "4.11",
+   "title": "The Inverse and Determinant of a Matrix",
+   "page": 126,
+   "extra": true
+  },
+  "4.12": {
+   "code": "4.12",
+   "title": "Linear Transformations and Matrices",
+   "page": 127,
+   "extra": true
+  },
+  "4.13": {
+   "code": "4.13",
+   "title": "Matrices as Functions",
+   "page": 128,
+   "extra": true
+  },
+  "4.14": {
+   "code": "4.14",
+   "title": "Matrices Modeling Contexts",
+   "page": 130,
+   "extra": true
+  }
+ },
+ "nodes": [
+  {
+   "c": "1.1.A",
+   "k": "lo",
+   "t": "Describe how the input and output values of a function vary together by comparing function values.",
+   "tp": "1.1"
+  },
+  {
+   "c": "1.1.A.1",
+   "k": "ek",
+   "t": "A function is a mathematical relation that maps a set of input values to a set of output values such that each input value is mapped to exactly one output value. The set of input values is called the domain of the function, and the set of output values is called the range of the function. The variable representing input values is called the independent variable, and the variable representing output values is called the dependent variable. Two functions, f and g, are equal if they have the same domain, and for every input value a in that same domain, both functions yield the same output value (f (a) = g(a)).",
+   "tp": "1.1"
+  },
+  {
+   "c": "1.1.A.2",
+   "k": "ek",
+   "t": "The input and output values of a function vary in tandem according to the function rule, which can be expressed graphically, numerically, analytically, or verbally. The image of an input value is the single output value yielded by the function rule. The preimage of an output value is the set of input values for which the function rule yields that output value.",
+   "tp": "1.1"
+  },
+  {
+   "c": "1.1.A.3",
+   "k": "ek",
+   "t": "A function is increasing over an interval of its domain if, as the input values increase, the output values always increase. That is, for all a and b in the interval, if a < b, then f (a) < f (b).",
+   "tp": "1.1"
+  },
+  {
+   "c": "1.1.A.4",
+   "k": "ek",
+   "t": "A function is decreasing over an interval of its domain if, as the input values increase, the output values always decrease. That is, for all a and b in the interval, if a < b, then f (a) > f (b).",
+   "tp": "1.1"
+  },
+  {
+   "c": "1.1.B",
+   "k": "lo",
+   "t": "Construct a graph representing two quantities that vary with respect to each other in a contextual scenario.",
+   "tp": "1.1"
+  },
+  {
+   "c": "1.1.B.1",
+   "k": "ek",
+   "t": "The graph of a function displays a set of input-output pairs and shows how the values of the function’s input and output values vary.",
+   "tp": "1.1"
+  },
+  {
+   "c": "1.1.B.2",
+   "k": "ek",
+   "t": "A verbal description of the way aspects of phenomena change together can be the basis for constructing a graph.",
+   "tp": "1.1"
+  },
+  {
+   "c": "1.1.B.3",
+   "k": "ek",
+   "t": "The graph of a function is concave up on intervals in which the rate of change is increasing.",
+   "tp": "1.1"
+  },
+  {
+   "c": "1.1.B.4",
+   "k": "ek",
+   "t": "The graph of a function is concave down on intervals in which the rate of change is decreasing.",
+   "tp": "1.1"
+  },
+  {
+   "c": "1.1.B.5",
+   "k": "ek",
+   "t": "The graph intersects the x-axis when the output value is zero. The corresponding input values are said to be zeros of the function.",
+   "tp": "1.1"
+  },
+  {
+   "c": "1.2.A",
+   "k": "lo",
+   "t": "Compare the rates of change at two points using average rates of change near the points.",
+   "tp": "1.2"
+  },
+  {
+   "c": "1.2.B",
+   "k": "lo",
+   "t": "Describe how two quantities vary together at different points and over different intervals of a function.",
+   "tp": "1.2"
+  },
+  {
+   "c": "1.2.A.1",
+   "k": "ek",
+   "t": "The average rate of change of a function over an interval of the function’s domain is the constant rate of change that yields the same change in the output values as the function yielded on that interval of the function’s domain. It is the ratio of the change in the output values to the change in input values over that interval.",
+   "tp": "1.2"
+  },
+  {
+   "c": "1.2.A.2",
+   "k": "ek",
+   "t": "The rate of change of a function at a point quantifies the rate at which output values would change were the input values to change at that point. The rate of change at a point can be approximated by the average rates of change of the function over small intervals containing the point, if such values exist.",
+   "tp": "1.2"
+  },
+  {
+   "c": "1.2.A.3",
+   "k": "ek",
+   "t": "The rates of change at two points can be compared using average rate of change approximations over sufficiently small intervals containing each point, if such values exist.",
+   "tp": "1.2"
+  },
+  {
+   "c": "1.2.B.1",
+   "k": "ek",
+   "t": "Rates of change quantify how two quantities vary together.",
+   "tp": "1.2"
+  },
+  {
+   "c": "1.2.B.2",
+   "k": "ek",
+   "t": "A positive rate of change indicates that as one quantity increases or decreases, the other quantity does the same.",
+   "tp": "1.2"
+  },
+  {
+   "c": "1.2.B.3",
+   "k": "ek",
+   "t": "A negative rate of change indicates that as one quantity increases, the other decreases.",
+   "tp": "1.2"
+  },
+  {
+   "c": "1.3.A",
+   "k": "lo",
+   "t": "Determine the average rates of change for sequences and functions, including linear, quadratic, and other function types.",
+   "tp": "1.3"
+  },
+  {
+   "c": "1.3.B",
+   "k": "lo",
+   "t": "Determine the change in the average rates of change for linear, quadratic, and other function types.",
+   "tp": "1.3"
+  },
+  {
+   "c": "1.3.A.1",
+   "k": "ek",
+   "t": "For a linear function, the average rate of change over any length input-value interval is constant.",
+   "tp": "1.3"
+  },
+  {
+   "c": "1.3.A.2",
+   "k": "ek",
+   "t": "For a quadratic function, the average rates of change over consecutive equal-length input-value intervals can be given by a linear function.",
+   "tp": "1.3"
+  },
+  {
+   "c": "1.3.A.3",
+   "k": "ek",
+   "t": "The average rate of change of a function f over the closed interval[ ]is the slope of the secant line from the point(a,f (a)) to)b,f)b ((.",
+   "tp": "1.3"
+  },
+  {
+   "c": "1.3.B.1",
+   "k": "ek",
+   "t": "For a linear function, since the average rates of change over consecutive equal-length input-value intervals can be given by a constant function, these average rates of change for a linear function are changing at a rate of zero.",
+   "tp": "1.3"
+  },
+  {
+   "c": "1.3.B.2",
+   "k": "ek",
+   "t": "For a quadratic function, since the average rates of change over consecutive equal-length input-value intervals can be given by a linear function, these average rates of change for a quadratic function are changing at a constant rate.",
+   "tp": "1.3"
+  },
+  {
+   "c": "1.3.B.3",
+   "k": "ek",
+   "t": "When the average rate of change over equal-length input-value intervals is increasing for all small-length intervals, the graph of the function is concave up. When the average rate of change over equal-length input-value intervals is decreasing for all small-length intervals, the graph of the function is concave down.",
+   "tp": "1.3"
+  },
+  {
+   "c": "1.4.A",
+   "k": "lo",
+   "t": "Identify key characteristics of polynomial functions related to rates of change.",
+   "tp": "1.4"
+  },
+  {
+   "c": "1.4.A.1",
+   "k": "ek",
+   "t": "A nonconstant polynomial function of x is any function representation that is equivalent to the analytical form n n-1 n-2 p() =x_na+_{n-}x_1a_{n-2 }x+ ⋯a x + a_2+x_1a+_0, wherex a n is a positive integer, a_iis a real number for each i from 0 to n, and a_n is nonzero. The polynomial has degree n, n the leading term is anx, and the leading coefficient is a_n. A nonzero constant is also a polynomial function of degree zero.",
+   "tp": "1.4"
+  },
+  {
+   "c": "1.4.A.2",
+   "k": "ek",
+   "t": "Where a polynomial function switches between increasing and decreasing, or at the included endpoint of a polynomial with a restricted domain, the polynomial function will have a local, or relative, maximum or minimum output value. If any local maximum is greater than all other function output values, then that local maximum is a global, or absolute, maximum. Similarly, if any local minimum is less than all other function output values, then that local minimum is a global, or absolute, minimum.",
+   "tp": "1.4"
+  },
+  {
+   "c": "1.4.A.3",
+   "k": "ek",
+   "t": "Between every two distinct real zeros of a nonconstant polynomial function, there must be at least one input value corresponding to a local maximum or local minimum.",
+   "tp": "1.4"
+  },
+  {
+   "c": "1.4.A.4",
+   "k": "ek",
+   "t": "A polynomial function of even degree has either a global maximum or a global minimum. For a quadratic function, the global maximum or global minimum occurs at the vertex.",
+   "tp": "1.4"
+  },
+  {
+   "c": "1.4.A.5",
+   "k": "ek",
+   "t": "Points of inflection of a polynomial function occur at input values where the rate of change of the function changes from increasing to decreasing or from decreasing to increasing. This occurs where the graph of a polynomial function changes from concave up to concave down or from concave down to concave up.",
+   "tp": "1.4"
+  },
+  {
+   "c": "1.5.A",
+   "k": "lo",
+   "t": "Identify key characteristics of a polynomial function related to its zeros when suitable factorizations are available or with technology.",
+   "tp": "1.5"
+  },
+  {
+   "c": "1.5.A.1",
+   "k": "ek",
+   "t": "If a is a complex number and p (a) = 0, then a is called a zero of the polynomial function p, or a root of p (x) = 0. If a is a real number, then)x - a(is a linear factor of p if and only if a is a zero of p.",
+   "tp": "1.5"
+  },
+  {
+   "c": "1.5.A.2",
+   "k": "ek",
+   "t": "If a linear factor(x - a) is repeated n times, the corresponding zero of the polynomial function has a multiplicity n. A polynomial function of degree n has exactly n complex zeros when counting multiplicities.",
+   "tp": "1.5"
+  },
+  {
+   "c": "1.5.A.3",
+   "k": "ek",
+   "t": "If a is a real zero of a polynomial function p, then the graph of y = p (x) has an x-intercept at the point(a, 0). Consequently, real zeros of a polynomial can be endpoints for intervals satisfying polynomial inequalities.",
+   "tp": "1.5"
+  },
+  {
+   "c": "1.5.A.4",
+   "k": "ek",
+   "t": "If a + bi is a non-real zero of a polynomial function p, then its conjugate a − bi is also a zero of p.",
+   "tp": "1.5"
+  },
+  {
+   "c": "1.5.A.5",
+   "k": "ek",
+   "t": "If the real zero, a, of a polynomial function has even multiplicity, then the signs of the output values are the same for input values near x = a. For these polynomial functions, the graph will be tangent to the x-axis at x = a.",
+   "tp": "1.5"
+  },
+  {
+   "c": "1.5.B",
+   "k": "lo",
+   "t": "Determine if a polynomial function is even or odd.",
+   "tp": "1.5"
+  },
+  {
+   "c": "1.5.A.6",
+   "k": "ek",
+   "t": "The degree of a polynomial function can be found by examining the successive differences of the output values over equal-interval input values. The degree of the polynomial function is equal to the least value n for which the successive nth differences are constant.",
+   "tp": "1.5"
+  },
+  {
+   "c": "1.5.B.1",
+   "k": "ek",
+   "t": "An even function is graphically symmetric over the line x = 0 and analytically has the property f () -=x ()f. If xn is even, then a polynomial of n the form p() =x_na, where x n ≥ 1 and a_n≠ 0, is an even function.",
+   "tp": "1.5"
+  },
+  {
+   "c": "1.5.B.2",
+   "k": "ek",
+   "t": "An odd function is graphically symmetric about the point(0,0) and analytically has the property f () =- -x (). Iff nxis odd, then a polynomial n of the form p() =x_na, where x n ≥ 1 and an ≠ 0, is an odd function.",
+   "tp": "1.5"
+  },
+  {
+   "c": "1.6.A",
+   "k": "lo",
+   "t": "Describe end behaviors of polynomial functions.",
+   "tp": "1.6"
+  },
+  {
+   "c": "1.6.A.1",
+   "k": "ek",
+   "t": "As input values of a nonconstant polynomial function increase without bound, the output values will either increase or decrease without bound. The corresponding mathematical notation is lim p (x) = ∞ or lim p (x) = -∞. x→∞ x→∞",
+   "tp": "1.6"
+  },
+  {
+   "c": "1.6.A.2",
+   "k": "ek",
+   "t": "As input values of a nonconstant polynomial function decrease without bound, the output values will either increase or decrease without bound. The corresponding mathematical notation is lim p (x) = ∞or lim p (x) = -∞. x→-∞ x→-∞",
+   "tp": "1.6"
+  },
+  {
+   "c": "1.6.A.3",
+   "k": "ek",
+   "t": "The degree and sign of the leading term of a polynomial determines the end behavior of the polynomial function, because as the input values increase or decrease without bound, the values of the leading term dominate the values of all lower-degree terms.",
+   "tp": "1.6"
+  },
+  {
+   "c": "1.7.A",
+   "k": "lo",
+   "t": "Describe end behaviors of rational functions.",
+   "tp": "1.7"
+  },
+  {
+   "c": "1.7.A.1",
+   "k": "ek",
+   "t": "A rational function is analytically represented as a quotient of two polynomial functions and gives a measure of the relative size of the polynomial function in the numerator compared to the polynomial function in the denominator for each value in the rational function’s domain.",
+   "tp": "1.7"
+  },
+  {
+   "c": "1.7.A.2",
+   "k": "ek",
+   "t": "The end behavior of a rational function will be affected most by the polynomial with the greater degree, as its values will dominate the values of the rational function for input values of large magnitude. For input values of large magnitude, a polynomial is dominated by its leading term. Therefore, the end behavior of a rational function can be understood by examining the corresponding quotient of the leading terms.",
+   "tp": "1.7"
+  },
+  {
+   "c": "1.7.A.3",
+   "k": "ek",
+   "t": "If the polynomial in the numerator dominates the polynomial in the denominator for input values of large magnitude, then the quotient of the leading terms is a nonconstant polynomial, and the original rational function has the end behavior of that polynomial. If that polynomial is linear, then the graph of the rational function has a slant asymptote parallel to the graph of the line.",
+   "tp": "1.7"
+  },
+  {
+   "c": "1.7.A.4",
+   "k": "ek",
+   "t": "If neither polynomial in a rational function dominates the other for input values of large magnitude, then the quotient of the leading terms is a constant, and that constant indicates the location of a horizontal asymptote of the graph of the original rational function.",
+   "tp": "1.7"
+  },
+  {
+   "c": "1.7.A.5",
+   "k": "ek",
+   "t": "If the polynomial in the denominator dominates the polynomial in the numerator for input values of large magnitude, then the quotient of the leading terms is a rational function with a constant in the numerator and nonconstant polynomial in the denominator, and the graph of the original rational function has a horizontal asymptote at y = 0.",
+   "tp": "1.7"
+  },
+  {
+   "c": "1.7.A.6",
+   "k": "ek",
+   "t": "When the graph of a rational function r has a horizontal asymptote at y = b, where b is a constant, the output values of the rational function get arbitrarily close to b and stay arbitrarily close to b as input values increase or decrease without bound. The corresponding mathematical notation is lim r (x) = b or lim r x b.^{x→∞} () = x→-∞",
+   "tp": "1.7"
+  },
+  {
+   "c": "1.8.A",
+   "k": "lo",
+   "t": "Determine the zeros of rational functions.",
+   "tp": "1.8"
+  },
+  {
+   "c": "1.8.A.1",
+   "k": "ek",
+   "t": "The real zeros of a rational function correspond to the real zeros of the numerator for such values in its domain.",
+   "tp": "1.8"
+  },
+  {
+   "c": "1.8.A.2",
+   "k": "ek",
+   "t": "The real zeros of both polynomial functions of a rational function r are endpoints or asymptotes for intervals satisfying the rational function inequalities r (x) ≥ 0 or r (x) ≤ 0.",
+   "tp": "1.8"
+  },
+  {
+   "c": "1.9.A",
+   "k": "lo",
+   "t": "Determine vertical asymptotes of graphs of rational functions.",
+   "tp": "1.9"
+  },
+  {
+   "c": "1.9.A.1",
+   "k": "ek",
+   "t": "If the value a is a real zero of the polynomial function in the denominator of a rational function and is not also a real zero of the polynomial function in the numerator, then the graph of the rational function has a vertical asymptote at x = a. Furthermore, a vertical asymptote also occurs at x = a if the multiplicity of a as a real zero in the denominator is greater than its multiplicity as a real zero in the numerator.",
+   "tp": "1.9"
+  },
+  {
+   "c": "1.9.A.2",
+   "k": "ek",
+   "t": "Near a vertical asymptote, x = a, of a rational function, the values of the polynomial function in the denominator are arbitrarily close to zero, so the values of the rational function r increase or decrease without bound. The corresponding mathematical notation is lim r (x) = ∞ or x→a^{+} lim r (x) = -∞ for input values near a and x→a^{+} greater than a, and lim r (x) = ∞ or x→a^{-} lim r (x) = -∞ for input values near a and less x→a^{-} than a.",
+   "tp": "1.9"
+  },
+  {
+   "c": "1.10.A",
+   "k": "lo",
+   "t": "Determine holes in graphs of rational functions.",
+   "tp": "1.10"
+  },
+  {
+   "c": "1.10.A.1",
+   "k": "ek",
+   "t": "If the multiplicity of a real zero in the numerator is greater than or equal to its multiplicity in the denominator, then the graph of the rational function has a hole at the corresponding input value.",
+   "tp": "1.10"
+  },
+  {
+   "c": "1.10.A.2",
+   "k": "ek",
+   "t": "If the graph of a rational function r has a hole at x = c, then the location of the hole can be determined by examining the output values corresponding to input values sufficiently close to c. If input values sufficiently close to c correspond to output values arbitrarily close to L, then the hole is located at the point with coordinates(c, L). The corresponding mathematical notation is lim r (x) = L. It should be noted that x→c lim r (x) = lim r (x) = lim r (x) = L. x→^{- }c →^{+ }x cx→c",
+   "tp": "1.10"
+  },
+  {
+   "c": "1.11.A",
+   "k": "lo",
+   "t": "Rewrite polynomial and rational expressions in equivalent forms.",
+   "tp": "1.11"
+  },
+  {
+   "c": "1.11.B",
+   "k": "lo",
+   "t": "Determine the quotient of two polynomial functions using long division.",
+   "tp": "1.11"
+  },
+  {
+   "c": "1.11.A.1",
+   "k": "ek",
+   "t": "Because the factored form of a polynomial or rational function readily provides information about real zeros, it can reveal information about x-intercepts, asymptotes, holes, domain, and range.",
+   "tp": "1.11"
+  },
+  {
+   "c": "1.11.A.2",
+   "k": "ek",
+   "t": "The standard form of a polynomial or rational function can reveal information about end behaviors of the function.",
+   "tp": "1.11"
+  },
+  {
+   "c": "1.11.A.3",
+   "k": "ek",
+   "t": "The information extracted from different analytic representations of the same polynomial or rational function can be used to answer questions in context.",
+   "tp": "1.11"
+  },
+  {
+   "c": "1.11.B.1",
+   "k": "ek",
+   "t": "Polynomial long division is an algebraic process similar to numerical long division involving a quotient and remainder. If the polynomial f is divided by the polynomial g, then f can be rewritten as f () =x ()g (x) q+ ()x, wherer xq is the quotient, r is the remainder, and the degree of r is less than the degree of g.",
+   "tp": "1.11"
+  },
+  {
+   "c": "1.11.B.2",
+   "k": "ek",
+   "t": "The result of polynomial long division is helpful in finding equations of slant asymptotes for graphs of rational functions.",
+   "tp": "1.11"
+  },
+  {
+   "c": "1.11.C",
+   "k": "lo",
+   "t": "Rewrite the repeated product of binomials using the binomial theorem.",
+   "tp": "1.11"
+  },
+  {
+   "c": "1.11.C.1",
+   "k": "ek",
+   "t": "The binomial theorem utilizes the entries in a single row of Pascal’s Triangle to more easily n expand expressions of the form(a + b), including polynomial functions of the form n p(x) (x= c)+, where c is a constant.",
+   "tp": "1.11"
+  },
+  {
+   "c": "1.12.A",
+   "k": "lo",
+   "t": "Construct a function that is an additive and/or multiplicative transformation of another function.",
+   "tp": "1.12"
+  },
+  {
+   "c": "1.12.A.1",
+   "k": "ek",
+   "t": "The function g (x) = (f)x + k is an additive transformation of the function f that results in a vertical translation of the graph of f by k units.",
+   "tp": "1.12"
+  },
+  {
+   "c": "1.12.A.2",
+   "k": "ek",
+   "t": "The function g (x) (x=)is an additive+f h transformation of the function f that results in a horizontal translation of the graph of f by−h units.",
+   "tp": "1.12"
+  },
+  {
+   "c": "1.12.A.3",
+   "k": "ek",
+   "t": "The function g () =x (a), wheref x a ≠ 0, is a multiplicative transformation of the function f that results in a vertical dilation of the graph of f by a factor of a. If a < 0, the transformation involves a reflection over the x-axis.",
+   "tp": "1.12"
+  },
+  {
+   "c": "1.12.A.4",
+   "k": "ek",
+   "t": "The function g () =x (f), wherebx b ≠ 0, is a multiplicative transformation of the function f that results in a horizontal dilation of the graph of f by a factor of. If b < 0, the b transformation involves a reflection over the y-axis.",
+   "tp": "1.12"
+  },
+  {
+   "c": "1.12.A.5",
+   "k": "ek",
+   "t": "Additive and multiplicative transformations can be combined, resulting in combinations of horizontal and vertical translations and dilations. The set of points prior to the transformations is called the preimage of the transformations, and the set of points after the transformations is called the image of the transformations.",
+   "tp": "1.12"
+  },
+  {
+   "c": "1.12.A.6",
+   "k": "ek",
+   "t": "The domain and range of a function that is a transformation of a parent function may be different from those of the parent function.",
+   "tp": "1.12"
+  },
+  {
+   "c": "1.13.A",
+   "k": "lo",
+   "t": "Identify an appropriate function type to construct a function model for a given scenario.",
+   "tp": "1.13"
+  },
+  {
+   "c": "1.13.A.1",
+   "k": "ek",
+   "t": "Linear functions model data sets or aspects of contextual scenarios that demonstrate roughly constant rates of change.",
+   "tp": "1.13"
+  },
+  {
+   "c": "1.13.A.2",
+   "k": "ek",
+   "t": "Quadratic functions model data sets or aspects of contextual scenarios that demonstrate roughly linear rates of change, or data sets that are roughly symmetric with a unique maximum or minimum value.",
+   "tp": "1.13"
+  },
+  {
+   "c": "1.13.A.3",
+   "k": "ek",
+   "t": "Geometric contexts involving area or two dimensions can often be modeled by quadratic functions. Geometric contexts involving volume or three dimensions can often be modeled by cubic functions.",
+   "tp": "1.13"
+  },
+  {
+   "c": "1.13.A.4",
+   "k": "ek",
+   "t": "Polynomial functions model data sets or contextual scenarios with multiple real zeros or multiple maxima or minima.",
+   "tp": "1.13"
+  },
+  {
+   "c": "1.13.A.5",
+   "k": "ek",
+   "t": "A polynomial function of degree n models data sets or contextual scenarios that demonstrate roughly constant nonzero nth differences.",
+   "tp": "1.13"
+  },
+  {
+   "c": "1.13.A.6",
+   "k": "ek",
+   "t": "A polynomial function of degree n or less can be used to model a graph of n + 1 points with distinct input values.",
+   "tp": "1.13"
+  },
+  {
+   "c": "1.13.B",
+   "k": "lo",
+   "t": "Describe assumptions and restrictions related to building a function model.",
+   "tp": "1.13"
+  },
+  {
+   "c": "1.13.A.7",
+   "k": "ek",
+   "t": "A piecewise-defined function consists of a set of functions defined over nonoverlapping domain intervals and is useful for modeling a data set or contextual scenario that demonstrates different characteristics over different intervals.",
+   "tp": "1.13"
+  },
+  {
+   "c": "1.13.B.1",
+   "k": "ek",
+   "t": "A model may have underlying assumptions about what is consistent in the model.",
+   "tp": "1.13"
+  },
+  {
+   "c": "1.13.B.2",
+   "k": "ek",
+   "t": "A model may have underlying assumptions about how quantities change together.",
+   "tp": "1.13"
+  },
+  {
+   "c": "1.13.B.3",
+   "k": "ek",
+   "t": "A model may require domain restrictions based on mathematical clues, contextual clues, or extreme values in the data set.",
+   "tp": "1.13"
+  },
+  {
+   "c": "1.13.B.4",
+   "k": "ek",
+   "t": "A model may require range restrictions, such as rounding values, based on mathematical clues, contextual clues, or extreme values in the data set.",
+   "tp": "1.13"
+  },
+  {
+   "c": "1.14.A",
+   "k": "lo",
+   "t": "Construct a linear, quadratic, cubic, quartic, polynomial of degree n, or related piecewise-defined function model.",
+   "tp": "1.14"
+  },
+  {
+   "c": "1.14.B",
+   "k": "lo",
+   "t": "Construct a rational function model based on a context.",
+   "tp": "1.14"
+  },
+  {
+   "c": "1.14.C",
+   "k": "lo",
+   "t": "Apply a function model to answer questions about a data set or contextual scenario.",
+   "tp": "1.14"
+  },
+  {
+   "c": "1.14.A.1",
+   "k": "ek",
+   "t": "A model can be constructed based on restrictions identified in a mathematical or contextual scenario.",
+   "tp": "1.14"
+  },
+  {
+   "c": "1.14.A.2",
+   "k": "ek",
+   "t": "A model of a data set or a contextual scenario can be constructed using transformations of the parent function.",
+   "tp": "1.14"
+  },
+  {
+   "c": "1.14.A.3",
+   "k": "ek",
+   "t": "A model of a data set can be constructed using technology and regressions, including linear, quadratic, cubic, and quartic regressions.",
+   "tp": "1.14"
+  },
+  {
+   "c": "1.14.A.4",
+   "k": "ek",
+   "t": "A piecewise-defined function model can be constructed through a combination of modeling techniques.",
+   "tp": "1.14"
+  },
+  {
+   "c": "1.14.B.1",
+   "k": "ek",
+   "t": "Data sets and aspects of contextual scenarios involving quantities that are inversely proportional can often be modeled by rational functions. For example, the magnitudes of both gravitational force and electromagnetic force between objects are inversely proportional to the objects’ squared distance.",
+   "tp": "1.14"
+  },
+  {
+   "c": "1.14.C.1",
+   "k": "ek",
+   "t": "A model can be used to draw conclusions about the modeled data set or contextual scenario, including answering key questions and predicting values, rates of change, average rates of change, and changing rates of change. Appropriate units of measure should be extracted or inferred from the given context.",
+   "tp": "1.14"
+  },
+  {
+   "c": "2.1.A",
+   "k": "lo",
+   "t": "Express arithmetic sequences found in mathematical and contextual scenarios as functions of the whole numbers.",
+   "tp": "2.1"
+  },
+  {
+   "c": "2.1.B",
+   "k": "lo",
+   "t": "Express geometric sequences found in mathematical and contextual scenarios as functions of the whole numbers.",
+   "tp": "2.1"
+  },
+  {
+   "c": "2.1.A.1",
+   "k": "ek",
+   "t": "A sequence is a function from the whole numbers to the real numbers. Consequently, the graph of a sequence consists of discrete points instead of a curve.",
+   "tp": "2.1"
+  },
+  {
+   "c": "2.1.A.2",
+   "k": "ek",
+   "t": "Successive terms in an arithmetic sequence have a common difference, or constant rate of change.",
+   "tp": "2.1"
+  },
+  {
+   "c": "2.1.A.3",
+   "k": "ek",
+   "t": "The general term of an arithmetic sequence with a common difference d is denoted by a_n and is given by a_n=_0a, where+ a_0dis then initial value, or by a_n=_k+a (d), wheren - k a_kis the kth term of the sequence.",
+   "tp": "2.1"
+  },
+  {
+   "c": "2.1.B.1",
+   "k": "ek",
+   "t": "Successive terms in an increasing or decreasing geometric sequence have a common ratio, or constant proportional change.",
+   "tp": "2.1"
+  },
+  {
+   "c": "2.1.B.2",
+   "k": "ek",
+   "t": "The general term of an increasing or decreasing geometric sequence with a common ratio r is denoted by g_nand is given n by g_n= g_0r, where g_0is the initial value, or by (n-k) g_n= g_kr, where g_kis the kth term of the sequence.",
+   "tp": "2.1"
+  },
+  {
+   "c": "2.1.B.3",
+   "k": "ek",
+   "t": "An increasing arithmetic sequence increases equally with each step, whereas an increasing geometric sequence of positive values increases by a larger amount with each successive step.",
+   "tp": "2.1"
+  },
+  {
+   "c": "2.2.A",
+   "k": "lo",
+   "t": "Construct functions of the real numbers that are comparable to arithmetic and geometric sequences.",
+   "tp": "2.2"
+  },
+  {
+   "c": "2.2.A.1",
+   "k": "ek",
+   "t": "Linear functions of the form f () =x + b mx are similar to arithmetic sequences of the form a_n=_0+a, as both can be expressed as andn initial value (b or a0) plus repeated addition of a constant rate of change, the slope (m or d).",
+   "tp": "2.2"
+  },
+  {
+   "c": "2.2.A.2",
+   "k": "ek",
+   "t": "Similar to arithmetic sequences of the form a_n=_k+a (d-), which are based on an k known difference, d, and a kth term, linear functions can be expressed in the form f () =x_i+y (-m_ix)based on a knownx slope, m, and a point,(x_i, y_i).",
+   "tp": "2.2"
+  },
+  {
+   "c": "2.2.A.3",
+   "k": "ek",
+   "t": "x Exponential functions of the form f () =x ab are similar to geometric sequences of the n form g_n= g_0r, as both can be expressed as an initial value (a or g 0) times repeated multiplication by a constant ratio (b or r).",
+   "tp": "2.2"
+  },
+  {
+   "c": "2.2.A.4",
+   "k": "ek",
+   "t": "Similar to geometric sequences of the form (n-k) g_n= g_kr, which are based on a known ratio, r, and a kth term, exponential functions (x-xi) can be expressed in the form f (x) = y_ib based on a known ratio, b, and a point,(x_i, y_i).",
+   "tp": "2.2"
+  },
+  {
+   "c": "2.2.A.5",
+   "k": "ek",
+   "t": "Sequences and their corresponding functions may have different domains.",
+   "tp": "2.2"
+  },
+  {
+   "c": "2.2.B",
+   "k": "lo",
+   "t": "Describe similarities and differences between linear and exponential functions.",
+   "tp": "2.2"
+  },
+  {
+   "c": "2.2.B.1",
+   "k": "ek",
+   "t": "Over equal-length input-value intervals, if the output values of a function change at constant rate, then the function is linear; if the output values of a function change proportionally, then the function is exponential. For an exponential function, the known ratio cannot be 0 or 1.",
+   "tp": "2.2"
+  },
+  {
+   "c": "2.2.B.2",
+   "k": "ek",
+   "t": "Linear functions of the form f () =x + b mx and exponential functions of the form x f () =x can both be expressedab analytically in terms of an initial value and a constant involved with change. However, linear functions are based on addition, while exponential functions are based on multiplication.",
+   "tp": "2.2"
+  },
+  {
+   "c": "2.2.B.3",
+   "k": "ek",
+   "t": "Arithmetic sequences, linear functions, geometric sequences, and exponential functions all have the property that they can be determined by two distinct sequence or function values.",
+   "tp": "2.2"
+  },
+  {
+   "c": "2.3.A",
+   "k": "lo",
+   "t": "Identify key characteristics of exponential functions.",
+   "tp": "2.3"
+  },
+  {
+   "c": "2.3.A.1",
+   "k": "ek",
+   "t": "The general form of an exponential function is x f () =x, with theab initial value a, where a ≠ 0, and the base b, where b > 0, and b ≠ 1. When a > 0 and b > 1, the exponential function is said to demonstrate exponential growth. When a > 0 and 0 < b <, the exponential function is1 said to demonstrate exponential decay.",
+   "tp": "2.3"
+  },
+  {
+   "c": "2.3.A.2",
+   "k": "ek",
+   "t": "When the natural numbers are input values in an exponential function, the input value specifies the number of factors of the base to be applied to the function’s initial value. The domain of an exponential function is all real numbers.",
+   "tp": "2.3"
+  },
+  {
+   "c": "2.3.A.3",
+   "k": "ek",
+   "t": "Because the output values of exponential functions in general form are proportional over equal-length input-value intervals, exponential functions are always increasing or always decreasing, and their graphs are always concave up or always concave down. Consequently, exponential functions do not have extrema except on a closed interval, and their graphs do not have points of inflection.",
+   "tp": "2.3"
+  },
+  {
+   "c": "2.3.A.4",
+   "k": "ek",
+   "t": "If the output values of the function f are not proportional over equal-length input-value intervals, but the output values of an additive transformation of f are proportional over equal-length input-value intervals, then f can be modeled by an additive transformation of an exponential function.",
+   "tp": "2.3"
+  },
+  {
+   "c": "2.3.A.5",
+   "k": "ek",
+   "t": "For an exponential function in general form, as the input values increase or decrease without bound, the output values will increase or decrease without bound or will get arbitrarily close to zero. That is, for an exponential x function in general form, lim ab = ∞, x→±∞ x x lim ab = -∞, or lim ab = 0. x→±∞ x→±∞",
+   "tp": "2.3"
+  },
+  {
+   "c": "2.4.A",
+   "k": "lo",
+   "t": "Rewrite exponential expressions in equivalent forms.",
+   "tp": "2.4"
+  },
+  {
+   "c": "2.4.A.1",
+   "k": "ek",
+   "t": "The product property for exponents states m n (m+n) that b b =. Graphically, this property b implies that every horizontal translation (x+k) of an exponential function, f () =xb, is equivalent to a vertical dilation, (x+k) x k x k f () =x b =, whereb b a= =abb.",
+   "tp": "2.4"
+  },
+  {
+   "c": "2.4.A.2",
+   "k": "ek",
+   "t": "The power property for exponents states m n (mn) that(b) =. Graphically, this property b implies that every horizontal dilation of (cx) an exponential function, f () =xb, is equivalent to a change of the base of an c x c exponential function, f () = x(b), where b is a constant and c ≠ 0.",
+   "tp": "2.4"
+  },
+  {
+   "c": "2.4.A.3",
+   "k": "ek",
+   "t": "The negative exponent property states that -n 1 b =. n b",
+   "tp": "2.4"
+  },
+  {
+   "c": "2.4.A.4",
+   "k": "ek",
+   "t": "The value of an exponential expression involving an exponential unit fraction, such as (1/k) b where k is a natural number, is the kth root of b, when it exists.",
+   "tp": "2.4"
+  },
+  {
+   "c": "2.5.A",
+   "k": "lo",
+   "t": "Construct a model for situations involving proportional output values over equal-length input-value intervals.",
+   "tp": "2.5"
+  },
+  {
+   "c": "2.5.A.1",
+   "k": "ek",
+   "t": "Exponential functions model growth patterns where successive output values over equal-length input-value intervals are proportional. When the input values are whole numbers, exponential functions model situations of repeated multiplication of a constant to an initial value.",
+   "tp": "2.5"
+  },
+  {
+   "c": "2.5.A.2",
+   "k": "ek",
+   "t": "A constant may need to be added to the dependent variable values of a data set to reveal a proportional growth pattern.",
+   "tp": "2.5"
+  },
+  {
+   "c": "2.5.A.3",
+   "k": "ek",
+   "t": "An exponential function model can be constructed from an appropriate ratio and initial value or from two input-output pairs. The initial value and the base can be found by solving a system of equations resulting from the two input-output pairs.",
+   "tp": "2.5"
+  },
+  {
+   "c": "2.5.A.4",
+   "k": "ek",
+   "t": "Exponential function models can be constructed by applying transformations to x f (x) = ab based on characteristics of a contextual scenario or data set.",
+   "tp": "2.5"
+  },
+  {
+   "c": "2.5.A.5",
+   "k": "ek",
+   "t": "Exponential function models can be constructed for a data set with technology using exponential regressions.",
+   "tp": "2.5"
+  },
+  {
+   "c": "2.5.A.6",
+   "k": "ek",
+   "t": "The natural base e, which is approximately 2.718, is often used as the base in exponential functions that model contextual scenarios.",
+   "tp": "2.5"
+  },
+  {
+   "c": "2.5.B",
+   "k": "lo",
+   "t": "Apply exponential models to answer questions about a data set or contextual scenario.",
+   "tp": "2.5"
+  },
+  {
+   "c": "2.5.B.1",
+   "k": "ek",
+   "t": "For an exponential model in general form x f (x) = ab, the base of the exponent, b, can be understood as a growth factor in successive unit changes in the input values and is related to a percent change in context.",
+   "tp": "2.5"
+  },
+  {
+   "c": "2.5.B.2",
+   "k": "ek",
+   "t": "Equivalent forms of an exponential function can reveal different properties of the function. For example, if d represents number of days, d then the base of f (d) = 2 indicates that the quantity increases by a factor of 2 every 7 (d/7) day, but the equivalent form f (d) = (2) indicates that the quantity increases by a factor of 2 every week.",
+   "tp": "2.5"
+  },
+  {
+   "c": "2.5.B.3",
+   "k": "ek",
+   "t": "Exponential models can be used to predict values for the dependent variable, depending on the contextual constraints on the domain, and may be used to determine values of the independent variable.",
+   "tp": "2.5"
+  },
+  {
+   "c": "2.6.A",
+   "k": "lo",
+   "t": "Construct linear, quadratic, and exponential models based on a data set.",
+   "tp": "2.6"
+  },
+  {
+   "c": "2.6.B",
+   "k": "lo",
+   "t": "Validate a model constructed from a data set.",
+   "tp": "2.6"
+  },
+  {
+   "c": "2.6.A.1",
+   "k": "ek",
+   "t": "Two variables in a data set that demonstrate a slightly changing rate of change can be modeled by linear, quadratic, and exponential function models.",
+   "tp": "2.6"
+  },
+  {
+   "c": "2.6.A.2",
+   "k": "ek",
+   "t": "Models can be compared based on contextual clues and applicability to determine which model is most appropriate.",
+   "tp": "2.6"
+  },
+  {
+   "c": "2.6.B.1",
+   "k": "ek",
+   "t": "For a given value of an independent variable, a residual of a regression is the actual value of the dependent variable value minus the value predicted by the function regression model. A residual plot is a graphical representation of the residuals of a regression, with the residuals on the vertical axis and the independent variable on the horizontal axis. A model is justified as appropriate for a data set if the residual plot appears without pattern.",
+   "tp": "2.6"
+  },
+  {
+   "c": "2.6.B.2",
+   "k": "ek",
+   "t": "For given values of an independent variable, the errors in a model can relate to the signed differences in the values of the dependent variable predicted by the function regression model and the actual values OR the unsigned absolute values of the residuals. Errors may reveal that the model underestimates or overestimates actual values on a given input-value interval. The data set and context can provide clues as to whether underestimates or overestimates are preferred on a given input-value interval.",
+   "tp": "2.6"
+  },
+  {
+   "c": "2.7.A",
+   "k": "lo",
+   "t": "Evaluate the composition of two or more functions for given values.",
+   "tp": "2.7"
+  },
+  {
+   "c": "2.7.A.1",
+   "k": "ek",
+   "t": "If f and g are functions, the composite function f ∘ g maps a set of input values to a set of output values such that the output values of g are used as input values of f. For this reason, the domain of the composite function is restricted to those input values of g for which the corresponding output value is in the domain of f.(f ∘ g)(x) can also be represented as f (g (x).)",
+   "tp": "2.7"
+  },
+  {
+   "c": "2.7.A.2",
+   "k": "ek",
+   "t": "Values for the composite function f ∘ g can be calculated or estimated from the graphical, numerical, analytical, or verbal representations of f and g by using output values from g as input values for f.",
+   "tp": "2.7"
+  },
+  {
+   "c": "2.7.A.3",
+   "k": "ek",
+   "t": "The composition of functions is not commutative; that is, f ∘ g and g ∘ f are typically different functions; therefore, f (g(x) and)g(f (x) are typically different) values.",
+   "tp": "2.7"
+  },
+  {
+   "c": "2.7.A.4",
+   "k": "ek",
+   "t": "If the function f () =x is composed withx any function g, the resulting composite function is the same as g; that is, g (f (x) =)(f (gx) =)(). The functiong x f () =x is called thex identity function. When composing two functions, the identity function acts in the same way as 0, the additive identity, when adding two numbers and 1, the multiplicative identity, when multiplying two numbers.",
+   "tp": "2.7"
+  },
+  {
+   "c": "2.7.B",
+   "k": "lo",
+   "t": "Construct a representation of the composition of two or more functions.",
+   "tp": "2.7"
+  },
+  {
+   "c": "2.7.C",
+   "k": "lo",
+   "t": "Rewrite a given function as a composition of two or more functions.",
+   "tp": "2.7"
+  },
+  {
+   "c": "2.7.B.1",
+   "k": "ek",
+   "t": "Function composition is useful for relating two quantities that are not directly related by an existing formula.",
+   "tp": "2.7"
+  },
+  {
+   "c": "2.7.B.2",
+   "k": "ek",
+   "t": "When analytic representations of the functions f and g are available, an analytic representation of f (g)x(can be constructed by substituting) g (x) for every instance of x in f.",
+   "tp": "2.7"
+  },
+  {
+   "c": "2.7.B.3",
+   "k": "ek",
+   "t": "A numerical or graphical representation of f ∘ g can often be constructed by calculating or estimating values for x f, ((g)x(.))",
+   "tp": "2.7"
+  },
+  {
+   "c": "2.7.C.1",
+   "k": "ek",
+   "t": "Functions given analytically can often be decomposed into less complicated functions. When properly decomposed, the variable in one function should replace each instance of the function with which it was composed.",
+   "tp": "2.7"
+  },
+  {
+   "c": "2.7.C.2",
+   "k": "ek",
+   "t": "An additive transformation of a function, f, that results in vertical and horizontal translations can be understood as the composition of g () =x + x withk f.",
+   "tp": "2.7"
+  },
+  {
+   "c": "2.7.C.3",
+   "k": "ek",
+   "t": "A multiplicative transformation of a function, f, that results in vertical and horizontal dilations can be understood as the composition of g () =x withkx f.",
+   "tp": "2.7"
+  },
+  {
+   "c": "2.8.A",
+   "k": "lo",
+   "t": "Determine the input-output pairs of the inverse of a function.",
+   "tp": "2.8"
+  },
+  {
+   "c": "2.8.B",
+   "k": "lo",
+   "t": "Determine the inverse of a function on an invertible domain.",
+   "tp": "2.8"
+  },
+  {
+   "c": "2.8.A.1",
+   "k": "ek",
+   "t": "On a specified domain, a function, f, has an inverse function, or is invertible, if each output value of f is mapped from a unique input value. The domain of a function may be restricted in many ways to make the function invertible.",
+   "tp": "2.8"
+  },
+  {
+   "c": "2.8.A.2",
+   "k": "ek",
+   "t": "An inverse function can be thought of as a reverse mapping of the function. An inverse −1 function, f, maps the output values of a function, f, on its invertible domain to their corresponding input values; that is, if f () =a, b -1 then f () =b. Alternately, on its invertiblea domain, if a function consists of input-output pairs(a, b), then the inverse function consists of input-output pairs(b, a).",
+   "tp": "2.8"
+  },
+  {
+   "c": "2.8.B.1",
+   "k": "ek",
+   "t": "The composition of a function, f, and its −1 inverse function, f, is the identity function; -1 -1 that is, f ((f)) x= (f)(=f.) x",
+   "tp": "2.8"
+  },
+  {
+   "c": "2.8.B.2",
+   "k": "ek",
+   "t": "On a function’s invertible domain, the function’s range and domain are the inverse function’s domain and range, respectively. The inverse of the table of values of y = f (x)can be found by reversing the input-output pairs; that is,(a, b)corresponds to(b, a).",
+   "tp": "2.8"
+  },
+  {
+   "c": "2.8.B.3",
+   "k": "ek",
+   "t": "The inverse of the graph of the function y = f (x)can be found by reversing the roles of the x- and y-axes; that is, by reflecting the graph of the function over the graph of the identity function h(x) = x.",
+   "tp": "2.8"
+  },
+  {
+   "c": "2.8.B.4",
+   "k": "ek",
+   "t": "The inverse of the function can be found by determining the inverse operations to reverse the mapping. One method for finding the inverse of the function f is reversing the roles of x and y in the equation y = f (x), then -1 solving for y = f (x).",
+   "tp": "2.8"
+  },
+  {
+   "c": "2.8.B.5",
+   "k": "ek",
+   "t": "In addition to limiting the domain of a function to obtain an inverse function, contextual restrictions may also limit the applicability of an inverse function.",
+   "tp": "2.8"
+  },
+  {
+   "c": "2.9.A",
+   "k": "lo",
+   "t": "Evaluate logarithmic expressions.",
+   "tp": "2.9"
+  },
+  {
+   "c": "2.9.A.1",
+   "k": "ek",
+   "t": "The logarithmic expression log b c is equal to, or represents, the value that the base b must be exponentially raised to in order to obtain the value c. That is, log_bc = if and only ifa a b = c, where a and c are constants, b > 0, and b ≠ 1. (when the base of a logarithmic expression is not specified, it is understood as the common logarithm with a base of 10)",
+   "tp": "2.9"
+  },
+  {
+   "c": "2.9.A.2",
+   "k": "ek",
+   "t": "The values of some logarithmic expressions are readily accessible through basic arithmetic while other values can be estimated through the use of technology.",
+   "tp": "2.9"
+  },
+  {
+   "c": "2.9.A.3",
+   "k": "ek",
+   "t": "On a logarithmic scale, each unit represents a multiplicative change of the base of the logarithm. For example, on a standard scale, the units might be 0,,1 2,, while on a... logarithmic scale, using logarithm base 10, the units might be 10, 10., 10,...",
+   "tp": "2.9"
+  },
+  {
+   "c": "2.10.A",
+   "k": "lo",
+   "t": "Construct representations of the inverse of an exponential function with an initial value of 1.",
+   "tp": "2.10"
+  },
+  {
+   "c": "2.10.A.1",
+   "k": "ek",
+   "t": "The general form of a logarithmic function is f () =x a_blxo, withg base b, where b > 0,b ≠ 1, and a ≠ 0.",
+   "tp": "2.10"
+  },
+  {
+   "c": "2.10.A.2",
+   "k": "ek",
+   "t": "The way in which input and output values vary together have an inverse relationship in exponential and logarithmic functions. Output values of general-form exponential functions change proportionately as input values increase in equal-length intervals. However, input values of general-form logarithmic functions change proportionately as output values increase in equal-length intervals. Alternately, exponential growth is characterized by output values changing multiplicatively as input values change additively, whereas logarithmic growth is characterized by output values changing additively as input values change multiplicatively.",
+   "tp": "2.10"
+  },
+  {
+   "c": "2.10.A.3",
+   "k": "ek",
+   "t": "x f () = log_bxx and g () =xb, where b > 0 and b ≠ 1, are inverse functions. That is, g (f (x) =)(f (gx) =.) x",
+   "tp": "2.10"
+  },
+  {
+   "c": "2.10.A.4",
+   "k": "ek",
+   "t": "The graph of the logarithmic function f () = log_bxx, where b > 0 and b ≠ 1, is a reflection of the graph of the exponential x function g () =xb,where b > 0 and b ≠ 1, over the graph of the identity function h() =x. x",
+   "tp": "2.10"
+  },
+  {
+   "c": "2.10.A.5",
+   "k": "ek",
+   "t": "If(s, t)is an ordered pair of the exponential x function g () =xb, where b > 0 and b ≠ 1, then(t, s) is an ordered pair of the logarithmic function f () = log_bxx, where b > 0 and b ≠ 1.",
+   "tp": "2.10"
+  },
+  {
+   "c": "2.11.A",
+   "k": "lo",
+   "t": "Identify key characteristics of logarithmic functions.",
+   "tp": "2.11"
+  },
+  {
+   "c": "2.11.A.1",
+   "k": "ek",
+   "t": "The domain of a logarithmic function in general form is any real number greater than zero, and its range is all real numbers.",
+   "tp": "2.11"
+  },
+  {
+   "c": "2.11.A.2",
+   "k": "ek",
+   "t": "Because logarithmic functions are inverses of exponential functions, logarithmic functions are also always increasing or always decreasing, and their graphs are either always concave up or always concave down. Consequently, logarithmic functions do not have extrema except on a closed interval, and their graphs do not have points of inflection.",
+   "tp": "2.11"
+  },
+  {
+   "c": "2.11.A.3",
+   "k": "ek",
+   "t": "The additive transformation function g () =x (x f k), where+ k ≠ 0, of a logarithmic function f in general form does not have input values that are proportional over equal-length output-value intervals. However, if the input values of the additive transformation function, g () =x (x f k), + of any function f are proportional over equal-length output value intervals, then f is logarithmic.",
+   "tp": "2.11"
+  },
+  {
+   "c": "2.11.A.4",
+   "k": "ek",
+   "t": "With their limited domain, logarithmic functions in general form are vertically asymptotic to x = 0, with an end behavior that is unbounded. That is, for a logarithmic function in general form, lim a log_bx = ±∞ x→0^{+} and lim log_ba x.= ±∞ x →∞",
+   "tp": "2.11"
+  },
+  {
+   "c": "2.12.A",
+   "k": "lo",
+   "t": "Rewrite logarithmic expressions in equivalent forms.",
+   "tp": "2.12"
+  },
+  {
+   "c": "2.12.A.1",
+   "k": "ek",
+   "t": "The product property for logarithms states that lo_b() =g x_by log_b. x Graphically, this property implies that every horizontal dilation of a logarithmic function, f () = log_bx(), kx is equivalent to a vertical translation, f () = lo_bx() =g_blog k xk_b where a = log_bk.",
+   "tp": "2.12"
+  },
+  {
+   "c": "2.12.A.2",
+   "k": "ek",
+   "t": "The power property for logarithms states that n lo_bg_bx. Graphically, this property = n log x implies that raising the input of a logarithmic k function to a power, f () = log_bxx, results in k a vertical dilation, f () = lo_bx g_b. x",
+   "tp": "2.12"
+  },
+  {
+   "c": "2.12.A.3",
+   "k": "ek",
+   "t": "The change of base property for logarithms log_ax states that log_bx =, where a > 0 and log_ab a ≠ 1. This implies that all logarithmic functions are vertical dilations of each other.",
+   "tp": "2.12"
+  },
+  {
+   "c": "2.12.A.4",
+   "k": "ek",
+   "t": "The function f (x) = ln is a logarithmicx function with the natural base e; that is, ln x = log_e. x",
+   "tp": "2.12"
+  },
+  {
+   "c": "2.13.A",
+   "k": "lo",
+   "t": "Solve exponential and logarithmic equations and inequalities.",
+   "tp": "2.13"
+  },
+  {
+   "c": "2.13.B",
+   "k": "lo",
+   "t": "Construct the inverse function for exponential and logarithmic functions.",
+   "tp": "2.13"
+  },
+  {
+   "c": "2.13.A.1",
+   "k": "ek",
+   "t": "Properties of exponents, properties of logarithms, and the inverse relationship between exponential and logarithmic functions can be used to solve equations and inequalities involving exponents and logarithms.",
+   "tp": "2.13"
+  },
+  {
+   "c": "2.13.A.2",
+   "k": "ek",
+   "t": "When solving exponential and logarithmic equations found through analytical or graphical methods, the results should be examined for extraneous solutions precluded by the mathematical or contextual limitations.",
+   "tp": "2.13"
+  },
+  {
+   "c": "2.13.A.3",
+   "k": "ek",
+   "t": "Logarithms can be used to rewrite expressions involving exponential functions in different ways that may reveal helpful information. x (log cb)(x) Specifically, b = c.",
+   "tp": "2.13"
+  },
+  {
+   "c": "2.13.B.1",
+   "k": "ek",
+   "t": "(x+h) The function f () =x a + is ab k combination of additive transformations of an exponential function in general form. The inverse of y = f (x)can be found by determining the inverse operations to reverse the mapping.",
+   "tp": "2.13"
+  },
+  {
+   "c": "2.13.B.2",
+   "k": "ek",
+   "t": "The function f () =x loga_b(+) x+ ish k a combination of additive transformations of a logarithmic function in general form. The inverse of y = f (x)can be found by determining the inverse operations to reverse the mapping.",
+   "tp": "2.13"
+  },
+  {
+   "c": "2.14.A",
+   "k": "lo",
+   "t": "Construct a logarithmic function model.",
+   "tp": "2.14"
+  },
+  {
+   "c": "2.14.A.1",
+   "k": "ek",
+   "t": "Logarithmic functions are inverses of exponential functions and can be used to model situations involving proportional growth, or repeated multiplication, where the input values change proportionally over equal-length output-value intervals. Alternately, if the output value is a whole number, it indicates how many times the initial value has been multiplied by the proportion.",
+   "tp": "2.14"
+  },
+  {
+   "c": "2.14.A.2",
+   "k": "ek",
+   "t": "A logarithmic function model can be constructed from an appropriate proportion and a real zero or from two input-output pairs.",
+   "tp": "2.14"
+  },
+  {
+   "c": "2.14.A.3",
+   "k": "ek",
+   "t": "Logarithmic function models can be constructed by applying transformations to f (x) = a log_bx based on characteristics of a context or data set.",
+   "tp": "2.14"
+  },
+  {
+   "c": "2.14.A.4",
+   "k": "ek",
+   "t": "Logarithmic function models can be constructed for a data set with technology using logarithmic regressions.",
+   "tp": "2.14"
+  },
+  {
+   "c": "2.14.A.5",
+   "k": "ek",
+   "t": "The natural logarithm function is often useful in modeling real-world phenomena.",
+   "tp": "2.14"
+  },
+  {
+   "c": "2.14.A.6",
+   "k": "ek",
+   "t": "Logarithmic function models can be used to predict values for the dependent variable, and they may be used to determine values of the independent variable.",
+   "tp": "2.14"
+  },
+  {
+   "c": "2.15.A",
+   "k": "lo",
+   "t": "Determine if an exponential model is appropriate by examining a semi-log plot of a data set.",
+   "tp": "2.15"
+  },
+  {
+   "c": "2.15.B",
+   "k": "lo",
+   "t": "Construct the linearization of exponential data.",
+   "tp": "2.15"
+  },
+  {
+   "c": "2.15.A.1",
+   "k": "ek",
+   "t": "In a semi-log plot, one of the axes is logarithmically scaled with logarithm base n, where n > 1. When the y-axis of a semi-log plot is logarithmically scaled, data or functions that demonstrate exponential characteristics will appear linear.",
+   "tp": "2.15"
+  },
+  {
+   "c": "2.15.A.2",
+   "k": "ek",
+   "t": "If for large input values of a bivariate data set the logarithms of the output values trend linear, then transformations of an exponential function can be used to model the data set. Therefore, an advantage of semi-log plots is that the dependent variable values do not need to be transformed by a constant to reveal that transformations of an exponential function would produce an appropriate model.",
+   "tp": "2.15"
+  },
+  {
+   "c": "2.15.B.1",
+   "k": "ek",
+   "t": "Techniques used to model linear functions can be applied to a semi-log graph.",
+   "tp": "2.15"
+  },
+  {
+   "c": "2.15.B.2",
+   "k": "ek",
+   "t": "x For an exponential model of the form y = ab, the corresponding linear model for the semi-log plot is y = (lo n b) +g nx, wherelog a n > 0 and n ≠ 1. Specifically, the linear rate of change is log_nb, and the initial linear value is log_na.",
+   "tp": "2.15"
+  },
+  {
+   "c": "3.1.A",
+   "k": "lo",
+   "t": "Construct graphs of periodic relationships based on verbal representations.",
+   "tp": "3.1"
+  },
+  {
+   "c": "3.1.B",
+   "k": "lo",
+   "t": "Describe key characteristics of a periodic function based on a verbal representation.",
+   "tp": "3.1"
+  },
+  {
+   "c": "3.1.A.1",
+   "k": "ek",
+   "t": "A periodic relationship can be identified between two aspects of a context if, as the input values increase, the output values demonstrate a repeating pattern over successive equal-length intervals.",
+   "tp": "3.1"
+  },
+  {
+   "c": "3.1.A.2",
+   "k": "ek",
+   "t": "The graph of a periodic relationship can be constructed from the graph of a single cycle of the relationship.",
+   "tp": "3.1"
+  },
+  {
+   "c": "3.1.B.1",
+   "k": "ek",
+   "t": "The period of the function is the smallest positive value k such that f (x) +k= ()f x for all x in the domain. Consequently, the behavior of a periodic function is completely determined by any interval of width k.",
+   "tp": "3.1"
+  },
+  {
+   "c": "3.1.B.2",
+   "k": "ek",
+   "t": "The period can be estimated by investigating successive equal-length output values and finding where the pattern begins to repeat.",
+   "tp": "3.1"
+  },
+  {
+   "c": "3.1.B.3",
+   "k": "ek",
+   "t": "Periodic functions take on characteristics of other functions, such as intervals of increase and decrease, different concavities, and various rates of change. However, with periodic functions, all characteristics found in one period of the function will be in every period of the function.",
+   "tp": "3.1"
+  },
+  {
+   "c": "3.2.A",
+   "k": "lo",
+   "t": "Determine the sine, cosine, and tangent of an angle using the unit circle.",
+   "tp": "3.2"
+  },
+  {
+   "c": "3.2.A.1",
+   "k": "ek",
+   "t": "In the coordinate plane, an angle is in standard position when the vertex coincides with the origin and one ray coincides with the positive x-axis. The other ray is called the terminal ray. Positive and negative angle measures indicate rotations from the positive x-axis in the counterclockwise and clockwise direction, respectively. Angles in standard position that share a terminal ray differ by an integer number of revolutions.",
+   "tp": "3.2"
+  },
+  {
+   "c": "3.2.A.2",
+   "k": "ek",
+   "t": "When considering a circle centered at the origin, the radian measure of an angle in standard position is the ratio of the length of the arc of the circle that the angle subtends to the radius of that same circle. For a unit circle, which has radius 1, one radian is the measure of the angle subtended at the center of the circle by an arc that has length 1.",
+   "tp": "3.2"
+  },
+  {
+   "c": "3.2.A.3",
+   "k": "ek",
+   "t": "Given an angle in standard position and a circle centered at the origin, there is a point, P, where the terminal ray intersects the circle. The sine of the angle is the ratio of the vertical displacement of P from the x-axis to the distance between the origin and point P. Therefore, for a unit circle, the sine of the angle is the y-coordinate of point P.",
+   "tp": "3.2"
+  },
+  {
+   "c": "3.2.A.4",
+   "k": "ek",
+   "t": "Given an angle in standard position and a circle centered at the origin, there is a point, P, where the terminal ray intersects the circle. The cosine of the angle is the ratio of the horizontal displacement of P from the y-axis to the distance between the origin and point P. Therefore, for a unit circle, the cosine of the angle is the x-coordinate of point P.",
+   "tp": "3.2"
+  },
+  {
+   "c": "3.2.A.5",
+   "k": "ek",
+   "t": "Given an angle in standard position, the tangent of the angle is the slope, if it exists, of the terminal ray. Because the slope of the terminal ray is the ratio of the vertical displacement to the horizontal displacement over any interval, the tangent of the angle is the ratio of the y-coordinate to the x-coordinate of the point at which the terminal ray intersects the unit circle; alternately, it is the ratio of the angle’s sine to its cosine.",
+   "tp": "3.2"
+  },
+  {
+   "c": "3.3.A",
+   "k": "lo",
+   "t": "Determine coordinates of points on a circle centered at the origin.",
+   "tp": "3.3"
+  },
+  {
+   "c": "3.3.A.1",
+   "k": "ek",
+   "t": "Given an angle of measure θ in standard position and a circle with radius r centered at the origin, there is a point, P, where the terminal ray intersects the circle. The coordinates of point P are(r co θs r,sinθ).",
+   "tp": "3.3"
+  },
+  {
+   "c": "3.3.A.2",
+   "k": "ek",
+   "t": "The geometry of isosceles right and equilateral triangles, while attending to the signs of the values based on the quadrant of the angle, can be used to find exact values for the cosine and π π sine of angles that are multiples of and radians and whose terminal rays do not lie on an axis.",
+   "tp": "3.3"
+  },
+  {
+   "c": "3.4.A",
+   "k": "lo",
+   "t": "Construct representations of the sine and cosine functions using the unit circle.",
+   "tp": "3.4"
+  },
+  {
+   "c": "3.4.A.1",
+   "k": "ek",
+   "t": "Given an angle of measure θ in standard position and a unit circle centered at the origin, there is a point, P, where the terminal ray intersects the circle. The sine function, f (θ) = sinθ, gives the y-coordinate, or vertical displacement from the x-axis, of point P. The domain of the sine function is all real numbers.",
+   "tp": "3.4"
+  },
+  {
+   "c": "3.4.A.2",
+   "k": "ek",
+   "t": "As the input values, or angle measures, of the sine function increase, the output values oscillate between−1 and 1, taking every value in between and tracking the vertical displacement of points on the unit circle from the x-axis.",
+   "tp": "3.4"
+  },
+  {
+   "c": "3.4.A.3",
+   "k": "ek",
+   "t": "Given an angle of measure θ in standard position and a unit circle centered at the origin, there is a point, P, where the terminal ray intersects the circle. The cosine function, f (θ) = cosθ, gives the x-coordinate, or horizontal displacement from the y-axis, of point P. The domain of the cosine function is all real numbers.",
+   "tp": "3.4"
+  },
+  {
+   "c": "3.4.A.4",
+   "k": "ek",
+   "t": "As the input values, or angle measures, of the cosine function increase, the output values oscillate between−1 and 1, taking every value in between and tracking the horizontal displacement of points on the unit circle from the y-axis.",
+   "tp": "3.4"
+  },
+  {
+   "c": "3.5.A",
+   "k": "lo",
+   "t": "Identify key characteristics of the sine and cosine functions.",
+   "tp": "3.5"
+  },
+  {
+   "c": "3.5.A.1",
+   "k": "ek",
+   "t": "A sinusoidal function is any function that involves additive and multiplicative transformations of f (θ) = sinθ. The sine and cosine functions are both sinusoidal functions, π with co θ =s (θs i+n).",
+   "tp": "3.5"
+  },
+  {
+   "c": "3.5.A.2",
+   "k": "ek",
+   "t": "The period and frequency of a sinusoidal function are reciprocals. The period of f (θ) = sinθ and g (θ) = cosθ is 2π, and the frequency is. 2π",
+   "tp": "3.5"
+  },
+  {
+   "c": "3.5.A.3",
+   "k": "ek",
+   "t": "The amplitude of a sinusoidal function is half the difference between its maximum and minimum values. The amplitude of f (θ) = sinθ and g (θ) = cosθ is 1.",
+   "tp": "3.5"
+  },
+  {
+   "c": "3.5.A.4",
+   "k": "ek",
+   "t": "The midline of the graph of a sinusoidal function is determined by the average, or arithmetic mean, of the maximum and minimum values of the function. The midline of the graphs of y = sinθ and y = cosθ is y = 0.",
+   "tp": "3.5"
+  },
+  {
+   "c": "3.5.A.5",
+   "k": "ek",
+   "t": "As input values increase, the graphs of sinusoidal functions oscillate between concave down and concave up.",
+   "tp": "3.5"
+  },
+  {
+   "c": "3.5.A.6",
+   "k": "ek",
+   "t": "The graph of y = sinθ has rotational symmetry about the origin and is therefore an odd function. The graph of y = cosθ has reflective symmetry over the y-axis and is therefore an even function.",
+   "tp": "3.5"
+  },
+  {
+   "c": "3.6.A",
+   "k": "lo",
+   "t": "Identify the amplitude, vertical shift, period, and phase shift of a sinusoidal function.",
+   "tp": "3.6"
+  },
+  {
+   "c": "3.6.A.1",
+   "k": "ek",
+   "t": "Functions that can be written in the form f (θ) = a(bsi(nθ +) +c or d) g (θ) = a(bco(θs +) +c, whered) a,b,c, and d are real numbers, a ≠ 0, and b ≠ 0, are sinusoidal functions and are transformations of the sine and cosine functions. Additive and multiplicative transformations are the same for both sine and cosine because the cosine function is a phase shift of the sine function by π - units.",
+   "tp": "3.6"
+  },
+  {
+   "c": "3.6.A.2",
+   "k": "ek",
+   "t": "The graph of the additive transformation g (θ) = sinθ + d of the sine function f (θ) = sinθ is a vertical translation of the graph of f, including its midline, by d units. The same transformation of the cosine function yields the same result.",
+   "tp": "3.6"
+  },
+  {
+   "c": "3.6.A.3",
+   "k": "ek",
+   "t": "The graph of the additive transformation g (θ) = sin(θ + c) of the sine function f (θ) = sinθ is a horizontal translation, or phase shift, of the graph of f by−c units. The same transformation of the cosine function yields the same result.",
+   "tp": "3.6"
+  },
+  {
+   "c": "3.6.A.4",
+   "k": "ek",
+   "t": "The graph of the multiplicative transformation g (θ) = a sinθ of the sine function f (θ) = sinθ is a vertical dilation of the graph of f and differs in amplitude by a factor of a. The same transformation of the cosine function yields the same result.",
+   "tp": "3.6"
+  },
+  {
+   "c": "3.6.A.5",
+   "k": "ek",
+   "t": "The graph of the multiplicative transformation g (θ) = sin(bθ) of the sine function f (θ) = sinθ is a horizontal dilation of the graph of f and differs in period by a factor of. The same transformation of the cosine b function yields the same result.",
+   "tp": "3.6"
+  },
+  {
+   "c": "3.6.A.6",
+   "k": "ek",
+   "t": "The graph of y f (θ) == sina (θ b+)(+ c has an amplitude of a units, a period of 2π b units, a midline vertical shift of d units from y = 0, and a phase shift of−c units. The same transformations of the cosine function yield the same results.",
+   "tp": "3.6"
+  },
+  {
+   "c": "3.7.A",
+   "k": "lo",
+   "t": "Construct sinusoidal function models of periodic phenomena.",
+   "tp": "3.7"
+  },
+  {
+   "c": "3.7.A.1",
+   "k": "ek",
+   "t": "The smallest interval of input values over which the maximum or minimum output values start to repeat, that is, the input-value interval between consecutive maxima or consecutive minima, can be used to determine or estimate the period and frequency for a sinusoidal function model.",
+   "tp": "3.7"
+  },
+  {
+   "c": "3.7.A.2",
+   "k": "ek",
+   "t": "The maximum and minimum output values can be used to determine or estimate the amplitude and vertical shift for a sinusoidal function model.",
+   "tp": "3.7"
+  },
+  {
+   "c": "3.7.A.3",
+   "k": "ek",
+   "t": "An actual pair of input-output values can be compared to pairs of input-output values produced by a sinusoidal function model to determine or estimate a phase shift for the model.",
+   "tp": "3.7"
+  },
+  {
+   "c": "3.7.A.4",
+   "k": "ek",
+   "t": "Sinusoidal function models can be constructed for a data set with technology by estimating key values or using sinusoidal regressions.",
+   "tp": "3.7"
+  },
+  {
+   "c": "3.7.A.5",
+   "k": "ek",
+   "t": "Sinusoidal functions that model a data set are frequently only useful over their contextual domain, can be used to predict values of the dependent variable from values of the independent variable, and may be used to determine values of the independent variable from values of the dependent variable.",
+   "tp": "3.7"
+  },
+  {
+   "c": "3.8.A",
+   "k": "lo",
+   "t": "Construct representations of the tangent function using the unit circle.",
+   "tp": "3.8"
+  },
+  {
+   "c": "3.8.B",
+   "k": "lo",
+   "t": "Describe key characteristics of the tangent function.",
+   "tp": "3.8"
+  },
+  {
+   "c": "3.8.A.1",
+   "k": "ek",
+   "t": "Given an angle of measure θ in standard position and a unit circle centered at the origin, there is a point, P, where the terminal ray intersects the circle. The tangent function, f (θ) = tanθ, gives the slope of the terminal ray.",
+   "tp": "3.8"
+  },
+  {
+   "c": "3.8.A.2",
+   "k": "ek",
+   "t": "Because the slope of the terminal ray is the ratio of the change in the y-values to the change in the x-values between any two points on the ray, the tangent function is also the ratio of the sine function to the cosine function. Therefore, sinθ tanθ =, where cosθ ≠ 0. cosθ",
+   "tp": "3.8"
+  },
+  {
+   "c": "3.8.B.1",
+   "k": "ek",
+   "t": "Because the slope values of the terminal ray repeat every one-half revolution of the circle, the tangent function has a period ofπ.",
+   "tp": "3.8"
+  },
+  {
+   "c": "3.8.B.2",
+   "k": "ek",
+   "t": "The tangent function demonstrates periodic asymptotic behavior at input values π θ = + kπ, for integer values of k, because cosθ = 0 at those values.",
+   "tp": "3.8"
+  },
+  {
+   "c": "3.8.B.3",
+   "k": "ek",
+   "t": "The tangent function increases and its graph changes from concave down to concave up between consecutive asymptotes.",
+   "tp": "3.8"
+  },
+  {
+   "c": "3.8.C",
+   "k": "lo",
+   "t": "Describe additive and multiplicative transformations involving the tangent function.",
+   "tp": "3.8"
+  },
+  {
+   "c": "3.8.C.1",
+   "k": "ek",
+   "t": "The graph of the additive transformation g (θ) = tanθ + d of the tangent function f (θ) = tanθ is a vertical translation of the graph of f and the line containing its points of inflection by d units.",
+   "tp": "3.8"
+  },
+  {
+   "c": "3.8.C.2",
+   "k": "ek",
+   "t": "The graph of the additive transformation g (θ) = tan(θ + c) of the tangent function f (θ) = tanθ is a horizontal translation, or phase shift, of the graph of f by−c units.",
+   "tp": "3.8"
+  },
+  {
+   "c": "3.8.C.3",
+   "k": "ek",
+   "t": "The graph of the multiplicative transformation g (θ) = a tanθ of the tangent function f (θ) = tanθ is a vertical dilation of the graph of f by a factor of a. If a < 0, the transformation involves a reflection over the x-axis.",
+   "tp": "3.8"
+  },
+  {
+   "c": "3.8.C.4",
+   "k": "ek",
+   "t": "The graph of the multiplicative transformation g (θ) = tan(bθ)of the tangent function f (θ) = tanθ is a horizontal dilation of the graph of f and differs in period by a factor of. If b < 0, the transformation involves a b reflection over the y-axis.",
+   "tp": "3.8"
+  },
+  {
+   "c": "3.8.C.5",
+   "k": "ek",
+   "t": "The graph of y = f (θ) = a(taθn +b c() + d) is a vertical dilation of the graph of y = tanθ by a factor of a, has a period of π units, is a b vertical shift of the line containing the points of inflection of the graph of y = tanθ by d units, and is a phase shift of−c units.",
+   "tp": "3.8"
+  },
+  {
+   "c": "3.9.A",
+   "k": "lo",
+   "t": "Construct analytical and graphical representations of the inverse of the sine, cosine, and tangent functions over a restricted domain.",
+   "tp": "3.9"
+  },
+  {
+   "c": "3.9.A.1",
+   "k": "ek",
+   "t": "For inverse trigonometric functions, the input and output values are switched from their corresponding trigonometric functions, so the output value of an inverse trigonometric function is often interpreted as an angle measure and the input is a value in the range of the corresponding trigonometric function.",
+   "tp": "3.9"
+  },
+  {
+   "c": "3.9.A.2",
+   "k": "ek",
+   "t": "The inverse trigonometric functions are called arcsine, arccosine, and arctangent (also −1 −1 −1 represented as sin x,cos x, and tan x). Because the corresponding trigonometric functions are periodic, they are only invertible if they have restricted domains.",
+   "tp": "3.9"
+  },
+  {
+   "c": "3.9.A.3",
+   "k": "ek",
+   "t": "In order to define their respective inverse functions, the domain of the sine function is [ π π ] restricted to -,, the cosine function to |[ 2 2 |] π π ]0, π], and the tangent function to(-,).",
+   "tp": "3.9"
+  },
+  {
+   "c": "3.10.A",
+   "k": "lo",
+   "t": "Solve equations and inequalities involving trigonometric functions.",
+   "tp": "3.10"
+  },
+  {
+   "c": "3.10.A.1",
+   "k": "ek",
+   "t": "Inverse trigonometric functions are useful in solving equations and inequalities involving trigonometric functions, but solutions may need to be modified due to domain restrictions.",
+   "tp": "3.10"
+  },
+  {
+   "c": "3.10.A.2",
+   "k": "ek",
+   "t": "Because trigonometric functions are periodic, there are often infinitely many solutions to trigonometric equations.",
+   "tp": "3.10"
+  },
+  {
+   "c": "3.10.A.3",
+   "k": "ek",
+   "t": "In trigonometric equations and inequalities arising from a contextual scenario, there is often a domain restriction that can be implied from the context, which limits the number of solutions.",
+   "tp": "3.10"
+  },
+  {
+   "c": "3.11.A",
+   "k": "lo",
+   "t": "Identify key characteristics of functions that involve quotients of the sine and cosine functions.",
+   "tp": "3.11"
+  },
+  {
+   "c": "3.11.A.1",
+   "k": "ek",
+   "t": "The secant function, f (θ) = secθ, is the reciprocal of the cosine function, where cosθ ≠ 0.",
+   "tp": "3.11"
+  },
+  {
+   "c": "3.11.A.2",
+   "k": "ek",
+   "t": "The cosecant function, f (θ) = cscθ, is the reciprocal of the sine function, where sinθ ≠ 0.",
+   "tp": "3.11"
+  },
+  {
+   "c": "3.11.A.3",
+   "k": "ek",
+   "t": "The graphs of the secant and cosecant functions have vertical asymptotes where cosine and sine are zero, respectively, and have a range of (-∞, -1[]∪ 1.,∞)",
+   "tp": "3.11"
+  },
+  {
+   "c": "3.11.A.4",
+   "k": "ek",
+   "t": "The cotangent function, f (θ) = cotθ, is the reciprocal of the tangent function, where cosθ tanθ ≠ 0. Equivalently, cotθ =, where sinθ sinθ ≠ 0.",
+   "tp": "3.11"
+  },
+  {
+   "c": "3.11.A.5",
+   "k": "ek",
+   "t": "The graph of the cotangent function has vertical asymptotes for domain values where tanθ = 0 and is decreasing between consecutive asymptotes.",
+   "tp": "3.11"
+  },
+  {
+   "c": "3.12.A",
+   "k": "lo",
+   "t": "Rewrite trigonometric expressions in equivalent forms with the Pythagorean identity.",
+   "tp": "3.12"
+  },
+  {
+   "c": "3.12.B",
+   "k": "lo",
+   "t": "Rewrite trigonometric expressions in equivalent forms with sine and cosine sum identities.",
+   "tp": "3.12"
+  },
+  {
+   "c": "3.12.A.1",
+   "k": "ek",
+   "t": "The Pythagorean Theorem can be applied to right triangles with points on the unit circle at coordinates(co θs s,inθ), resulting in the Pythagorean identity: sin θ + cos θ = 1.",
+   "tp": "3.12"
+  },
+  {
+   "c": "3.12.A.2",
+   "k": "ek",
+   "t": "The Pythagorean identity can be algebraically manipulated into other forms involving trigonometric functions, such as ta θ =n ec θs-1, and can be used to establish other trigonometric relationships, such as arcsi x n (1= x)a, withrccos-appropriate domain restrictions.",
+   "tp": "3.12"
+  },
+  {
+   "c": "3.12.B.1",
+   "k": "ek",
+   "t": "The sum identity for sine is sin(α + β) α os β=+siconαs cinsβ.",
+   "tp": "3.12"
+  },
+  {
+   "c": "3.12.B.2",
+   "k": "ek",
+   "t": "The sum identity for cosine is co (α + β) s α co β=csos αssiinn β.-",
+   "tp": "3.12"
+  },
+  {
+   "c": "3.12.B.3",
+   "k": "ek",
+   "t": "The sum identities for sine and cosine can also be used as difference and double-angle identities.",
+   "tp": "3.12"
+  },
+  {
+   "c": "3.12.B.4",
+   "k": "ek",
+   "t": "Properties of trigonometric functions, known trigonometric identities, and other algebraic properties can be used to verify additional trigonometric identities.",
+   "tp": "3.12"
+  },
+  {
+   "c": "3.12.C",
+   "k": "lo",
+   "t": "Solve equations using equivalent analytic representations of trigonometric functions.",
+   "tp": "3.12"
+  },
+  {
+   "c": "3.12.C.1",
+   "k": "ek",
+   "t": "A specific equivalent form involving trigonometric expressions can make information more accessible.",
+   "tp": "3.12"
+  },
+  {
+   "c": "3.12.C.2",
+   "k": "ek",
+   "t": "Equivalent trigonometric forms may be useful in solving trigonometric equations and inequalities.",
+   "tp": "3.12"
+  },
+  {
+   "c": "3.13.A",
+   "k": "lo",
+   "t": "Determine the location of a point in the plane using both rectangular and polar coordinates.",
+   "tp": "3.13"
+  },
+  {
+   "c": "3.13.A.1",
+   "k": "ek",
+   "t": "The polar coordinate system is based on a grid of circles centered at the origin and on lines through the origin. The positive x-axis is called the polar axis. Polar coordinates of a point are defined as an ordered pair, (r, θ). The value ofθ is given by the measure of an angle in standard position whose terminal ray lies in a line that passes through the point, and r is the radial displacement of the point from the origin. Positive values of r indicate radial displacement from the origin along the terminal ray of the angleθ. Negative values of r indicate radial displacement from the origin along the line containing the terminal ray of the angleθ —but in the opposite direction of the terminal ray of the angleθ. In the polar coordinate system, the same point can be represented many ways with combinations of positive and negative values of r andθ.",
+   "tp": "3.13"
+  },
+  {
+   "c": "3.13.A.2",
+   "k": "ek",
+   "t": "The coordinates of a point in the polar coordinate system,(r, θ), can be converted to coordinates in the rectangular coordinate system,(x, y), using x = r cosθ and y = r sinθ.",
+   "tp": "3.13"
+  },
+  {
+   "c": "3.13.A.3",
+   "k": "ek",
+   "t": "The coordinates of a point in the rectangular coordinate system,(x, y), can be converted to coordinates in the polar coordinate system, 2 2 { y } (r, θ), using r x =+ y andθ = arctan| | { x } { y } for x > 0 orθ = arctan| | + π for x < 0. { x }",
+   "tp": "3.13"
+  },
+  {
+   "c": "3.13.A.4",
+   "k": "ek",
+   "t": "A complex number can be understood as a point in the complex plane and can be determined by its corresponding rectangular or polar coordinates. When the complex number has the rectangular coordinates(a, b), it can be expressed as a + bi. When the complex number has polar coordinates(r, θ), it can be expressed as(r co θ) + i(rs inθ). s",
+   "tp": "3.13"
+  },
+  {
+   "c": "3.14.A",
+   "k": "lo",
+   "t": "Construct graphs of polar functions.",
+   "tp": "3.14"
+  },
+  {
+   "c": "3.14.A.1",
+   "k": "ek",
+   "t": "The graph of the function r = f (θ) in polar coordinates consists of input-output pairs of values where the input values are angle measures and the output values are radii.",
+   "tp": "3.14"
+  },
+  {
+   "c": "3.14.A.2",
+   "k": "ek",
+   "t": "The domain of the polar function r θ f (θ), given graphically, can be restricted to a desired portion of the function by selecting endpoints corresponding to the desired angle and radius.",
+   "tp": "3.14"
+  },
+  {
+   "c": "3.14.A.3",
+   "k": "ek",
+   "t": "When graphing polar functions in the form of r = f (θ), changes in input values relate to changes in angle measures from the polar axis, and changes in output values relate to changes in signed radial displacements from the origin.",
+   "tp": "3.14"
+  },
+  {
+   "c": "3.15.A",
+   "k": "lo",
+   "t": "Describe characteristics of the graph of a polar function.",
+   "tp": "3.15"
+  },
+  {
+   "c": "3.15.A.1",
+   "k": "ek",
+   "t": "If a polar function, r θ f (θ), is positive and increasing or negative and decreasing, then the distance between the point with polar coordinates(f (θ), θ) and the origin is increasing.",
+   "tp": "3.15"
+  },
+  {
+   "c": "3.15.A.2",
+   "k": "ek",
+   "t": "If a polar function, r = f (θ), is positive and decreasing or negative and increasing, then the distance between the point with polar coordinates(f (θ), θ) and the origin is decreasing.",
+   "tp": "3.15"
+  },
+  {
+   "c": "3.15.A.3",
+   "k": "ek",
+   "t": "For a polar function, r = f (θ), if the function changes from increasing to decreasing or decreasing to increasing on an interval, then the function has a relative extremum on the interval corresponding to a point relatively closest to or farthest from the origin.",
+   "tp": "3.15"
+  },
+  {
+   "c": "3.15.A.4",
+   "k": "ek",
+   "t": "The average rate of change of r with respect to θ over an interval ofθ is the ratio of the change in the signed radius values to the change inθ over an interval ofθ. Graphically, the average rate of change indicates the rate at which the signed radius is changing per radian.",
+   "tp": "3.15"
+  },
+  {
+   "c": "3.15.A.5",
+   "k": "ek",
+   "t": "The average rate of change of r with respect to θ over an interval ofθ can be used to estimate values of the function within the interval.",
+   "tp": "3.15"
+  },
+  {
+   "c": "4.1.A",
+   "k": "lo",
+   "t": "Construct a graph or table of values for a parametric function represented analytically.",
+   "tp": "4.1"
+  },
+  {
+   "c": "4.1.A.1",
+   "k": "ek",
+   "t": "A parametric function in ℝ², the set of all ordered pairs of two real numbers, consists of a set of two parametric equations in which two dependent variables, x and y, are dependent on a single independent variable, t, called the parameter.",
+   "tp": "4.1"
+  },
+  {
+   "c": "4.1.A.2",
+   "k": "ek",
+   "t": "Because variables x and y are dependent on the independent variable, t, the coordinates (x_i, y_i) at time t_ican be written as functions of t and can be expressed as the single parametric function f (t) = (x t(), y(t)), where in this case x and y are names of two functions.",
+   "tp": "4.1"
+  },
+  {
+   "c": "4.1.A.3",
+   "k": "ek",
+   "t": "A numerical table of values can be generated for the parametric function f (t) = (x t(), y(t)) by evaluating x_iand y_iat several values of ti within the domain.",
+   "tp": "4.1"
+  },
+  {
+   "c": "4.1.A.4",
+   "k": "ek",
+   "t": "A graph of a parametric function can be sketched by connecting several points from the numerical table of values in order of increasing value of t.",
+   "tp": "4.1"
+  },
+  {
+   "c": "4.1.A.5",
+   "k": "ek",
+   "t": "The domain of the parametric function f is often restricted, which results in start and end points on the graph of f.",
+   "tp": "4.1"
+  },
+  {
+   "c": "4.2.A",
+   "k": "lo",
+   "t": "Identify key characteristics of a parametric planar motion function that are related to position.",
+   "tp": "4.2"
+  },
+  {
+   "c": "4.2.A.1",
+   "k": "ek",
+   "t": "A parametric function given by f (t) + (x t(), y(t))can be used to model particle motion in the plane. The graph of this function indicates the position of a particle at time t.",
+   "tp": "4.2"
+  },
+  {
+   "c": "4.2.A.2",
+   "k": "ek",
+   "t": "The horizontal and vertical extrema of a particle’s motion can be determined by identifying the maximum and minimum values of the functions x (t) and y (t), respectively.",
+   "tp": "4.2"
+  },
+  {
+   "c": "4.2.A.3",
+   "k": "ek",
+   "t": "The real zeros of the function x (t) correspond to y-intercepts, and the real zeros of y)t(correspond to x-intercepts.",
+   "tp": "4.2"
+  },
+  {
+   "c": "4.3.A",
+   "k": "lo",
+   "t": "Identify key characteristics of a parametric planar motion function that are related to direction and rate of change.",
+   "tp": "4.3"
+  },
+  {
+   "c": "4.3.A.1",
+   "k": "ek",
+   "t": "As the parameter increases, the direction of planar motion of a particle can be analyzed in terms of x and y independently. If x)t (is increasing or decreasing, the direction of motion is to the right or left, respectively. If y (t) is increasing or decreasing, the direction of motion is up or down, respectively.",
+   "tp": "4.3"
+  },
+  {
+   "c": "4.3.A.2",
+   "k": "ek",
+   "t": "At any given point in the plane, the direction of planar motion may be different for different values of t.",
+   "tp": "4.3"
+  },
+  {
+   "c": "4.3.A.3",
+   "k": "ek",
+   "t": "The same curve in the plane can be parametrized in different ways and can be traversed in different directions with different parametric functions.",
+   "tp": "4.3"
+  },
+  {
+   "c": "4.3.A.4",
+   "k": "ek",
+   "t": "Over a given interval [t_1, t_2]within the domain, the average rate of change can be computed for x (t) and y (t) independently. The ratio of the average rate of change of y to the average rate of change of x gives the slope of the graph between the points on the curve corresponding to t_1and t_2, so long as the average rate of change of x (t) ≠ 0.",
+   "tp": "4.3"
+  },
+  {
+   "c": "4.4.A",
+   "k": "lo",
+   "t": "Express motion around a circle or along a line segment parametrically.",
+   "tp": "4.4"
+  },
+  {
+   "c": "4.4.A.1",
+   "k": "ek",
+   "t": "A complete counterclockwise revolution around the unit circle that starts and ends at (1, 0) and is centered at the origin can be modeled by(x (t), y()t) = (cos tt), withsin domain 0 ≤ t 2≤π.",
+   "tp": "4.4"
+  },
+  {
+   "c": "4.4.A.2",
+   "k": "ek",
+   "t": "Transformations of the parametric function (x (t), y()t) = (cos t), can model anysint circular path traversed in the plane.",
+   "tp": "4.4"
+  },
+  {
+   "c": "4.4.A.3",
+   "k": "ek",
+   "t": "A linear path along the line segment from the point (x_1, y_1) to the point (x_2, y_2) can be parametrized many ways, including using an initial position(x_1, y_1)and rates of change for x with respect to t and y with respect to t.",
+   "tp": "4.4"
+  },
+  {
+   "c": "4.5.A",
+   "k": "lo",
+   "t": "Construct a graph of an equation involving two variables.",
+   "tp": "4.5"
+  },
+  {
+   "c": "4.5.B",
+   "k": "lo",
+   "t": "Determine how the two quantities related in an implicitly defined function vary together.",
+   "tp": "4.5"
+  },
+  {
+   "c": "4.5.A.1",
+   "k": "ek",
+   "t": "An equation involving two variables can implicitly describe one or more functions.",
+   "tp": "4.5"
+  },
+  {
+   "c": "4.5.A.2",
+   "k": "ek",
+   "t": "An equation involving two variables can be graphed by finding solutions to the equation.",
+   "tp": "4.5"
+  },
+  {
+   "c": "4.5.A.3",
+   "k": "ek",
+   "t": "Solving for one of the variables in an equation involving two variables can define a function whose graph is part or all of the graph of the equation.",
+   "tp": "4.5"
+  },
+  {
+   "c": "4.5.B.1",
+   "k": "ek",
+   "t": "For ordered pairs on the graph of an implicitly defined function that are close together, if the ratio of the change in the two variables is positive, then the two variables simultaneously increase or both decrease; conversely, if the ratio is negative, then as one variable increases, the other decreases.",
+   "tp": "4.5"
+  },
+  {
+   "c": "4.5.B.2",
+   "k": "ek",
+   "t": "The rate of change of x with respect to y or of y with respect to x can be zero, indicating vertical or horizontal intervals, respectively.",
+   "tp": "4.5"
+  },
+  {
+   "c": "4.6.A",
+   "k": "lo",
+   "t": "Represent conic sections with horizontal or vertical symmetry analytically.",
+   "tp": "4.6"
+  },
+  {
+   "c": "4.6.A.1",
+   "k": "ek",
+   "t": "A parabola with vertex (h, k)can, if a ≠ 0, be represented analytically as x h- =(a- ky) if it opens left or right, or as y k- =(a- hx) if it opens up or down.",
+   "tp": "4.6"
+  },
+  {
+   "c": "4.6.A.2",
+   "k": "ek",
+   "t": "An ellipse centered at (h, k)with horizontal radius a and vertical radius b can be represented analytically as (x - h) (y - k) + = 1. A circle is a special a b case of an ellipse where a = b.",
+   "tp": "4.6"
+  },
+  {
+   "c": "4.6.A.3",
+   "k": "ek",
+   "t": "A hyperbola centered at (h, k)with vertical and horizonal lines of symmetry can be represented algebraically (x - h) (y - k) as - = 1 for a a b hyperbola opening left and right, or as (y - k) (x - h) - = 1 for a hyperbola b a opening up and down. The asymptotes are b y k- = (x ±h). -a",
+   "tp": "4.6"
+  },
+  {
+   "c": "4.7.A",
+   "k": "lo",
+   "t": "Represent a curve in the plane parametrically.",
+   "tp": "4.7"
+  },
+  {
+   "c": "4.7.B",
+   "k": "lo",
+   "t": "Represent conic sections parametrically.",
+   "tp": "4.7"
+  },
+  {
+   "c": "4.7.A.1",
+   "k": "ek",
+   "t": "A parametrization (x (t), y()t) for an implicitly defined function will, when x (t) and y (t) are substituted for x and y, respectively, satisfy the corresponding equation for every value of t in the domain.",
+   "tp": "4.7"
+  },
+  {
+   "c": "4.7.A.2",
+   "k": "ek",
+   "t": "If f is a function of x, then y = f (x) can be parametrized as (x (t), y()t) = (t, f (t)). If f is invertible, its inverse can be parametrized as (x (t), y()t) = (f (t), t) for an appropriate interval of t.",
+   "tp": "4.7"
+  },
+  {
+   "c": "4.7.B.1",
+   "k": "ek",
+   "t": "A parabola can be parametrized in the same way that any equation that can be solved for x or y can be parametrized. Equations that can be solved for x can be parametrized as (x (t), y()t) = (f (t), t)by solving for x and replacing y with t. Equations that can be solved for y can be parametrized as (x (t), y()t) = (t, f (t)) by solving for y and replacing x with t.",
+   "tp": "4.7"
+  },
+  {
+   "c": "4.7.B.2",
+   "k": "ek",
+   "t": "An ellipse can be parametrized using the trigonometric functions x (t) = +h a cosandt y (t) = +k b sinfort 0 ≤ t 2≤π.",
+   "tp": "4.7"
+  },
+  {
+   "c": "4.7.B.3",
+   "k": "ek",
+   "t": "A hyperbola can be parametrized using trigonometric functions. For a hyperbola that opens left and right, the functions are x (t) = +h a secandt y (t) = +k b tanfort 0 ≤ t 2≤π. For a hyperbola that opens up and down, the functions are x (t) = +h a tanandt y (t) = +k b secfort 0 ≤ t 2≤π.",
+   "tp": "4.7"
+  },
+  {
+   "c": "4.8.A",
+   "k": "lo",
+   "t": "Identify characteristics of a vector.",
+   "tp": "4.8"
+  },
+  {
+   "c": "4.8.B",
+   "k": "lo",
+   "t": "Determine sums and products involving vectors.",
+   "tp": "4.8"
+  },
+  {
+   "c": "4.8.A.1",
+   "k": "ek",
+   "t": "A vector is a directed line segment. When a vector is placed in the plane, the point at the beginning of the line segment is called the tail, and the point at the end of the line segment is called the head. The length of the line segment is the magnitude of the vector.",
+   "tp": "4.8"
+  },
+  {
+   "c": "4.8.A.2",
+   "k": "ek",
+   "t": "A vector P_1P_2with two components can be plotted in the xy-plane from P_1= (x_1, y_1) to P_2= (x_2, y_2). The vector is identified by a and b, where a x_2= x_1-and b y_2=- y_1. The vector can be expressed as a, b. A zero vector 0, 0 is the trivial case when P_1= P_2.",
+   "tp": "4.8"
+  },
+  {
+   "c": "4.8.A.3",
+   "k": "ek",
+   "t": "The direction of the vector is parallel to the line segment from the origin to the point with coordinates(a, b). The magnitude of the vector is the square root of the sum of the squares of the components.",
+   "tp": "4.8"
+  },
+  {
+   "c": "4.8.A.4",
+   "k": "ek",
+   "t": "For a vector represented geometrically in the plane, the components of the vector can be found using trigonometry.",
+   "tp": "4.8"
+  },
+  {
+   "c": "4.8.B.1",
+   "k": "ek",
+   "t": "The multiplication of a constant and a vector results in a new vector whose components are found by multiplying the constant by each of the components of the original vector. The new vector is parallel to the original vector.",
+   "tp": "4.8"
+  },
+  {
+   "c": "4.8.C",
+   "k": "lo",
+   "t": "Determine a unit vector for a given vector.",
+   "tp": "4.8"
+  },
+  {
+   "c": "4.8.D",
+   "k": "lo",
+   "t": "Determine angle measures between vectors and magnitudes of vectors involved in vector addition.",
+   "tp": "4.8"
+  },
+  {
+   "c": "4.8.B.2",
+   "k": "ek",
+   "t": "The sum of two vectors in ℝ² is a new vector whose components are found by adding the corresponding components of the original vectors. The new vector can be represented graphically as a vector whose tail corresponds to the tail of the first vector and whose head corresponds to the head of the second vector when the second vector’s tail is located at the first vector’s head.",
+   "tp": "4.8"
+  },
+  {
+   "c": "4.8.B.3",
+   "k": "ek",
+   "t": "The dot product of two vectors is the sum of the products of their corresponding components. That is, a_1, b_{1 2},_2. a_1aa_2+bb=_1b_2.",
+   "tp": "4.8"
+  },
+  {
+   "c": "4.8.C.1",
+   "k": "ek",
+   "t": "A unit vector is a vector of magnitude 1. A unit vector in the same direction as a given nonzero vector can be found by scalar multiplying the vector by the reciprocal of its magnitude.",
+   "tp": "4.8"
+  },
+  {
+   "c": "4.8.C.2",
+   "k": "ek",
+   "t": "The vector a, b can be expressed as ai + b j in ℝ², where i and j are unit vectors in the x and y directions, respectively. That is, i = 1, 0 and j = 0,1.",
+   "tp": "4.8"
+  },
+  {
+   "c": "4.8.D.1",
+   "k": "ek",
+   "t": "The dot product is geometrically equivalent to the product of the magnitudes of the two vectors and the cosine of the angle between them. Therefore, if the dot product of two nonzero vectors is zero, then the vectors are perpendicular.",
+   "tp": "4.8"
+  },
+  {
+   "c": "4.8.D.2",
+   "k": "ek",
+   "t": "The Law of Sines and Law of Cosines can be used to determine side lengths and angle measures of triangles formed by vector addition.",
+   "tp": "4.8"
+  },
+  {
+   "c": "4.9.A",
+   "k": "lo",
+   "t": "Represent planar motion in terms of vector-valued functions.",
+   "tp": "4.9"
+  },
+  {
+   "c": "4.9.A.1",
+   "k": "ek",
+   "t": "The position of a particle moving in a plane that is given by the parametric function f (t) = (x (t), y()t) may be expressed as a vector-valued function, p (t) = x(t)i + y(t) j or p (t) = x(t), y()t. The magnitude of the position vector at time t gives the distance of the particle from the origin.",
+   "tp": "4.9"
+  },
+  {
+   "c": "4.9.A.2",
+   "k": "ek",
+   "t": "The vector-valued function v (t) = x(t), y()t can be used to express the velocity of a particle moving in a plane at different times, t. At time t, the sign of x (t) indicates if the particle is moving right or left, and the sign of y (t)indicates if the particle is moving up or down. The magnitude of the velocity vector at time t gives the speed of the particle.",
+   "tp": "4.9"
+  },
+  {
+   "c": "4.10.A",
+   "k": "lo",
+   "t": "Determine the product of two matrices.",
+   "tp": "4.10"
+  },
+  {
+   "c": "4.10.A.1",
+   "k": "ek",
+   "t": "An n × m matrix is an array consisting of n rows and m columns.",
+   "tp": "4.10"
+  },
+  {
+   "c": "4.10.A.2",
+   "k": "ek",
+   "t": "Two matrices can be multiplied if the number of columns in the first matrix equals the number of rows in the second matrix. The product of the matrices is a new matrix in which the component in the ith row and jth column is the dot product of the ith row of the first matrix and the jth column of the second matrix.",
+   "tp": "4.10"
+  },
+  {
+   "c": "4.11.A",
+   "k": "lo",
+   "t": "Determine the inverse of a 2 × 2 matrix.",
+   "tp": "4.11"
+  },
+  {
+   "c": "4.11.B",
+   "k": "lo",
+   "t": "Apply the value of the determinant to invertibility and vectors.",
+   "tp": "4.11"
+  },
+  {
+   "c": "4.11.A.1",
+   "k": "ek",
+   "t": "The identity matrix, I, is a square matrix consisting of 1s on the diagonal from the top left to bottom right and 0s everywhere else.",
+   "tp": "4.11"
+  },
+  {
+   "c": "4.11.A.2",
+   "k": "ek",
+   "t": "Multiplying a square matrix by its corresponding identity matrix results in the original square matrix.",
+   "tp": "4.11"
+  },
+  {
+   "c": "4.11.A.3",
+   "k": "ek",
+   "t": "The product of a square matrix and its inverse, when it exists, is the identity matrix of the same size.",
+   "tp": "4.11"
+  },
+  {
+   "c": "4.11.A.4",
+   "k": "ek",
+   "t": "The inverse of a 2 × 2 matrix, when it exists, can be calculated with or without technology.",
+   "tp": "4.11"
+  },
+  {
+   "c": "4.11.B.1",
+   "k": "ek",
+   "t": "a b [ ] The determinant of the matrix A = | | is [c d] ad − bc. The determinant can be calculated with or without technology and is denoted det(A).",
+   "tp": "4.11"
+  },
+  {
+   "c": "4.11.B.2",
+   "k": "ek",
+   "t": "If a 2 × 2 matrix consists of two column or row vectors from ℝ², then the nonzero absolute value of the determinant of the matrix is the area of the parallelogram spanned by the vectors represented in the columns or rows of the matrix. If the determinant equals 0, then the vectors are parallel.",
+   "tp": "4.11"
+  },
+  {
+   "c": "4.11.B.3",
+   "k": "ek",
+   "t": "The square matrix A has an inverse if and only if det(A) ≠ 0.",
+   "tp": "4.11"
+  },
+  {
+   "c": "4.12.A",
+   "k": "lo",
+   "t": "Determine the output vectors of a linear transformation using a 2 × 2 matrix.",
+   "tp": "4.12"
+  },
+  {
+   "c": "4.12.A.1",
+   "k": "ek",
+   "t": "A linear transformation is a function that maps an input vector to an output vector such that each component of the output vector is the sum of constant multiples of the input vector components.",
+   "tp": "4.12"
+  },
+  {
+   "c": "4.12.A.2",
+   "k": "ek",
+   "t": "A linear transformation will map the zero vector to the zero vector.",
+   "tp": "4.12"
+  },
+  {
+   "c": "4.12.A.3",
+   "k": "ek",
+   "t": "A single vector in ℝ² can be expressed as a 2 ×1 matrix. A set of n vectors in ℝ² can be expressed as a 2 × n matrix.",
+   "tp": "4.12"
+  },
+  {
+   "c": "4.12.A.4",
+   "k": "ek",
+   "t": "For a linear transformation, L, from ℝ² to ℝ², there is a unique 2 × 2 matrix, A, such that",
+   "tp": "4.12"
+  },
+  {
+   "c": "4.12.A.5",
+   "k": "ek",
+   "t": "Multiplication of a 2 × 2 transformation matrix, A, and a 2 × n matrix of n input vectors gives a 2 × n matrix of the n output vectors for the linear transformation L (v) = Av.",
+   "tp": "4.12"
+  },
+  {
+   "c": "4.13.A",
+   "k": "lo",
+   "t": "Determine the association between a linear transformation and a matrix.",
+   "tp": "4.13"
+  },
+  {
+   "c": "4.13.B",
+   "k": "lo",
+   "t": "Determine the composition of two linear transformations.",
+   "tp": "4.13"
+  },
+  {
+   "c": "4.13.A.1",
+   "k": "ek",
+   "t": "The linear transformation mapping x, y to a_{11}x a_{12}y,_2a_1+x a_{22}y is associated with+ [ 11 a 12]a^{the matrix }| |^{.} [ 21 a 22]a",
+   "tp": "4.13"
+  },
+  {
+   "c": "4.13.A.2",
+   "k": "ek",
+   "t": "The mapping of the unit vectors in a linear transformation provides valuable information for determining the associated matrix.",
+   "tp": "4.13"
+  },
+  {
+   "c": "4.13.A.3",
+   "k": "ek",
+   "t": "[co θ -s inθ]s^{The matrix }| |^{is associated with} [si θ n osθ]c a linear transformation of vectors that rotates every vector an angle θ counterclockwise about the origin.",
+   "tp": "4.13"
+  },
+  {
+   "c": "4.13.A.4",
+   "k": "ek",
+   "t": "The absolute value of the determinant of a 2 × 2 transformation matrix gives the magnitude of the dilation of regions in ℝ² under the transformation.",
+   "tp": "4.13"
+  },
+  {
+   "c": "4.13.B.1",
+   "k": "ek",
+   "t": "The composition of two linear transformations is a linear transformation.",
+   "tp": "4.13"
+  },
+  {
+   "c": "4.13.B.2",
+   "k": "ek",
+   "t": "The matrix associated with the composition of two linear transformations is the product of the matrices associated with each linear transformation.",
+   "tp": "4.13"
+  },
+  {
+   "c": "4.13.C",
+   "k": "lo",
+   "t": "Determine the inverse of a linear transformation.",
+   "tp": "4.13"
+  },
+  {
+   "c": "4.13.C.1",
+   "k": "ek",
+   "t": "Two linear transformations are inverses if their composition maps any vector to itself.",
+   "tp": "4.13"
+  },
+  {
+   "c": "4.13.C.2",
+   "k": "ek",
+   "t": "If a linear transformation,  L, is given by L (v) = Av, then its inverse transformation - -1 1 −1 is given by L (v) = A, wherev A is the inverse of the matrix A.",
+   "tp": "4.13"
+  },
+  {
+   "c": "4.14.A",
+   "k": "lo",
+   "t": "Construct a model of a scenario involving transitions between two states using matrices.",
+   "tp": "4.14"
+  },
+  {
+   "c": "4.14.B",
+   "k": "lo",
+   "t": "Apply matrix models to predict future and past states for n transition steps.",
+   "tp": "4.14"
+  },
+  {
+   "c": "4.14.A.1",
+   "k": "ek",
+   "t": "A contextual scenario can indicate the rate of transitions between states as percent changes. A matrix can be constructed based on these rates to model how states change over discrete intervals.",
+   "tp": "4.14"
+  },
+  {
+   "c": "4.14.B.1",
+   "k": "ek",
+   "t": "The product of a matrix that models transitions between states and a corresponding state vector can predict future states.",
+   "tp": "4.14"
+  },
+  {
+   "c": "4.14.B.2",
+   "k": "ek",
+   "t": "Repeated multiplication of a matrix that models the transitions between states and corresponding resultant state vectors can predict the steady state, a distribution between states that does not change from one step to the next.",
+   "tp": "4.14"
+  },
+  {
+   "c": "4.14.B.3",
+   "k": "ek",
+   "t": "The product of the inverse of a matrix that models transitions between states and a corresponding state vector can predict past states.",
+   "tp": "4.14"
+  }
+ ],
+ "skillsByTopic": {
+  "1.1": [
+   "2.B",
+   "3.A"
+  ],
+  "1.2": [
+   "2.A",
+   "3.A"
+  ],
+  "1.3": [
+   "3.B",
+   "3.C"
+  ],
+  "1.4": [
+   "2.A",
+   "3.A"
+  ],
+  "1.5": [
+   "1.B",
+   "2.B"
+  ],
+  "1.6": [
+   "3.A"
+  ],
+  "1.7": [
+   "1.B",
+   "3.A"
+  ],
+  "1.8": [
+   "1.A"
+  ],
+  "1.9": [
+   "2.A"
+  ],
+  "1.10": [
+   "3.C"
+  ],
+  "1.11": [
+   "1.B",
+   "3.B"
+  ],
+  "1.12": [
+   "1.C",
+   "3.A"
+  ],
+  "1.13": [
+   "2.A",
+   "3.C"
+  ],
+  "1.14": [
+   "1.C",
+   "3.B"
+  ],
+  "2.1": [
+   "1.B",
+   "3.A"
+  ],
+  "2.2": [
+   "1.C",
+   "3.B"
+  ],
+  "2.3": [
+   "3.A"
+  ],
+  "2.4": [
+   "1.B",
+   "3.A"
+  ],
+  "2.5": [
+   "1.C",
+   "3.B"
+  ],
+  "2.6": [
+   "2.A",
+   "3.C"
+  ],
+  "2.7": [
+   "1.C",
+   "2.B"
+  ],
+  "2.8": [
+   "1.A",
+   "2.B"
+  ],
+  "2.9": [
+   "1.B"
+  ],
+  "2.10": [
+   "1.C",
+   "2.B"
+  ],
+  "2.11": [
+   "3.A"
+  ],
+  "2.12": [
+   "1.B",
+   "3.A"
+  ],
+  "2.13": [
+   "1.A",
+   "1.B",
+   "1.C"
+  ],
+  "2.14": [
+   "1.C",
+   "3.B"
+  ],
+  "2.15": [
+   "2.B",
+   "3.C"
+  ],
+  "3.1": [
+   "2.B",
+   "3.A"
+  ],
+  "3.2": [
+   "2.A",
+   "3.A"
+  ],
+  "3.3": [
+   "2.A",
+   "3.B"
+  ],
+  "3.4": [
+   "2.A",
+   "3.A"
+  ],
+  "3.5": [
+   "2.A",
+   "3.A"
+  ],
+  "3.6": [
+   "1.C",
+   "2.B"
+  ],
+  "3.7": [
+   "1.C",
+   "3.C"
+  ],
+  "3.8": [
+   "2.A",
+   "3.A"
+  ],
+  "3.9": [
+   "1.C",
+   "2.B"
+  ],
+  "3.10": [
+   "1.A",
+   "2.A",
+   "3.B"
+  ],
+  "3.11": [
+   "2.B",
+   "3.A"
+  ],
+  "3.12": [
+   "1.A",
+   "1.B",
+   "3.B"
+  ],
+  "3.13": [
+   "1.B",
+   "2.A"
+  ],
+  "3.14": [
+   "2.B",
+   "3.A"
+  ],
+  "3.15": [
+   "3.A",
+   "3.C"
+  ],
+  "4.1": [
+   "1.A",
+   "2.B"
+  ],
+  "4.2": [
+   "3.A",
+   "3.B"
+  ],
+  "4.3": [
+   "3.B",
+   "3.C"
+  ],
+  "4.4": [
+   "1.B",
+   "1.C"
+  ],
+  "4.5": [
+   "2.B",
+   "3.A"
+  ],
+  "4.6": [
+   "1.B",
+   "2.A",
+   "2.B"
+  ],
+  "4.7": [
+   "1.B",
+   "2.A"
+  ],
+  "4.8": [
+   "2.A",
+   "3.A",
+   "3.B"
+  ],
+  "4.9": [
+   "3.C"
+  ],
+  "4.10": [
+   "1.B",
+   "3.B"
+  ],
+  "4.11": [
+   "1.B",
+   "3.B"
+  ],
+  "4.12": [
+   "1.B"
+  ],
+  "4.13": [
+   "1.B",
+   "2.A",
+   "3.A"
+  ],
+  "4.14": [
+   "1.C",
+   "3.B",
+   "3.C"
+  ]
+ },
+ "skillDesc": {
+  "2.B": "Construct equivalent graphical, numerical, analytical, and verbal representations of functions that are useful in a given mathematical or applied context, with and without technology.",
+  "3.A": "Describe the characteristics of a function with varying levels of precision, depending on the function representation and available mathematical tools.",
+  "2.A": "Identify information from graphical, numerical, analytical, and verbal representations to answer a question or construct a model, with and without technology.",
+  "3.B": "Apply numerical results in a given mathematical or applied context.",
+  "3.C": "Support conclusions or choices with a logical rationale or appropriate data.",
+  "1.B": "Express functions, equations, or expressions in analytically equivalent forms that are useful in a given mathematical or applied context.",
+  "1.A": "Solve equations and inequalities represented analytically, with and without technology.",
+  "1.C": "Construct new functions, using transformations, compositions, inverses, or regressions, that may be useful in modeling contexts, criteria, or data, with and without technology."
+ },
+ "glance": {
+  "1.1": {
+   "title": "Change in Tandem",
+   "periods": "2"
+  },
+  "1.2": {
+   "title": "Rates of Change",
+   "periods": "2"
+  },
+  "1.3": {
+   "title": "Rates of Change in Linear and Quadratic Functions",
+   "periods": "2"
+  },
+  "1.4": {
+   "title": "Polynomial Functions and Rates of Change",
+   "periods": "2"
+  },
+  "1.5": {
+   "title": "Polynomial Functions and Complex Zeros",
+   "periods": "2–3"
+  },
+  "1.6": {
+   "title": "Polynomial Functions and End Behavior",
+   "periods": "1–2"
+  },
+  "1.7": {
+   "title": "Rational Functions and End Behavior",
+   "periods": "1"
+  },
+  "1.8": {
+   "title": "Rational Functions and Zeros",
+   "periods": "1–2"
+  },
+  "1.9": {
+   "title": "Rational Functions and Vertical Asymptotes",
+   "periods": "1"
+  },
+  "1.10": {
+   "title": "Rational Functions and Holes",
+   "periods": "1–2"
+  },
+  "1.11": {
+   "title": "Equivalent Representations of Polynomial and Rational Expressions",
+   "periods": "2–3"
+  },
+  "1.12": {
+   "title": "Transformations of Functions",
+   "periods": "2–3"
+  },
+  "1.13": {
+   "title": "Function Model Selection and Assumption Articulation",
+   "periods": "2–3"
+  },
+  "1.14": {
+   "title": "Function Model Construction and Application",
+   "periods": "2"
+  },
+  "2.1": {
+   "title": "Change in Arithmetic and Geometric Sequences",
+   "periods": "2"
+  },
+  "2.2": {
+   "title": "Change in Linear and Exponential Functions",
+   "periods": "2"
+  },
+  "2.3": {
+   "title": "Exponential Functions",
+   "periods": "1–2"
+  },
+  "2.4": {
+   "title": "Exponential Function Manipulation",
+   "periods": "2"
+  },
+  "2.5": {
+   "title": "Exponential Function Context and Data Modeling",
+   "periods": "2–3"
+  },
+  "2.6": {
+   "title": "Competing Function Model Validation",
+   "periods": "2–3"
+  },
+  "2.7": {
+   "title": "Composition of Functions",
+   "periods": "2–3"
+  },
+  "2.8": {
+   "title": "Inverse Functions",
+   "periods": "2"
+  },
+  "2.9": {
+   "title": "Logarithmic Expressions",
+   "periods": "2"
+  },
+  "2.10": {
+   "title": "Inverses of Exponential Functions",
+   "periods": "2"
+  },
+  "2.11": {
+   "title": "Logarithmic Functions",
+   "periods": "1–2"
+  },
+  "2.12": {
+   "title": "Logarithmic Function Manipulation",
+   "periods": "2–3"
+  },
+  "2.13": {
+   "title": "Exponential and Logarithmic Equations and Inequalities",
+   "periods": "3–4"
+  },
+  "2.14": {
+   "title": "Logarithmic Function Context and Data Modeling",
+   "periods": "2–3"
+  },
+  "2.15": {
+   "title": "Semi-log Plots",
+   "periods": "3"
+  },
+  "3.1": {
+   "title": "Periodic Phenomena",
+   "periods": "2"
+  },
+  "3.2": {
+   "title": "Sine, Cosine, and Tangent",
+   "periods": "2–3"
+  },
+  "3.3": {
+   "title": "Sine and Cosine Function Values",
+   "periods": "2–3"
+  },
+  "3.4": {
+   "title": "Sine and Cosine Function Graphs",
+   "periods": "2–3"
+  },
+  "3.5": {
+   "title": "Sinusoidal Functions",
+   "periods": "2–3"
+  },
+  "3.6": {
+   "title": "Sinusoidal Function Transformations",
+   "periods": "2–3"
+  },
+  "3.7": {
+   "title": "Sinusoidal Function Context and Data Modeling",
+   "periods": "2–3"
+  },
+  "3.8": {
+   "title": "The Tangent Function",
+   "periods": "3"
+  },
+  "3.9": {
+   "title": "Inverse Trigonometric Functions",
+   "periods": "3"
+  },
+  "3.10": {
+   "title": "Trigonometric Equations and Inequalities",
+   "periods": "3–4"
+  },
+  "3.11": {
+   "title": "The Secant, Cosecant, and Cotangent Functions",
+   "periods": "2"
+  },
+  "3.12": {
+   "title": "Equivalent Representations of Trigonometric Functions",
+   "periods": "3–4"
+  },
+  "3.13": {
+   "title": "Trigonometry and Polar Coordinates",
+   "periods": "2–3"
+  },
+  "3.14": {
+   "title": "Polar Function Graphs",
+   "periods": "2–3"
+  },
+  "3.15": {
+   "title": "Rates of Change in Polar Functions",
+   "periods": "4"
+  },
+  "4.1": {
+   "title": "Parametric Functions",
+   "periods": "2"
+  },
+  "4.2": {
+   "title": "Parametric Functions Modeling Planar Motion",
+   "periods": "2"
+  },
+  "4.3": {
+   "title": "Parametric Functions and Rates of Change",
+   "periods": "2"
+  },
+  "4.4": {
+   "title": "Parametrically Defined Circles and Lines",
+   "periods": "2"
+  },
+  "4.5": {
+   "title": "Implicitly Defined Functions",
+   "periods": "2"
+  },
+  "4.6": {
+   "title": "Conic Sections",
+   "periods": "3"
+  },
+  "4.7": {
+   "title": "Parametrization of Implicitly Defined Functions",
+   "periods": "4"
+  },
+  "4.8": {
+   "title": "Vectors",
+   "periods": "3"
+  },
+  "4.9": {
+   "title": "Vector-Valued Functions",
+   "periods": "4"
+  },
+  "4.10": {
+   "title": "Matrices",
+   "periods": "2"
+  },
+  "4.11": {
+   "title": "The Inverse and Determinant of a Matrix",
+   "periods": "2"
+  },
+  "4.12": {
+   "title": "Linear Transformations and Matrices",
+   "periods": "1"
+  },
+  "4.13": {
+   "title": "Matrices as Functions",
+   "periods": "3"
+  },
+  "4.14": {
+   "title": "Matrices Modeling Contexts",
+   "periods": "3"
+  }
+ }
+}

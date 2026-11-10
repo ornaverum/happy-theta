@@ -131,6 +131,55 @@
 		return data;
 	};
 
+	/* The course a course "is" for the shared library — { id, label } — so activities only meet courses whose
+	   objective codes mean the same thing (AP Physics 1 "1.1.A" ≠ AP Precalculus "1.1.A").
+	   Set when a course is made from a framework (course.subject); older courses are recognized from their
+	   objective lists; anything else is its own subject, named after the course. */
+	S.PHYSICS1 = { id: 'ap-physics-1', label: 'AP Physics 1' };
+	S.subjectSlug = (s) =>
+		String(s || '')
+			.toLowerCase()
+			.normalize('NFKD')
+			.replace(/[^a-z0-9]+/g, '-')
+			.replace(/^-+|-+$/g, '')
+			.slice(0, 60) || 'course';
+	S.courseSubject = function (data, seeds = root.HT && root.HT.schedulerSeeds) {
+		const s = data.course && data.course.subject;
+		if (s && s.id) return { id: s.id, label: s.label || s.id };
+		const names = (data.objectiveTrees || []).map((t) => t.name);
+		for (const seed of Object.values(seeds || {})) {
+			const t = seed.data && seed.data.objectiveTrees && seed.data.objectiveTrees[0];
+			if (seed.subject && t && names.includes(t.name)) return { ...seed.subject };
+		}
+		if (names.some((n) => /AP Physics 1/i.test(n))) return { ...S.PHYSICS1 };
+		const title = (data.course && data.course.title) || 'Course';
+		return { id: S.subjectSlug(title), label: title };
+	};
+
+	/* The exam the course builds to (AP Exam, or a final exam): course.exam = { date, name, review }, where
+	   review is how many class meetings right before the exam are kept for review. All new content has to
+	   be done before them. Returns null without a date, else
+	   { date, name, review (as many as there are), reviewStart, reviewEnd, contentEnd (last content meeting),
+	     reviewDates }. Meetings on or after the exam day don't count. */
+	S.examPlan = function (data, days = S.genDays(data)) {
+		const e = data.course && data.course.exam;
+		if (!e || !S.isDate(e.date)) return null;
+		const before = days.filter((x) => x.meet && x.date < e.date).map((x) => x.date);
+		const review = Math.max(0, Math.min(parseInt(e.review, 10) || 0, before.length));
+		const reviewDates = before.slice(before.length - review);
+		return {
+			date: e.date,
+			name: e.name || 'Exam',
+			review,
+			reviewDates,
+			reviewStart: reviewDates[0] || null,
+			reviewEnd: reviewDates[reviewDates.length - 1] || null,
+			contentEnd: before.length > review ? before[before.length - review - 1] : null
+		};
+	};
+	S.EXAM_NAMES = ['AP Exam', 'Final exam'];
+	S.defaultExamName = (subject) => (/^AP\b/.test((subject && subject.label) || '') ? 'AP Exam' : 'Final exam');
+
 	/* Fields that tie an activity to a shared library item. A copy of an activity must not carry them, or
 	   editing the copy would change (or be treated as) the original. `libraryForkedFrom` only remembers
 	   where a copy came from. */
@@ -313,7 +362,7 @@
 				date: d,
 				dow: dw,
 				type,
-				note: (ov && ov.note) || (br && br.note) || '',
+				note: (ov && ov.note) || (br && br.note) || (c.exam && c.exam.date === d ? c.exam.name || 'Exam' : ''),
 				school: type !== 'none',
 				meet: type === c.meetsOn,
 				minutes: type === c.meetsOn ? minutes : null,

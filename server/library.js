@@ -2,7 +2,9 @@
 /* Shared activity library for Theta Scheduler. Teachers publish activities from their courses; any teacher
    can search the library and pull a copy into their own course, where it's theirs to change.
    Only the owner can change or delete a library item. Objectives are stored as AP-style codes
-   ("1.2.A", "2.4.A.3") so an item lines up with any course built on those codes, whatever its sequence. */
+   ("1.2.A", "2.4.A.3") so an item lines up with any course built on those codes, whatever its sequence.
+   Each item is tagged with its course subject ({ id, label }, e.g. "ap-physics-1"), because the same code
+   means different things in different subjects (Physics 1 "1.1.A" vs Precalculus "1.1.A"). */
 const crypto = require('crypto');
 const express = require('express');
 const { db } = require('./db');
@@ -22,6 +24,20 @@ CREATE TABLE IF NOT EXISTS library_items (
 CREATE INDEX IF NOT EXISTS library_owner ON library_items(owner_id);
 `);
 
+/* Items shared before course tags existed were all AP Physics 1 (the only framework then). Tag them once;
+   the version isn't bumped, since the tag isn't part of what copies compare. */
+const PHYSICS1 = { id: 'ap-physics-1', label: 'AP Physics 1' };
+{
+	const untagged = db.prepare('SELECT id, data FROM library_items').all().filter((r) => !JSON.parse(r.data).course);
+	if (untagged.length) {
+		const set = db.prepare('UPDATE library_items SET data = ? WHERE id = ?');
+		db.transaction(() => {
+			for (const r of untagged) set.run(JSON.stringify({ ...JSON.parse(r.data), course: PHYSICS1 }), r.id);
+		})();
+		console.log(`library: tagged ${untagged.length} older item(s) as ${PHYSICS1.label}`);
+	}
+}
+
 const q = {
 	all: db.prepare('SELECT l.*, u.email AS owner FROM library_items l JOIN users u ON u.id = l.owner_id'),
 	one: db.prepare('SELECT l.*, u.email AS owner FROM library_items l JOIN users u ON u.id = l.owner_id WHERE l.id = ?'),
@@ -37,6 +53,8 @@ const q = {
 const str = (v, max) => (typeof v === 'string' ? v.trim().slice(0, max) : '');
 const CODE_RE = /^[A-Za-z0-9][\w.\-]{0,39}$/;
 const COLOR_RE = /^#[0-9a-fA-F]{6}$/;
+const COURSE_RE = /^[a-z0-9][a-z0-9-]{0,59}$/;
+const course = (c) => (c && typeof c === 'object' && COURSE_RE.test(c.id) ? { id: c.id, label: str(c.label, 80) || c.id } : null);
 const tag = (t) =>
 	t && typeof t === 'object' && str(t.label, 60)
 		? { id: str(t.id, 60) || str(t.label, 60).toLowerCase().replace(/\s+/g, '-'), label: str(t.label, 60), color: COLOR_RE.test(t.color) ? t.color : '#6b7280' }
@@ -55,6 +73,7 @@ function clean(item) {
 	return {
 		item: {
 			title,
+			course: course(item.course),
 			type: tag(item.type),
 			interaction: tag(item.interaction),
 			assessment: ['formative', 'summative'].includes(item.assessment) ? item.assessment : 'none',
@@ -90,7 +109,8 @@ router.use(auth.requireTeacher);
 
 /* Search. Query: q (words in title/notes/topic), type (tag id or label), assessment, interaction,
    inClass (1/0), min, max (minutes), codes (comma list: matches items linked to the same, a more
-   specific, or a broader objective), mine (1), sort (new|popular|title|minutes), limit, offset */
+   specific, or a broader objective), course (subject id: only that course's items), mine (1),
+   sort (new|popular|title|minutes), limit, offset */
 router.get('/', (req, res) => {
 	const Q = req.query;
 	const words = String(Q.q || '').toLowerCase().split(/\s+/).filter(Boolean).slice(0, 10);
@@ -99,9 +119,11 @@ router.get('/', (req, res) => {
 	const max = Q.max === undefined || Q.max === '' ? null : Number(Q.max);
 	const typ = String(Q.type || '').toLowerCase();
 	const inter = String(Q.interaction || '').toLowerCase();
+	const crs = COURSE_RE.test(String(Q.course || '')) ? String(Q.course) : '';
 	let rows = q.all.all().map((r) => out(r, req.user));
 	rows = rows.filter(({ item, mine, owner }) => {
 		if (Q.mine === '1' && !mine) return false;
+		if (crs && !(item.course && item.course.id === crs)) return false;
 		if (typ && !(item.type && (item.type.id.toLowerCase() === typ || item.type.label.toLowerCase() === typ))) return false;
 		if (inter && !(item.interaction && (item.interaction.id.toLowerCase() === inter || item.interaction.label.toLowerCase() === inter))) return false;
 		if (Q.assessment && item.assessment !== Q.assessment) return false;
@@ -129,6 +151,17 @@ router.get('/', (req, res) => {
 	res.json({ total: rows.length, items: rows.slice(offset, offset + limit) });
 });
 
+/* The courses the library has items for: [{ id, label, count }] (untagged items count under id null) */
+router.get('/courses', (req, res) => {
+	const by = new Map();
+	for (const r of q.all.all()) {
+		const c = JSON.parse(r.data).course || { id: null, label: 'No course' };
+		const hit = by.get(c.id) || by.set(c.id, { id: c.id, label: c.label, count: 0 }).get(c.id);
+		hit.count++;
+	}
+	res.json({ courses: [...by.values()].sort((a, b) => a.label.localeCompare(b.label)) });
+});
+
 /* Versions of several items at once (comma list of ids) — lets a course see which copies are behind */
 router.get('/versions', (req, res) => {
 	const ids = String(req.query.ids || '').split(',').filter(Boolean).slice(0, 1000);
@@ -152,9 +185,11 @@ router.get('/:id', (req, res) => {
 function save(entry, user) {
 	const c = clean(entry && entry.item);
 	if (c.error) return { status: 'error', error: c.error };
-	const data = JSON.stringify(c.item);
 	const id = typeof entry.id === 'string' ? entry.id : null;
 	const existing = id ? q.one.get(id) : null;
+	// an update that doesn't say (an older page) keeps the item's course
+	if (!c.item.course && existing) c.item.course = JSON.parse(existing.data).course || null;
+	const data = JSON.stringify(c.item);
 	if (existing && existing.owner_id === user.id) {
 		if (Number.isInteger(entry.baseVersion) && entry.baseVersion !== existing.version)
 			return { status: 'conflict', id, version: existing.version, error: 'This activity was changed in the library since you last synced it.' };

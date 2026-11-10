@@ -1,7 +1,10 @@
 /* Theta Scheduler — shared activity library (needs the Happy Theta server and a teacher account).
    Teachers share activities from their courses; anyone can search, pull a copy into their own course and
    change it there. Objectives travel as AP-style codes, so an activity shared from one sequence lands on
-   the matching objectives in another. Load after scheduler.js (uses account.js for HT.api). */
+   the matching objectives in another — within one subject: each item carries its course subject
+   (S.courseSubject: AP Physics 1, AP CSA, …), the library shows this course's subject by default, and an
+   activity pulled from another subject comes in without objective links. Load after scheduler.js
+   (uses account.js for HT.api). */
 'use strict';
 
 (function () {
@@ -79,6 +82,7 @@
 		const topic = a.start ? S.topicAt(data, a.start) : null;
 		return {
 			title: a.title,
+			course: S.courseSubject(data),
 			type: tagOf(data, 'type', a.tags && a.tags.type),
 			interaction: tagOf(data, 'interaction', a.tags && a.tags.interaction),
 			assessment: a.assessment || 'none',
@@ -92,10 +96,11 @@
 		};
 	};
 
-	/* A short fingerprint of what's shared, to notice local edits since the last sync */
+	/* A short fingerprint of what's shared, to notice local edits since the last sync (the course tag and
+	   topic hint aren't edits) */
 	L.sig = function (item) {
-		const { topicHint, ...rest } = item;
-		void topicHint;
+		const { topicHint, course, ...rest } = item;
+		void topicHint, void course;
 		const s = JSON.stringify(rest, Object.keys(rest).sort());
 		let h = 5381;
 		for (let i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) | 0;
@@ -117,10 +122,14 @@
 		return id;
 	}
 
-	/* Library entry → fields of a course activity (mutates data's tag sets) */
+	/* Is a library item from another subject than this course? (untagged items count as this one) */
+	L.foreign = (data, it) => !!(it.course && it.course.id !== S.courseSubject(data).id);
+
+	/* Library entry → fields of a course activity (mutates data's tag sets). Codes only mean something
+	   within a subject, so an item from another subject comes in without objective links. */
 	L.fields = function (data, entry) {
 		const it = entry.item;
-		const objectiveIds = [...new Set(it.objectiveCodes.flatMap((c) => L.nodesForCode(data, c)))];
+		const objectiveIds = L.foreign(data, it) ? [] : [...new Set(it.objectiveCodes.flatMap((c) => L.nodesForCode(data, c)))];
 		const tags = {};
 		const ty = ensureTag(data, 'type', it.type, { countsAs: 'practice' });
 		if (ty) tags.type = ty;
@@ -171,7 +180,8 @@
 		sel: null,
 		loading: false,
 		error: '',
-		f: { q: '', node: '', type: '', assessment: '', interaction: '', where: '', min: '', max: '', mine: false, sort: 'new' },
+		f: { q: '', course: null, node: '', type: '', assessment: '', interaction: '', where: '', min: '', max: '', mine: false, sort: 'new' },
+		courses: [], // [{ id, label, count }] the library has items for
 		versions: {} // libraryId -> { version, owner, mine }
 	};
 	L.state = lib;
@@ -213,10 +223,27 @@
 		return L.codesFor(app.data, [lib.f.node], { precise: true });
 	}
 
+	// null = this course's subject (the default, follows the open course), '' = every course
+	// (a choice made while another subject's course was open doesn't carry over)
+	const courseFilter = () => {
+		const mine = S.courseSubject(app.data).id;
+		return lib.f.course === null || lib.f.courseFor !== mine ? mine : lib.f.course;
+	};
+
+	async function loadCourses() {
+		try {
+			lib.courses = (await HT.api('library/courses')).courses || [];
+		} catch {
+			lib.courses = [];
+		}
+	}
+
 	async function search() {
 		const f = lib.f;
 		const p = new URLSearchParams();
 		if (f.q) p.set('q', f.q);
+		const crs = courseFilter();
+		if (crs) p.set('course', crs);
 		if (f.type) p.set('type', f.type);
 		if (f.assessment) p.set('assessment', f.assessment);
 		if (f.interaction) p.set('interaction', f.interaction);
@@ -224,7 +251,7 @@
 		if (f.min !== '') p.set('min', f.min);
 		if (f.max !== '') p.set('max', f.max);
 		if (f.mine) p.set('mine', '1');
-		const codes = searchCodes();
+		const codes = crs === S.courseSubject(app.data).id ? searchCodes() : []; // this course's codes mean nothing elsewhere
 		if (codes.length) p.set('codes', codes.slice(0, 500).join(','));
 		p.set('sort', f.sort);
 		p.set('limit', '200');
@@ -264,6 +291,7 @@
 				whoAmI().then(async (me) => {
 					if (me && me.role === 'teacher') {
 						await refreshVersions();
+						await loadCourses();
 						await search();
 					} else draw();
 				});
@@ -355,11 +383,23 @@
 		const mine = el('input', { type: 'checkbox', checked: f.mine });
 		mine.addEventListener('change', () => set('mine', mine.checked));
 
+		const subj = S.courseSubject(d);
+		const courseOpts = [
+			['', 'All courses'],
+			[subj.id, `${subj.label} (this course)`],
+			...lib.courses.filter((c) => c.id && c.id !== subj.id).map((c) => [c.id, `${c.label} (${c.count})`])
+		];
+		const courseSel = app.select(courseOpts, courseFilter(), { 'aria-label': 'Course' });
+		courseSel.addEventListener('change', () => ((f.courseFor = subj.id), set('course', courseSel.value === subj.id ? null : courseSel.value)));
+		const otherCourse = courseFilter() !== subj.id;
+
 		const filters = el(
 			'aside',
 			{ class: 'lib-filters' },
 			app.field('Search', q),
-			sel('node', nodeOpts, 'Topic or objective'),
+			app.field('Course', courseSel),
+			otherCourse ? el('p', { class: 'sched-hint', text: `Other courses’ objective codes don’t match ${subj.label}, so activities from them come in without objectives.` }) : null,
+			otherCourse ? null : sel('node', nodeOpts, 'Topic or objective'),
 			sel('type', [['', 'Any type'], ...typeSet.tags.map((t) => [t.id, t.label])], 'Activity type'),
 			sel('assessment', [['', 'Any'], ...S.ASSESSMENT], 'Assessment'),
 			sel('interaction', [['', 'Any'], ...interSet.tags.map((t) => [t.id, t.label])], 'Student interaction'),
@@ -368,7 +408,7 @@
 			el('label', { class: 'sched-check' }, mine, ' Only what I’ve shared'),
 			sel('sort', [['new', 'Recently updated'], ['popular', 'Most pulled'], ['title', 'Title'], ['minutes', 'Shortest first']], 'Sort'),
 			app.btn('Clear filters', () => {
-				Object.assign(f, { q: '', node: '', type: '', assessment: '', interaction: '', where: '', min: '', max: '', mine: false });
+				Object.assign(f, { q: '', course: null, node: '', type: '', assessment: '', interaction: '', where: '', min: '', max: '', mine: false });
 				search();
 			})
 		);
@@ -410,11 +450,12 @@
 	function card(r, copy) {
 		const it = r.item;
 		const behind = copy && copy.libraryVersion < r.version;
+		const foreign = L.foreign(app.data, it);
 		return el(
 			'button',
 			{ type: 'button', class: 'lib-card' + (lib.sel === r.id ? ' sel' : ''), onclick: () => ((lib.sel = r.id), draw()) },
 			el('div', { class: 'lib-title' }, it.title, copy ? el('span', { class: 'lib-badge' + (behind ? ' warn' : ''), text: behind ? 'update available' : 'in your course' }) : null),
-			el('div', { class: 'lib-chips' }, chips(it)),
+			el('div', { class: 'lib-chips' }, foreign ? el('span', { class: 'lib-chip lib-course', text: it.course.label }) : null, chips(it)),
 			el(
 				'div',
 				{ class: 'lib-meta' },
@@ -428,12 +469,14 @@
 	function detailPane(r, copy) {
 		const d = app.data;
 		const it = r.item;
-		const mapped = [...new Set(it.objectiveCodes.flatMap((c) => L.nodesForCode(d, c)))];
-		const missing = it.objectiveCodes.filter((c) => !L.nodesForCode(d, c).length);
+		const foreign = L.foreign(d, it);
+		const mapped = foreign ? [] : [...new Set(it.objectiveCodes.flatMap((c) => L.nodesForCode(d, c)))];
+		const missing = foreign ? it.objectiveCodes.slice() : it.objectiveCodes.filter((c) => !L.nodesForCode(d, c).length);
 		const date = app.input({ type: 'date', value: S.today() >= d.course.termStart && S.today() <= d.course.termEnd ? S.today() : d.course.termStart });
 		const parts = [
 			el('h2', { class: 'lib-dtitle', text: it.title }),
 			el('div', { class: 'lib-chips' }, chips(it)),
+			el('p', { class: 'sched-hint', text: `Course: ${it.course ? it.course.label : 'not tagged'}` }),
 			el('p', { class: 'sched-hint', text: `Shared by ${r.mine ? 'you' : r.owner} · version ${r.version} · updated ${new Date(r.updatedAt).toLocaleDateString()} · added to courses ${r.pulls}×${r.forkedFrom ? ' · adapted from another library activity' : ''}` }),
 			it.topicHint ? el('p', null, el('strong', { text: 'Used with: ' }), it.topicHint) : null,
 			el(
@@ -441,7 +484,12 @@
 				{ class: 'ht-field' },
 				el('span', { text: 'Objectives' }),
 				el('div', { class: 'obj-chips' }, it.objectiveCodes.map((c) => el('span', { class: 'obj-chip' + (missing.includes(c) ? ' missing' : ''), title: missing.includes(c) ? 'Not in this course’s objectives' : '', text: c }))),
-				el('span', { class: 'sched-hint', text: `Links to ${mapped.length} objective${mapped.length === 1 ? '' : 's'} in this course` + (missing.length ? `; ${missing.length} code${missing.length === 1 ? '' : 's'} not found here` : '') + '.' })
+				el('span', {
+					class: 'sched-hint',
+					text: foreign
+						? `These are ${it.course.label} codes, so they won’t be linked in ${S.courseSubject(d).label}. Add objectives yourself after you add it.`
+						: `Links to ${mapped.length} objective${mapped.length === 1 ? '' : 's'} in this course` + (missing.length ? `; ${missing.length} code${missing.length === 1 ? '' : 's'} not found here` : '') + '.'
+				})
 			),
 			it.spanMeetings ? el('p', { class: 'sched-hint', text: `Spans ${it.spanMeetings + 1} class meetings.` }) : null,
 			it.links.length
@@ -456,8 +504,9 @@
 			} catch {}
 			app.commit((dd) => {
 				const a = S.newActivity({ ...L.fields(dd, entry), ...datesFrom(dd, onDate ? date.value : null, entry.item.spanMeetings) });
-				// already have a linked copy? then this one is a separate copy (one link per course)
-				dd.activities.push(dd.activities.some((x) => x.libraryId === entry.id) ? S.unlinkedCopy(a, { id: a.id }) : a);
+				// already have a linked copy? then this one is a separate copy (one link per course). From another
+				// subject it's always a separate copy: library updates would bring back codes that mean nothing here.
+				dd.activities.push(foreign || dd.activities.some((x) => x.libraryId === entry.id) ? S.unlinkedCopy(a, { id: a.id }) : a);
 			});
 			lib.versions[r.id] = { version: entry.version, owner: entry.owner, mine: entry.mine };
 			app.flash(onDate ? `Added “${it.title}” on ${S.fmtShort(date.value)}` : `Added “${it.title}” to your activity bank`);

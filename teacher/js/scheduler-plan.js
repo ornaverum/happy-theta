@@ -25,15 +25,58 @@
 	};
 
 	/* Whole year, plus the two semesters when a second-semester date is set */
+	/* With an exam date, new content ends before the review meetings: the year (and the semester holding
+	   the exam) stops at the last content meeting. */
 	P.ranges = function (data) {
 		const c = data.course;
-		const out = [{ id: 'year', name: 'Whole year', start: c.termStart, end: c.termEnd }];
+		const ex = S.examPlan(data);
+		const stop = ex && ex.contentEnd && ex.contentEnd >= c.termStart ? ex.contentEnd : null;
+		const cap = (end) => (stop && stop < end ? stop : end);
+		const tag = stop ? ` (until ${ex.review ? ex.name + ' review' : 'the ' + ex.name})` : '';
+		const out = [{ id: 'year', name: 'Whole year' + tag, start: c.termStart, end: cap(c.termEnd) }];
 		const s2 = c.semester2Start;
 		if (S.isDate(s2) && s2 > c.termStart && s2 <= c.termEnd) {
-			out.push({ id: 's1', name: 'Semester 1', start: c.termStart, end: S.addDays(s2, -1) });
-			out.push({ id: 's2', name: 'Semester 2', start: s2, end: c.termEnd });
+			const e1 = S.addDays(s2, -1);
+			out.push({ id: 's1', name: 'Semester 1' + (stop && stop < e1 ? tag : ''), start: c.termStart, end: cap(e1) });
+			if (!stop || stop >= s2) out.push({ id: 's2', name: 'Semester 2' + tag, start: s2, end: cap(c.termEnd) });
 		}
 		return out;
+	};
+
+	/* 2027 AP Exam dates (AP Central, "2027 AP Exam Dates") for the built-in subjects — a suggestion only. */
+	P.AP_EXAM_DATES = {
+		'ap-physics-1': { 2027: '2027-05-05' },
+		'ap-csa': { 2027: '2027-05-12' },
+		'ap-csp': { 2027: '2027-05-14' },
+		'ap-precalculus': { 2027: '2027-05-11' }
+	};
+	P.suggestExamDate = function (subject, termEnd) {
+		const byYear = subject && P.AP_EXAM_DATES[subject.id];
+		const y = S.isDate(termEnd) ? +termEnd.slice(0, 4) : null;
+		return (byYear && y && byYear[y]) || null;
+	};
+
+	/* The review block: a unit + topic over the review meetings before the exam (marked review: true, so it
+	   can be rebuilt whenever the exam date, review length or calendar changes). No exam → no block. */
+	P.placeReview = function (data) {
+		const old = new Set(data.units.filter((u) => u.review).map((u) => u.id));
+		data.topics = data.topics.filter((t) => !t.review && !old.has(t.unitId));
+		data.units = data.units.filter((u) => !u.review);
+		const ex = S.examPlan(data);
+		if (!ex || !ex.review) return null;
+		const u = { id: S.newId('u'), title: `${ex.name} review`, color: '#fee2e2', objectiveId: null, start: ex.reviewStart, end: ex.reviewEnd, review: true };
+		data.units.push(u);
+		data.topics.push({ id: S.newId('t'), unitId: u.id, title: `Review for the ${ex.name} (${S.fmtShort(ex.date)})`, start: ex.reviewStart, end: ex.reviewEnd, objectiveId: null, review: true });
+		return ex;
+	};
+
+	/* Content topics that run into the review meetings (or past the exam) */
+	P.examCheck = function (data) {
+		const ex = S.examPlan(data);
+		if (!ex) return null;
+		const limit = ex.contentEnd || S.addDays(ex.date, -1);
+		const late = ordered(data.topics).filter((t) => !t.review && (t.end || t.start) > limit);
+		return { ...ex, late };
 	};
 	P.rangeAt = (data, date) => {
 		const r = P.ranges(data);
@@ -240,7 +283,7 @@
 		ix.kids(null).forEach((u, ui) => {
 			const kids = ix.kids(u.id);
 			const m = (u.meta && u.meta.durationMeetings) || kids.length || 1;
-			const unitTitle = u.code === 'UX' ? u.text : /^U/.test(u.code) ? `${u.code.replace(/^U/, 'Unit ')}: ${u.text}` : `Unit ${u.code}: ${u.text}`;
+			const unitTitle = u.code === 'UX' || !/^(U|\d)/.test(u.code) ? u.text : /^U/.test(u.code) ? `${u.code.replace(/^U/, 'Unit ')}: ${u.text}` : `Unit ${u.code}: ${u.text}`;
 			tpl.units.push({ key: 'u' + ui, title: unitTitle, color: S.UNIT_COLORS[ui % S.UNIT_COLORS.length], objectiveId: u.id, meetings: m });
 			kids.forEach((t) => {
 				const key = 't' + tpl.topics.length;
@@ -258,8 +301,96 @@
 			const base = { title: q.code ? `${q.code} ${q.title}` : q.title, tags: q.tags || {}, assessment: q.assessment || 'none', objectiveIds: q.objectiveIds || [], inClass: false };
 			tpl.activities.push({ ...base, anchor: last ? { topicKey: topicKeyByNode.get(last), side: 'end', off: 0, delta: 0, spanM: 0, endDelta: 0 } : null });
 		}
+		P.addDailyVideos(tpl, d.dailyVideos, tree, topicKeyByNode);
 		return tpl;
 	};
+
+	/* AP Daily videos (scheduler-apdaily.js) as an evening-before series: each video goes with the template
+	   topic holding the first Essential Knowledge it covers (the framework topic, or wherever a reorganized
+	   sequence put that EK). applyTemplate spreads each topic's videos over its class meetings. */
+	P.addDailyVideos = function (tpl, videos, tree, topicKeyByNode) {
+		if (!videos || !videos.length || !tree) return tpl;
+		const ix = S.treeIndex(tree);
+		const byCode = new Map();
+		for (const n of tree.nodes) if (n.code && !/^U/.test(n.code)) (byCode.get(n.code) || byCode.set(n.code, []).get(n.code)).push(n.id);
+		const series = new Map();
+		for (const v of videos) {
+			const objectiveIds = [...new Set(v.eks.flatMap((c) => byCode.get(c) || []))];
+			let key = null;
+			// its own AP topic's EKs decide first (a 1.3 video that touches 1.2.B.4 still goes with 1.3)
+			const own = (c) => (v.topic && c.startsWith(v.topic + '.') ? 0 : 1);
+			for (const c of [...v.eks].sort((a, b) => own(a) - own(b))) {
+				for (const id of byCode.get(c) || []) {
+					const t = [id, ...ix.ancestors(id)].find((x) => topicKeyByNode.has(x));
+					if (t) {
+						key = topicKeyByNode.get(t);
+						break;
+					}
+				}
+				if (key) break;
+			}
+			if (!key) continue;
+			if (!series.has(key)) series.set(key, []);
+			series.get(key).push({
+				title: v.title,
+				tags: { type: 'video', interaction: 'individual' },
+				expectedMin: v.minutes || null,
+				inClass: false,
+				assessment: 'none',
+				objectiveIds,
+				links: [{ label: `${v.topic}: Daily Video ${v.n} (AP Classroom)`, url: v.url }],
+				notes: v.desc
+			});
+		}
+		tpl.series = [...series].map(([topicKey, items]) => ({ topicKey, name: 'AP Daily videos', when: 'evening-before', items }));
+		return tpl;
+	};
+
+	/* Lay out one topic's series over its class meetings ns.a..ns.b: one assignment the evening before each
+	   meeting (the last school day before it). Fewer videos than meetings: spread out, some meetings get none;
+	   more videos than meetings: consecutive videos are combined into one assignment. */
+	P.placeSeries = function (series, ns, meets, schoolDays) {
+		const L = ns.b - ns.a + 1;
+		const N = series.items.length;
+		const out = [];
+		if (!N || L <= 0) return out;
+		const groups = [];
+		if (N <= L) series.items.forEach((it, k) => groups.push({ m: ns.a + Math.floor((k * L) / N), items: [it] }));
+		else for (let k = 0; k < L; k++) groups.push({ m: ns.a + k, items: series.items.slice(Math.floor((k * N) / L), Math.floor(((k + 1) * N) / L)) });
+		for (const g of groups) {
+			if (!g.items.length) continue;
+			const meet = meets[g.m];
+			const i = S.lowerBound(schoolDays.map((x) => ({ date: x })), meet) - 1;
+			const date = i >= 0 ? schoolDays[i] : meet;
+			const one = g.items.length === 1;
+			const first = g.items[0];
+			const title = one ? first.title : combinedTitle(g.items.map((x) => x.title));
+			out.push({
+				...JSON.parse(JSON.stringify(first)),
+				title,
+				expectedMin: g.items.every((x) => x.expectedMin) ? g.items.reduce((s, x) => s + x.expectedMin, 0) : first.expectedMin,
+				objectiveIds: [...new Set(g.items.flatMap((x) => x.objectiveIds || []))],
+				links: g.items.flatMap((x) => x.links || []),
+				notes: (one ? first.notes : g.items.map((x) => `${x.title}: ${x.notes}`).join('\n')) + `\nWatch before class on ${S.fmtShort(meet)}.`,
+				start: date,
+				end: date
+			});
+		}
+		return out;
+	};
+	// "AP Daily 1.3 Video 1" + "AP Daily 1.3 Video 2" → "AP Daily 1.3 Videos 1, 2"
+	function combinedTitle(titles) {
+		const m = titles.map((t) => /^(.*) Video (\d+)$/.exec(t));
+		if (m.every(Boolean) && m.every((x) => x[1] === m[0][1])) return `${m[0][1]} Videos ${m.map((x) => x[2]).join(', ')}`;
+		const parts = [];
+		for (const x of m) {
+			if (!x) return titles.join(' + ');
+			const last = parts[parts.length - 1];
+			if (last && last.head === x[1]) last.nums.push(x[2]);
+			else parts.push({ head: x[1], nums: [x[2]] });
+		}
+		return parts.map((p) => `${p.head} Video${p.nums.length > 1 ? 's' : ''} ${p.nums.join(', ')}`).join(' + ').replace(/ \+ AP Daily /g, ' + ');
+	}
 
 	/* Lay a template over [from, to].
 	   opts: { from, to, unitKeys (null = all), replace (true: clear units/topics/unpinned activities that
@@ -379,7 +510,23 @@
 			data.activities.push(S.newActivity({ ...JSON.parse(JSON.stringify(fields)), pinned: false, start: d.start, end: d.end }));
 			placed++;
 		}
-		return { units: units.length, topics: topicSpan.size, activities: placed, banked, meetings: M, overflow, kept, startedOn: meets[first] };
+		// evening-before series (AP Daily videos): one assignment before each of the topic's meetings
+		if (tpl.series && tpl.series.length && opts.series !== false) {
+			const schoolDays = S.genDays(data)
+				.filter((x) => x.school)
+				.map((x) => x.date);
+			for (const s of tpl.series) {
+				const ts = topicSpan.get(s.topicKey);
+				if (!ts) continue;
+				for (const a of P.placeSeries(s, ts.ns, meets, schoolDays)) {
+					data.activities.push(S.newActivity({ ...a, pinned: false }));
+					placed++;
+				}
+			}
+		}
+		const ex = P.placeReview(data);
+		const late = ex ? P.examCheck(data).late.length : 0;
+		return { units: units.length, topics: topicSpan.size, activities: placed, banked, meetings: M, overflow, kept, startedOn: meets[first], review: ex, late };
 	};
 
 	/* ------------------------------------------------------------------ */
@@ -392,7 +539,9 @@
 	   fit their topics. Returns { rows, moved, meetings } or { error }. */
 	/* fit = false: keep every later topic's length and push them all later, in order, from the next class
 	   (until is ignored; anything past the end of the term piles up on the last day). */
-	P.catchUp = function (data, { topicId, asOf, until, fit = true }) {
+	/* all = true: every later topic (not just those planned to start by `until`) — the rest of the year, which
+	   with an exam must all fit before the review meetings. */
+	P.catchUp = function (data, { topicId, asOf, until, fit = true, all = false }) {
 		if (!fit) until = data.course.termEnd;
 		const days = S.genDays(data);
 		const meets = meetDates(data, days);
@@ -400,7 +549,7 @@
 		const k = topics.findIndex((t) => t.id === topicId);
 		if (k < 0) return { error: 'Pick the topic you finished most recently.' };
 		const done = topics[k];
-		const rest = topics.slice(k + 1).filter((t) => t.start <= until);
+		const rest = topics.slice(k + 1).filter((t) => (all || t.start <= until) && !t.review); // the exam review block stays put
 		const startIx = S.lowerBound(meets.map((x) => ({ date: x })), S.addDays(asOf, 1));
 		let endIx = S.lowerBound(meets.map((x) => ({ date: x })), until);
 		if (endIx >= meets.length || meets[endIx] > until) endIx -= 1;

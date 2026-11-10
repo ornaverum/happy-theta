@@ -1,0 +1,2570 @@
+{
+ "topics": {
+  "1.1": {
+   "code": "1.1",
+   "title": "Introduction to Algorithms, Programming, and Compilers",
+   "page": 36,
+   "extra": false
+  },
+  "1.2": {
+   "code": "1.2",
+   "title": "Variables and Data Types",
+   "page": 38,
+   "extra": false
+  },
+  "1.3": {
+   "code": "1.3",
+   "title": "Expressions and Output",
+   "page": 39,
+   "extra": false
+  },
+  "1.4": {
+   "code": "1.4",
+   "title": "Assignment Statements and Input",
+   "page": 41,
+   "extra": false
+  },
+  "1.5": {
+   "code": "1.5",
+   "title": "Casting and Range of Variables",
+   "page": 42,
+   "extra": false
+  },
+  "1.6": {
+   "code": "1.6",
+   "title": "Compound Assignment Operators",
+   "page": 44,
+   "extra": false
+  },
+  "1.7": {
+   "code": "1.7",
+   "title": "Application Program Interface (API) and Libraries",
+   "page": 45,
+   "extra": false
+  },
+  "1.8": {
+   "code": "1.8",
+   "title": "Documentation with Comments",
+   "page": 46,
+   "extra": false
+  },
+  "1.9": {
+   "code": "1.9",
+   "title": "Method Signatures",
+   "page": 47,
+   "extra": false
+  },
+  "1.10": {
+   "code": "1.10",
+   "title": "Calling Class Methods",
+   "page": 49,
+   "extra": false
+  },
+  "1.11": {
+   "code": "1.11",
+   "title": "Math",
+   "page": 50,
+   "extra": false
+  },
+  "1.12": {
+   "code": "1.12",
+   "title": "Objects: Instances of Classes",
+   "page": 51,
+   "extra": false
+  },
+  "1.13": {
+   "code": "1.13",
+   "title": "Object Creation and Storage (Instantiation)",
+   "page": 52,
+   "extra": false
+  },
+  "1.14": {
+   "code": "1.14",
+   "title": "Calling Instance Methods",
+   "page": 54,
+   "extra": false
+  },
+  "1.15": {
+   "code": "1.15",
+   "title": "String",
+   "page": 55,
+   "extra": false
+  },
+  "2.1": {
+   "code": "2.1",
+   "title": "Algorithms with Selection and Repetition",
+   "page": 67,
+   "extra": false
+  },
+  "2.2": {
+   "code": "2.2",
+   "title": "Boolean Expressions",
+   "page": 68,
+   "extra": false
+  },
+  "2.3": {
+   "code": "2.3",
+   "title": "if",
+   "page": 69,
+   "extra": false
+  },
+  "2.4": {
+   "code": "2.4",
+   "title": "Nested",
+   "page": 70,
+   "extra": false
+  },
+  "2.5": {
+   "code": "2.5",
+   "title": "Compound Boolean Expressions",
+   "page": 71,
+   "extra": false
+  },
+  "2.6": {
+   "code": "2.6",
+   "title": "Comparing Boolean Expressions",
+   "page": 72,
+   "extra": false
+  },
+  "2.7": {
+   "code": "2.7",
+   "title": "while",
+   "page": 73,
+   "extra": false
+  },
+  "2.8": {
+   "code": "2.8",
+   "title": "for",
+   "page": 74,
+   "extra": false
+  },
+  "2.9": {
+   "code": "2.9",
+   "title": "Implementing Selection and Iteration Algorithms",
+   "page": 75,
+   "extra": false
+  },
+  "2.10": {
+   "code": "2.10",
+   "title": "Implementing String Algorithms",
+   "page": 76,
+   "extra": false
+  },
+  "2.11": {
+   "code": "2.11",
+   "title": "Nested Iteration",
+   "page": 77,
+   "extra": false
+  },
+  "2.12": {
+   "code": "2.12",
+   "title": "Informal Run-Time Analysis",
+   "page": 78,
+   "extra": false
+  },
+  "3.1": {
+   "code": "3.1",
+   "title": "Abstraction and Program Design",
+   "page": 86,
+   "extra": false
+  },
+  "3.2": {
+   "code": "3.2",
+   "title": "Impact of Program Design",
+   "page": 88,
+   "extra": false
+  },
+  "3.3": {
+   "code": "3.3",
+   "title": "Anatomy of a Class",
+   "page": 89,
+   "extra": false
+  },
+  "3.4": {
+   "code": "3.4",
+   "title": "Constructors",
+   "page": 90,
+   "extra": false
+  },
+  "3.5": {
+   "code": "3.5",
+   "title": "Methods: How to Write Them",
+   "page": 91,
+   "extra": false
+  },
+  "3.6": {
+   "code": "3.6",
+   "title": "Methods: Passing and",
+   "page": 93,
+   "extra": false
+  },
+  "3.7": {
+   "code": "3.7",
+   "title": "Class Variables and Methods",
+   "page": 94,
+   "extra": false
+  },
+  "3.8": {
+   "code": "3.8",
+   "title": "Scope and Access",
+   "page": 95,
+   "extra": false
+  },
+  "3.9": {
+   "code": "3.9",
+   "title": "this",
+   "page": 96,
+   "extra": false
+  },
+  "4.1": {
+   "code": "4.1",
+   "title": "Ethical and Social Issues Around Data Collection",
+   "page": 106,
+   "extra": false
+  },
+  "4.2": {
+   "code": "4.2",
+   "title": "Introduction to Using Data Sets",
+   "page": 107,
+   "extra": false
+  },
+  "4.3": {
+   "code": "4.3",
+   "title": "Array Creation and Access",
+   "page": 108,
+   "extra": false
+  },
+  "4.4": {
+   "code": "4.4",
+   "title": "Array Traversals",
+   "page": 109,
+   "extra": false
+  },
+  "4.5": {
+   "code": "4.5",
+   "title": "Implementing Array Algorithms",
+   "page": 110,
+   "extra": false
+  },
+  "4.6": {
+   "code": "4.6",
+   "title": "Using Text Files",
+   "page": 111,
+   "extra": false
+  },
+  "4.7": {
+   "code": "4.7",
+   "title": "Wrapper Classes",
+   "page": 114,
+   "extra": false
+  },
+  "4.8": {
+   "code": "4.8",
+   "title": "ArrayList",
+   "page": 116,
+   "extra": false
+  },
+  "4.9": {
+   "code": "4.9",
+   "title": "ArrayList",
+   "page": 118,
+   "extra": false
+  },
+  "4.10": {
+   "code": "4.10",
+   "title": "Implementing ArrayList",
+   "page": 119,
+   "extra": false
+  },
+  "4.11": {
+   "code": "4.11",
+   "title": "2D Array Creation and Access",
+   "page": 120,
+   "extra": false
+  },
+  "4.12": {
+   "code": "4.12",
+   "title": "2D Array Traversals",
+   "page": 122,
+   "extra": false
+  },
+  "4.13": {
+   "code": "4.13",
+   "title": "Implementing 2D Array Algorithms",
+   "page": 123,
+   "extra": false
+  },
+  "4.14": {
+   "code": "4.14",
+   "title": "Searching Algorithms",
+   "page": 124,
+   "extra": false
+  },
+  "4.15": {
+   "code": "4.15",
+   "title": "Sorting Algorithms",
+   "page": 125,
+   "extra": false
+  },
+  "4.16": {
+   "code": "4.16",
+   "title": "Recursion",
+   "page": 126,
+   "extra": false
+  },
+  "4.17": {
+   "code": "4.17",
+   "title": "Recursive Searching and Sorting",
+   "page": 127,
+   "extra": false
+  }
+ },
+ "nodes": [
+  {
+   "c": "1.1.A",
+   "k": "lo",
+   "t": "Represent patterns and algorithms found in everyday life using written language or diagrams.",
+   "tp": "1.1"
+  },
+  {
+   "c": "1.1.B",
+   "k": "lo",
+   "t": "Explain the code compilation and execution process.",
+   "tp": "1.1"
+  },
+  {
+   "c": "1.1.C",
+   "k": "lo",
+   "t": "Identify types of programming errors.",
+   "tp": "1.1"
+  },
+  {
+   "c": "1.1.A.1",
+   "k": "ek",
+   "t": "Algorithms define step-by-step processes to follow when completing a task or solving a problem. These algorithms can be represented using written language or diagrams.",
+   "tp": "1.1"
+  },
+  {
+   "c": "1.1.A.2",
+   "k": "ek",
+   "t": "Sequencing defines an order for when steps in a process are completed. Steps in a process are completed one at a time.",
+   "tp": "1.1"
+  },
+  {
+   "c": "1.1.B.1",
+   "k": "ek",
+   "t": "Code can be written in any text editor; however, an integrated development environment (IDE) is often used to write programs because it provides tools for a programmer to write, compile, and run code.",
+   "tp": "1.1"
+  },
+  {
+   "c": "1.1.B.2",
+   "k": "ek",
+   "t": "A compiler checks code for some errors. Errors detectable by the compiler need to be fixed before the program can be run.",
+   "tp": "1.1"
+  },
+  {
+   "c": "1.1.C.1",
+   "k": "ek",
+   "t": "A syntax error is a mistake in the program where the rules of the programming language are not followed. These errors are detected by the compiler.",
+   "tp": "1.1"
+  },
+  {
+   "c": "1.1.C.2",
+   "k": "ek",
+   "t": "A logic error is a mistake in the algorithm or program that causes it to behave incorrectly or unexpectedly. These errors are detected by testing the program with specific data to see if it produces the expected outcome.",
+   "tp": "1.1"
+  },
+  {
+   "c": "1.1.C.3",
+   "k": "ek",
+   "t": "A run-time error is a mistake in the program that occurs during the execution of a program. Run-time errors typically cause the program to terminate abnormally.",
+   "tp": "1.1"
+  },
+  {
+   "c": "1.1.C.4",
+   "k": "ek",
+   "t": "An exception is a type of run-time error that occurs as a result of an unexpected error that was not detected by the compiler. It interrupts the normal flow of the program’s execution.",
+   "tp": "1.1"
+  },
+  {
+   "c": "1.2.A",
+   "k": "lo",
+   "t": "Identify the most appropriate data type category for a particular specification.",
+   "tp": "1.2"
+  },
+  {
+   "c": "1.2.B",
+   "k": "lo",
+   "t": "Develop code to declare variables to store numbers and Boolean values.",
+   "tp": "1.2"
+  },
+  {
+   "c": "1.2.A.1",
+   "k": "ek",
+   "t": "A data type is a set of values and a corresponding set of operations on those values. Data types can be categorized as either primitive or reference.",
+   "tp": "1.2"
+  },
+  {
+   "c": "1.2.A.2",
+   "k": "ek",
+   "t": "The primitive data types used in this course define the set of values and corresponding operations on those values for numbers and Boolean values.",
+   "tp": "1.2"
+  },
+  {
+   "c": "1.2.A.3",
+   "k": "ek",
+   "t": "A reference type is used to define objects that are not primitive types.",
+   "tp": "1.2"
+  },
+  {
+   "c": "1.2.B.1",
+   "k": "ek",
+   "t": "The three primitive data types used in this course are int, double, and boolean. An int value is an integer. A double value is a real number. A boolean value is either true or false.",
+   "tp": "1.2",
+   "x": "The other five primitive data types (long, short, byte, float, and char) are outside the scope of the AP Computer Science A course and exam."
+  },
+  {
+   "c": "1.2.B.2",
+   "k": "ek",
+   "t": "A variable is a storage location that holds a value, which can change while the program is running. Every variable has a name and an associated data type. A variable of a primitive type holds a primitive value from that type.",
+   "tp": "1.2"
+  },
+  {
+   "c": "1.3.A",
+   "k": "lo",
+   "t": "Develop code to generate output and determine the result that would be displayed.",
+   "tp": "1.3"
+  },
+  {
+   "c": "1.3.B",
+   "k": "lo",
+   "t": "Develop code to utilize string literals and determine the result of using string literals.",
+   "tp": "1.3"
+  },
+  {
+   "c": "1.3.C",
+   "k": "lo",
+   "t": "Develop code for arithmetic expressions and determine the result of these expressions.",
+   "tp": "1.3"
+  },
+  {
+   "c": "1.3.A.1",
+   "k": "ek",
+   "t": "System.out.print and System.out. println display information on the computer display. System.out.println moves the cursor to a new line after the information has been displayed, while System.out.print does not.",
+   "tp": "1.3"
+  },
+  {
+   "c": "1.3.B.1",
+   "k": "ek",
+   "t": "A literal is the code representation of a fixed value.",
+   "tp": "1.3"
+  },
+  {
+   "c": "1.3.B.2",
+   "k": "ek",
+   "t": "A string literal is a sequence of characters enclosed in double quotes.",
+   "tp": "1.3"
+  },
+  {
+   "c": "1.3.B.3",
+   "k": "ek",
+   "t": "Escape sequences are special sequences of characters that can be included in a string. They start with a \\ and have a special meaning in Java. Escape sequences used in this course include double quote \\\", backslash \\\\, and newline \\n.",
+   "tp": "1.3"
+  },
+  {
+   "c": "1.3.C.1",
+   "k": "ek",
+   "t": "Arithmetic expressions, which consist of numeric values, variables, and operators, include expressions of type int and double.",
+   "tp": "1.3"
+  },
+  {
+   "c": "1.3.C.2",
+   "k": "ek",
+   "t": "The arithmetic operators consist of addition +, subtraction -, multiplication *, division /, and remainder %. An arithmetic operation that uses two int values will evaluate to an int value. An arithmetic operation that uses at least one double value will evaluate to a double value.",
+   "tp": "1.3",
+   "x": "Expressions that result in special double values (e.g., infinities and NaN) are outside the scope of the AP Computer Science A course and exam."
+  },
+  {
+   "c": "1.3.C.3",
+   "k": "ek",
+   "t": "When dividing numeric values that are both int values, the result is only the integer portion of the quotient. When dividing numeric values that use at least one double value, the result is the quotient.",
+   "tp": "1.3"
+  },
+  {
+   "c": "1.3.C.4",
+   "k": "ek",
+   "t": "The remainder operator % is used to compute the remainder when one number a is divided by another number b.",
+   "tp": "1.3",
+   "x": "The use of values less than 0 for a and the use of values less than or equal to 0 for b is outside the scope of the AP Computer Science A course and exam."
+  },
+  {
+   "c": "1.3.C.5",
+   "k": "ek",
+   "t": "Operators can be used to construct compound expressions. At compile time, numeric values are associated with operators according to operator precedence to determine how they are grouped. Parentheses can be used to modify operator precedence. Multiplication, division, and remainder have precedence over addition and subtraction. Operators with the same precedence are evaluated from left to right.",
+   "tp": "1.3"
+  },
+  {
+   "c": "1.3.C.6",
+   "k": "ek",
+   "t": "An attempt to divide an integer by the integer zero will result in an ArithmeticException.",
+   "tp": "1.3",
+   "x": "The use of dividing by zero when one numeric value is a double is outside the scope of the AP Computer Science A course and exam."
+  },
+  {
+   "c": "1.4.A",
+   "k": "lo",
+   "t": "Develop code for assignment statements with expressions and determine the value that is stored in the variable as a result of these statements.",
+   "tp": "1.4"
+  },
+  {
+   "c": "1.4.B",
+   "k": "lo",
+   "t": "Develop code to read input.",
+   "tp": "1.4"
+  },
+  {
+   "c": "1.4.A.1",
+   "k": "ek",
+   "t": "Every variable must be assigned a value before it can be used in an expression. That value must be from a compatible data type. A variable is initialized the first time it is assigned a value. Reference types can be assigned a new object or null if there is no object. The literal null is a special value used to indicate that a reference is not associated with any object.",
+   "tp": "1.4"
+  },
+  {
+   "c": "1.4.A.2",
+   "k": "ek",
+   "t": "The assignment operator = allows a program to initialize or change the value stored in a variable. The value of the expression on the right is stored in the variable on the left.",
+   "tp": "1.4",
+   "x": "The use of assignment operators inside expressions (e.g., a = b = 4; or a[i += 5]) is outside the scope of the AP Computer Science A course and exam."
+  },
+  {
+   "c": "1.4.A.3",
+   "k": "ek",
+   "t": "During execution, an expression is evaluated to produce a single value. The value of an expression has a type based on the evaluation of the expression.",
+   "tp": "1.4"
+  },
+  {
+   "c": "1.4.B.1",
+   "k": "ek",
+   "t": "Input can come in a variety of forms, such as tactile, audio, visual, or text. The Scanner class is one way to obtain text input from the keyboard.",
+   "tp": "1.4",
+   "x": "Any specific form of input from the user is outside the scope of the AP Computer Science A course and exam."
+  },
+  {
+   "c": "1.5.A",
+   "k": "lo",
+   "t": "Develop code to cast primitive values to different primitive types in arithmetic expressions and determine the value that is produced as a result.",
+   "tp": "1.5"
+  },
+  {
+   "c": "1.5.B",
+   "k": "lo",
+   "t": "Describe conditions when an integer expression evaluates to a value out of range.",
+   "tp": "1.5"
+  },
+  {
+   "c": "1.5.A.1",
+   "k": "ek",
+   "t": "The casting operators (int) and (double) can be used to convert from a double value to an int value (or vice versa).",
+   "tp": "1.5"
+  },
+  {
+   "c": "1.5.A.2",
+   "k": "ek",
+   "t": "Casting a double value to an int value causes the digits to the right of the decimal point to be truncated.",
+   "tp": "1.5"
+  },
+  {
+   "c": "1.5.A.3",
+   "k": "ek",
+   "t": "Some code causes int values to be automatically cast (widened) to double values.",
+   "tp": "1.5"
+  },
+  {
+   "c": "1.5.A.4",
+   "k": "ek",
+   "t": "Values of type double can be rounded to the nearest integer by (int) (x + 0.5) for non-negative numbers or (int)(x - 0.5) for negative numbers.",
+   "tp": "1.5"
+  },
+  {
+   "c": "1.5.B.1",
+   "k": "ek",
+   "t": "The constant Integer.MAX_VALUE holds the value of the largest possible int value. The constant Integer.MIN_VALUE holds the value of the smallest possible int value.",
+   "tp": "1.5"
+  },
+  {
+   "c": "1.5.B.2",
+   "k": "ek",
+   "t": "Integer values in Java are represented by values of type int, which are stored using a finite amount (4 bytes) of memory. Therefore, an int value must be in the range from Integer.MIN_VALUE to Integer.MAX_VALUE inclusive.",
+   "tp": "1.5"
+  },
+  {
+   "c": "1.5.C",
+   "k": "lo",
+   "t": "Describe conditions that limit accuracy of expressions.",
+   "tp": "1.5"
+  },
+  {
+   "c": "1.5.B.3",
+   "k": "ek",
+   "t": "If an expression would evaluate to an int value outside of the allowed range, an integer overflow occurs. The result is an int value in the allowed range but not necessarily the value expected.",
+   "tp": "1.5"
+  },
+  {
+   "c": "1.5.C.1",
+   "k": "ek",
+   "t": "Computers allot a specified amount of memory to store data based on the data type. If an expression would evaluate to a double that is more precise than can be stored in the allotted amount of memory, a round-off error occurs. The result will be rounded to the representable value. To avoid rounding errors that naturally occur, use int values.",
+   "tp": "1.5",
+   "x": "Other special decimal data types that can be used to avoid rounding errors are outside the scope of the AP Computer Science A course and exam."
+  },
+  {
+   "c": "1.6.A",
+   "k": "lo",
+   "t": "Develop code for assignment statements with compound assignment operators and determine the value that is stored in the variable as a result.",
+   "tp": "1.6"
+  },
+  {
+   "c": "1.6.A.1",
+   "k": "ek",
+   "t": "Compound assignment operators +=, −=, *=, /=, and %= can be used in place of the assignment operator in numeric expressions. A compound assignment operator performs the indicated arithmetic operation between the value on the left and the value on the right and then assigns the result to the variable on the left.",
+   "tp": "1.6"
+  },
+  {
+   "c": "1.6.A.2",
+   "k": "ek",
+   "t": "The post-increment operator ++ and post-decrement operator -- are used to add 1 or subtract 1 from the stored value of a numeric variable. The new value is assigned to the variable.",
+   "tp": "1.6",
+   "x": "The use of increment and decrement operators in prefix form (e.g., ++x) is outside the scope of the AP Computer Science A course and exam. The use of increment and decrement operators inside other expressions (e.g., arr[x++]) is outside the scope of the AP Computer Science A course and exam."
+  },
+  {
+   "c": "1.7.A",
+   "k": "lo",
+   "t": "Identify the attributes and behaviors of a class found in the libraries contained in an API.",
+   "tp": "1.7"
+  },
+  {
+   "c": "1.7.A.1",
+   "k": "ek",
+   "t": "Libraries are collections of classes. An application programming interface (API) specification informs the programmer how to use those classes. Documentation found in API specifications and libraries is essential to understanding the attributes and behaviors of a class defined by the API. A class defines a specific reference type. Classes in the APIs and libraries are grouped into packages. Existing classes and class libraries can be utilized to create objects.",
+   "tp": "1.7"
+  },
+  {
+   "c": "1.7.A.2",
+   "k": "ek",
+   "t": "Attributes refer to the data related to the class and are stored in variables. Behaviors refer to what instances of the class can do (or what can be done with them) and are defined by methods.",
+   "tp": "1.7"
+  },
+  {
+   "c": "1.8.A",
+   "k": "lo",
+   "t": "Describe the functionality and use of code through comments.",
+   "tp": "1.8"
+  },
+  {
+   "c": "1.8.A.1",
+   "k": "ek",
+   "t": "Comments are written for both the original programmer and other programmers to understand the code and its functionality, but are ignored by the compiler and are not executed when the program is run. Three types of comments in Java include /* */, which generates a block of comments; //, which generates a comment on one line; and /** */, which are Javadoc comments and are used to create API documentation.",
+   "tp": "1.8"
+  },
+  {
+   "c": "1.8.A.2",
+   "k": "ek",
+   "t": "A precondition is a condition that must be true just prior to the execution of a method in order for it to behave as expected. There is no expectation that the method will check to ensure preconditions are satisfied.",
+   "tp": "1.8"
+  },
+  {
+   "c": "1.8.A.3",
+   "k": "ek",
+   "t": "A postcondition is a condition that must always be true after the execution of a method. Postconditions describe the outcome of the execution in terms of what is being returned or the current value of the attributes of an object.",
+   "tp": "1.8"
+  },
+  {
+   "c": "1.9.A",
+   "k": "lo",
+   "t": "Identify the correct method to call based on documentation and method signatures.",
+   "tp": "1.9"
+  },
+  {
+   "c": "1.9.B",
+   "k": "lo",
+   "t": "Describe how to call methods.",
+   "tp": "1.9"
+  },
+  {
+   "c": "1.9.A.1",
+   "k": "ek",
+   "t": "A method is a named block of code that only runs when it is called. A block of code is any section of code that is enclosed in braces. Procedural abstraction allows a programmer to use a method by knowing what the method does even if they do not know how the method was written.",
+   "tp": "1.9"
+  },
+  {
+   "c": "1.9.A.2",
+   "k": "ek",
+   "t": "A parameter is a variable declared in the header of a method or constructor and can be used inside the body of the method. This allows values or arguments to be passed and used by a method or constructor. A method signature for a method with parameters consists of the method name and the ordered list of parameter types. A method signature for a method without parameters consists of the method name and an empty parameter list.",
+   "tp": "1.9"
+  },
+  {
+   "c": "1.9.B.1",
+   "k": "ek",
+   "t": "A void method does not have a return value and is therefore not called as part of an expression.",
+   "tp": "1.9"
+  },
+  {
+   "c": "1.9.B.2",
+   "k": "ek",
+   "t": "A non-void method returns a value that is the same type as the return type in the header. To use the return value when calling a non-void method, it must be stored in a variable or used as part of an expression.",
+   "tp": "1.9"
+  },
+  {
+   "c": "1.9.B.3",
+   "k": "ek",
+   "t": "An argument is a value that is passed into a method when the method is called. The arguments passed to a method must be compatible in number and order with the types identified in the parameter list of the method signature. When calling methods, arguments are passed using call by value. Call by value initializes the parameters with copies of the arguments.",
+   "tp": "1.9"
+  },
+  {
+   "c": "1.9.B.4",
+   "k": "ek",
+   "t": "Methods are said to be overloaded when there are multiple methods with the same name but different signatures.",
+   "tp": "1.9"
+  },
+  {
+   "c": "1.9.B.5",
+   "k": "ek",
+   "t": "A method call interrupts the sequential execution of statements, causing the program to first execute the statements in the method before continuing. Once the last statement in the method has been executed or a return statement is executed, the flow of control is",
+   "tp": "1.9"
+  },
+  {
+   "c": "1.10.A",
+   "k": "lo",
+   "t": "Develop code to call class methods and determine the result of those calls.",
+   "tp": "1.10"
+  },
+  {
+   "c": "1.10.A.1",
+   "k": "ek",
+   "t": "Class methods are associated with the class, not instances of the class. Class methods include the keyword static in the header before the method name.",
+   "tp": "1.10"
+  },
+  {
+   "c": "1.10.A.2",
+   "k": "ek",
+   "t": "Class methods are typically called using the class name along with the dot operator. When the method call occurs in the defining class, the use of the class name is optional in the call.",
+   "tp": "1.10"
+  },
+  {
+   "c": "1.11.A",
+   "k": "lo",
+   "t": "Develop code to write expressions that incorporate calls to built-in mathematical libraries and determine the value that is produced as a result.",
+   "tp": "1.11"
+  },
+  {
+   "c": "1.11.A.1",
+   "k": "ek",
+   "t": "The Math class is part of the java.lang package. Classes in the java.lang package are available by default.",
+   "tp": "1.11"
+  },
+  {
+   "c": "1.11.A.2",
+   "k": "ek",
+   "t": "The Math class contains only class methods. The following Math class methods—including what they do and when they are used—are part of the Java Quick Reference: • static int abs(int x) returns the absolute value of an int value. • static double abs(double x)",
+   "tp": "1.11"
+  },
+  {
+   "c": "1.11.A.3",
+   "k": "ek",
+   "t": "The values returned from Math.random() can be manipulated using arithmetic and casting operators to produce a random int or double in a defined range based on specified criteria. Each endpoint of the range can be inclusive, meaning the value is included, or exclusive, meaning the value is not included.",
+   "tp": "1.11"
+  },
+  {
+   "c": "1.12.A",
+   "k": "lo",
+   "t": "Explain the relationship between a class and an object.",
+   "tp": "1.12"
+  },
+  {
+   "c": "1.12.B",
+   "k": "lo",
+   "t": "Develop code to declare variables to store reference types.",
+   "tp": "1.12"
+  },
+  {
+   "c": "1.12.A.1",
+   "k": "ek",
+   "t": "An object is a specific instance of a class with defined attributes. A class is the formal implementation, or blueprint, of the attributes and behaviors of an object.",
+   "tp": "1.12"
+  },
+  {
+   "c": "1.12.A.2",
+   "k": "ek",
+   "t": "A class hierarchy can be developed by putting common attributes and behaviors of related classes into a single class called a superclass. Classes that extend a superclass, called subclasses, can draw upon the existing attributes and behaviors of the superclass without replacing these in the code. This creates an inheritance relationship from the subclasses to the superclass.",
+   "tp": "1.12",
+   "x": "Designing and implementing inheritance relationships are outside the scope of the AP Computer Science A course and exam."
+  },
+  {
+   "c": "1.12.A.3",
+   "k": "ek",
+   "t": "All classes in Java are subclasses of the Object class.",
+   "tp": "1.12"
+  },
+  {
+   "c": "1.12.B.1",
+   "k": "ek",
+   "t": "A variable of a reference type holds an object reference, which can be thought of as the memory address of that object.",
+   "tp": "1.12"
+  },
+  {
+   "c": "1.13.A",
+   "k": "lo",
+   "t": "Identify, using its signature, the correct constructor being called.",
+   "tp": "1.13"
+  },
+  {
+   "c": "1.13.B",
+   "k": "lo",
+   "t": "Develop code to declare variables of the correct types to hold object references.",
+   "tp": "1.13"
+  },
+  {
+   "c": "1.13.C",
+   "k": "lo",
+   "t": "Develop code to create an object by calling a constructor.",
+   "tp": "1.13"
+  },
+  {
+   "c": "1.13.A.1",
+   "k": "ek",
+   "t": "A class contains constructors that are called to create objects. They have the same name as the class.",
+   "tp": "1.13"
+  },
+  {
+   "c": "1.13.A.2",
+   "k": "ek",
+   "t": "A constructor signature consists of the constructor’s name, which is the same as the class name, and the ordered list of parameter types. The parameter list, in the header of a constructor, lists the types of the values that are passed and their variable names.",
+   "tp": "1.13"
+  },
+  {
+   "c": "1.13.A.3",
+   "k": "ek",
+   "t": "Constructors are said to be overloaded when there are multiple constructors with different signatures.",
+   "tp": "1.13"
+  },
+  {
+   "c": "1.13.B.1",
+   "k": "ek",
+   "t": "A variable of a reference type holds an object reference or, if there is no object, null.",
+   "tp": "1.13"
+  },
+  {
+   "c": "1.13.C.1",
+   "k": "ek",
+   "t": "An object is typically created using the keyword new followed by a call to one of the class’s constructors.",
+   "tp": "1.13"
+  },
+  {
+   "c": "1.13.C.2",
+   "k": "ek",
+   "t": "Parameters allow constructors to accept values to establish the initial values of the attributes of the object.",
+   "tp": "1.13"
+  },
+  {
+   "c": "1.13.C.3",
+   "k": "ek",
+   "t": "A constructor argument is a value that is passed into a constructor when the constructor is called. The arguments passed to a constructor must be compatible in order and number with the types identified in the parameter list in the constructor signature. When calling constructors, arguments are passed using call by value. Call by value initializes the parameters with copies of the arguments.",
+   "tp": "1.13"
+  },
+  {
+   "c": "1.13.C.4",
+   "k": "ek",
+   "t": "A constructor call interrupts the sequential execution of statements, causing the program to first execute the statements in the constructor before continuing. Once the last statement in the constructor has been executed, the flow of control is returned to the point immediately following where the constructor was called.",
+   "tp": "1.13"
+  },
+  {
+   "c": "1.14.A",
+   "k": "lo",
+   "t": "Develop code to call instance methods and determine the result of these calls.",
+   "tp": "1.14"
+  },
+  {
+   "c": "1.14.A.1",
+   "k": "ek",
+   "t": "Instance methods are called on objects of the class. The dot operator is used along with the object name to call instance methods.",
+   "tp": "1.14"
+  },
+  {
+   "c": "1.14.A.2",
+   "k": "ek",
+   "t": "A method call on a null reference will result in a NullPointerException.",
+   "tp": "1.14"
+  },
+  {
+   "c": "1.15.A",
+   "k": "lo",
+   "t": "Develop code to create string objects and determine the result of creating and combining strings.",
+   "tp": "1.15"
+  },
+  {
+   "c": "1.15.A.1",
+   "k": "ek",
+   "t": "A String object represents a sequence of characters and can be created by using a string literal or by calling the String class constructor.",
+   "tp": "1.15"
+  },
+  {
+   "c": "1.15.A.2",
+   "k": "ek",
+   "t": "The String class is part of the java.lang package. Classes in the java.lang package are available by default.",
+   "tp": "1.15"
+  },
+  {
+   "c": "1.15.A.3",
+   "k": "ek",
+   "t": "A String object is immutable, meaning once a String object is created, its attributes cannot be changed. Methods called on a String object do not change the content of the String object.",
+   "tp": "1.15"
+  },
+  {
+   "c": "1.15.A.4",
+   "k": "ek",
+   "t": "Two String objects can be concatenated together or combined using the + or += operator, resulting in a new String object. A primitive value can be concatenated with a String object. This causes the implicit conversion of the primitive value to a String object.",
+   "tp": "1.15"
+  },
+  {
+   "c": "1.15.B",
+   "k": "lo",
+   "t": "Develop code to call methods on string objects and determine the result of calling these methods.",
+   "tp": "1.15"
+  },
+  {
+   "c": "1.15.A.5",
+   "k": "ek",
+   "t": "A String object can be concatenated with any object, which implicitly calls the object’s toString method (a behavior that is guaranteed to exist by the inheritance relationship every class has with the Object class). An object’s toString method returns a string value representing the object. Subclasses of Object often override the toString method with class-specific implementation. Method overriding occurs when a public method in a subclass has the same method signature as a public method in the superclass, but the behavior of the method is specific to the subclass.",
+   "tp": "1.15",
+   "x": "Overriding the toString method of a class is outside the scope of the AP Computer Science A course and exam."
+  },
+  {
+   "c": "1.15.B.1",
+   "k": "ek",
+   "t": "A String object has index values from 0 to one less than the length of the string. Attempting to access indices outside this range will result in a StringIndexOutOfBoundsException.",
+   "tp": "1.15"
+  },
+  {
+   "c": "1.15.B.2",
+   "k": "ek",
+   "t": "The following String methods—including what they do and when they are used—are part of the Java Quick Reference: • int length() returns the number of characters in a String object. • String substring(int from, int to) returns the substring beginning at index from and ending at index to - 1. • String substring(int from)",
+   "tp": "1.15"
+  },
+  {
+   "c": "1.15.B.3",
+   "k": "ek",
+   "t": "A string identical to the single element substring at position index can be created by calling substring(index, index + 1).",
+   "tp": "1.15"
+  },
+  {
+   "c": "2.1.A",
+   "k": "lo",
+   "t": "Represent patterns and algorithms that involve selection and repetition found in everyday life using written language or diagrams.",
+   "tp": "2.1"
+  },
+  {
+   "c": "2.1.A.1",
+   "k": "ek",
+   "t": "The building blocks of algorithms include sequencing, selection, and repetition.",
+   "tp": "2.1"
+  },
+  {
+   "c": "2.1.A.2",
+   "k": "ek",
+   "t": "Algorithms can contain selection, through decision making, and repetition, via looping.",
+   "tp": "2.1"
+  },
+  {
+   "c": "2.1.A.3",
+   "k": "ek",
+   "t": "Selection occurs when a choice of how the execution of an algorithm will proceed is based on a true or false decision.",
+   "tp": "2.1"
+  },
+  {
+   "c": "2.1.A.4",
+   "k": "ek",
+   "t": "Repetition is when a process repeats itself until a desired outcome is reached.",
+   "tp": "2.1"
+  },
+  {
+   "c": "2.1.A.5",
+   "k": "ek",
+   "t": "The order in which sequencing, selection, and repetition are used contributes to the outcome of the algorithm.",
+   "tp": "2.1"
+  },
+  {
+   "c": "2.2.A",
+   "k": "lo",
+   "t": "Develop code to create Boolean expressions with relational operators and determine the result of these expressions.",
+   "tp": "2.2"
+  },
+  {
+   "c": "2.2.A.1",
+   "k": "ek",
+   "t": "Values can be compared using the relational operators == and != to determine whether the values are the same. With primitive types, this compares the actual primitive values. With reference types, this compares the object references.",
+   "tp": "2.2"
+  },
+  {
+   "c": "2.2.A.2",
+   "k": "ek",
+   "t": "Numeric values can be compared using the relational operators <, >, <=, and >= to determine the relationship between the values.",
+   "tp": "2.2"
+  },
+  {
+   "c": "2.2.A.3",
+   "k": "ek",
+   "t": "An expression involving relational operators evaluates to a Boolean value.",
+   "tp": "2.2"
+  },
+  {
+   "c": "2.3.A",
+   "k": "lo",
+   "t": "Develop code to represent branching logical processes by using selection statements and determine the result of these processes.",
+   "tp": "2.3"
+  },
+  {
+   "c": "2.3.A.1",
+   "k": "ek",
+   "t": "Selection statements change the sequential execution of statements.",
+   "tp": "2.3"
+  },
+  {
+   "c": "2.3.A.2",
+   "k": "ek",
+   "t": "An if statement is a type of selection statement that affects the flow of control by executing different segments of code based on the value of a Boolean expression.",
+   "tp": "2.3"
+  },
+  {
+   "c": "2.3.A.3",
+   "k": "ek",
+   "t": "A one-way selection (if statement) is used when there is a segment of code to execute under a certain condition. In this case, the body is executed only when the Boolean expression is true.",
+   "tp": "2.3"
+  },
+  {
+   "c": "2.3.A.4",
+   "k": "ek",
+   "t": "A two-way selection (if-else statement) is used when there are two segments of code—one to be executed when the Boolean expression is true and another segment for when the Boolean expression is false. In this case, the body of the if is executed when the Boolean expression is true, and the body of the else is executed when the Boolean expression is false.",
+   "tp": "2.3"
+  },
+  {
+   "c": "2.4.A",
+   "k": "lo",
+   "t": "Develop code to represent nested branching logical processes and determine the result of these processes. Statements",
+   "tp": "2.4"
+  },
+  {
+   "c": "2.4.A.1",
+   "k": "ek",
+   "t": "Nested if statements consist of if, if-else, or if-else-if statements within if, if-else, or if-else-if statements.",
+   "tp": "2.4"
+  },
+  {
+   "c": "2.4.A.2",
+   "k": "ek",
+   "t": "The Boolean expression of the inner nested if statement is evaluated only if the Boolean expression of the outer if statement evaluates to true.",
+   "tp": "2.4"
+  },
+  {
+   "c": "2.4.A.3",
+   "k": "ek",
+   "t": "A multiway selection (if-else-if) is used when there are a series of expressions with different segments of code for each condition. Multiway selection is performed such that no more than one segment of code is executed based on the first expression that evaluates to true. If no expression evaluates to true and there is a trailing else statement, then the body of the else is executed.",
+   "tp": "2.4"
+  },
+  {
+   "c": "2.5.A",
+   "k": "lo",
+   "t": "Develop code to represent compound Boolean expressions and determine the result of these expressions.",
+   "tp": "2.5"
+  },
+  {
+   "c": "2.5.A.1",
+   "k": "ek",
+   "t": "Logical operators ! (not), && (and), and || (or) are used with Boolean expressions. The expression !a evaluates to true if a is false and evaluates to false otherwise. The expression a && b evaluates to true if both a and b are true and evaluates to false otherwise. The expression a || b evaluates to true if a is true, b is true, or both, and evaluates to false otherwise. The order of precedence for evaluating logical operators is ! (not), && (and), then || (or). An expression involving logical operators evaluates to a Boolean value.",
+   "tp": "2.5"
+  },
+  {
+   "c": "2.5.A.2",
+   "k": "ek",
+   "t": "Short-circuit evaluation occurs when the result of a logical operation using && or || can be determined by evaluating only the first Boolean expression. In this case, the second Boolean expression is not evaluated.",
+   "tp": "2.5"
+  },
+  {
+   "c": "2.6.A",
+   "k": "lo",
+   "t": "Compare equivalent Boolean expressions.",
+   "tp": "2.6"
+  },
+  {
+   "c": "2.6.B",
+   "k": "lo",
+   "t": "Develop code to compare object references using Boolean expressions and determine the result of these expressions.",
+   "tp": "2.6"
+  },
+  {
+   "c": "2.6.A.1",
+   "k": "ek",
+   "t": "Two Boolean expressions are equivalent if they evaluate to the same value in all cases. Truth tables can be used to prove Boolean expressions are equivalent.",
+   "tp": "2.6"
+  },
+  {
+   "c": "2.6.A.2",
+   "k": "ek",
+   "t": "De Morgan’s law can be applied to Boolean expressions to create equivalent Boolean expressions. Under De Morgan’s law, the Boolean expression !(a && b) is equivalent to !a || !b and the Boolean expression !(a || b) is equivalent to !a && !b.",
+   "tp": "2.6"
+  },
+  {
+   "c": "2.6.B.1",
+   "k": "ek",
+   "t": "Two different variables can hold references to the same object. Object references can be compared using == and !=.",
+   "tp": "2.6"
+  },
+  {
+   "c": "2.6.B.2",
+   "k": "ek",
+   "t": "An object reference can be compared with null, using == or !=, to determine if the reference actually references an object.",
+   "tp": "2.6"
+  },
+  {
+   "c": "2.6.B.3",
+   "k": "ek",
+   "t": "Classes often define their own equals method, which can be used to specify the criteria for equivalency for two objects of the class. The equivalency of two objects is most often determined using attributes from the two objects.",
+   "tp": "2.6",
+   "x": "Overriding the equals method is outside the scope of the AP Computer Science A course and exam."
+  },
+  {
+   "c": "2.7.A",
+   "k": "lo",
+   "t": "Identify when an iterative process is required to achieve a desired result.",
+   "tp": "2.7"
+  },
+  {
+   "c": "2.7.B",
+   "k": "lo",
+   "t": "Develop code to represent iterative processes using while loops and determine the result of these processes.",
+   "tp": "2.7"
+  },
+  {
+   "c": "2.7.A.1",
+   "k": "ek",
+   "t": "Iteration is a form of repetition. Iteration statements change the flow of control by repeating a segment of code zero or more times as long as the Boolean expression controlling the loop evaluates to true.",
+   "tp": "2.7"
+  },
+  {
+   "c": "2.7.A.2",
+   "k": "ek",
+   "t": "An infinite loop occurs when the Boolean expression in an iterative statement always evaluates to true.",
+   "tp": "2.7"
+  },
+  {
+   "c": "2.7.A.3",
+   "k": "ek",
+   "t": "The loop body of an iterative statement will not execute if the Boolean expression initially evaluates to false.",
+   "tp": "2.7"
+  },
+  {
+   "c": "2.7.A.4",
+   "k": "ek",
+   "t": "Off by one errors occur when the iteration statement loops one time too many or one time too few.",
+   "tp": "2.7"
+  },
+  {
+   "c": "2.7.B.1",
+   "k": "ek",
+   "t": "A while loop is a type of iterative statement. In while loops, the Boolean expression is evaluated before each iteration of the loop body, including the first. When the expression evaluates to true, the loop body is executed. This continues until the Boolean expression evaluates to false, whereupon the iteration terminates.",
+   "tp": "2.7"
+  },
+  {
+   "c": "2.8.A",
+   "k": "lo",
+   "t": "Develop code to represent iterative processes using for loops and determine the result of these processes.",
+   "tp": "2.8"
+  },
+  {
+   "c": "2.8.A.1",
+   "k": "ek",
+   "t": "A for loop is a type of iterative statement. There are three parts in a for loop header: the initialization, the Boolean expression, and the update.",
+   "tp": "2.8"
+  },
+  {
+   "c": "2.8.A.2",
+   "k": "ek",
+   "t": "In a for loop, the initialization statement is only executed once before the first Boolean expression evaluation. The variable being initialized is referred to as a loop control variable. The Boolean expression is evaluated immediately after the loop control variable is initialized and then following each execution of the increment statement until it is false. In each iteration, the update is executed after the entire loop body is executed and before the Boolean expression is evaluated again.",
+   "tp": "2.8"
+  },
+  {
+   "c": "2.8.A.3",
+   "k": "ek",
+   "t": "A for loop can be rewritten into an equivalent while loop (and vice versa).",
+   "tp": "2.8"
+  },
+  {
+   "c": "2.9.A",
+   "k": "lo",
+   "t": "Develop code for standard and original algorithms (without data structures) and determine the result of these algorithms.",
+   "tp": "2.9"
+  },
+  {
+   "c": "2.9.A.1",
+   "k": "ek",
+   "t": "There are standard algorithms to: • identify if an integer is or is not evenly divisible by another integer • identify the individual digits in an integer • determine the frequency with which a specific criterion is met • determine a minimum or maximum value • compute a sum or average",
+   "tp": "2.9"
+  },
+  {
+   "c": "2.10.A",
+   "k": "lo",
+   "t": "Develop code for standard and original algorithms that involve strings and determine the result of these algorithms.",
+   "tp": "2.10"
+  },
+  {
+   "c": "2.10.A.1",
+   "k": "ek",
+   "t": "There are standard string algorithms to: • find if one or more substrings have a particular property • determine the number of substrings that meet specific criteria • create a new string with the characters reversed",
+   "tp": "2.10"
+  },
+  {
+   "c": "2.11.A",
+   "k": "lo",
+   "t": "Develop code to represent nested iterative processes and determine the result of these processes.",
+   "tp": "2.11"
+  },
+  {
+   "c": "2.11.A.1",
+   "k": "ek",
+   "t": "Nested iteration statements are iteration statements that appear in the body of another iteration statement. When a loop is nested inside another loop, the inner loop must complete all its iterations before the outer loop can continue to its next iteration.",
+   "tp": "2.11"
+  },
+  {
+   "c": "2.12.A",
+   "k": "lo",
+   "t": "Calculate statement execution counts and informal run-time comparison of iterative statements.",
+   "tp": "2.12"
+  },
+  {
+   "c": "2.12.A.1",
+   "k": "ek",
+   "t": "A statement execution count indicates the number of times a statement is executed by the program. Statement execution counts are often calculated informally through tracing and analysis of the iterative statements.",
+   "tp": "2.12"
+  },
+  {
+   "c": "3.1.A",
+   "k": "lo",
+   "t": "Represent the design of a program by using natural language or creating diagrams that indicate the classes in the program and the data and procedural abstractions found in each class by including all attributes and behaviors.",
+   "tp": "3.1"
+  },
+  {
+   "c": "3.1.A.1",
+   "k": "ek",
+   "t": "Abstraction is the process of reducing complexity by focusing on the main idea. By hiding details irrelevant to the question at hand and bringing together related and useful details, abstraction reduces complexity and allows one to focus on the idea.",
+   "tp": "3.1"
+  },
+  {
+   "c": "3.1.A.2",
+   "k": "ek",
+   "t": "Data abstraction provides a separation between the abstract properties of a data type and the concrete details of its representation. Data abstraction manages complexity by giving data a name without referencing the specific details of the representation. Data can take the form of a single variable or a collection of data, such as in a class or a set of data.",
+   "tp": "3.1"
+  },
+  {
+   "c": "3.1.A.3",
+   "k": "ek",
+   "t": "An attribute is a type of data abstraction that is defined in a class outside any method or constructor. An instance variable is an attribute whose value is unique to each instance of the class. A class variable is an attribute shared by all instances of the class.",
+   "tp": "3.1"
+  },
+  {
+   "c": "3.1.A.4",
+   "k": "ek",
+   "t": "Procedural abstraction provides a name for a process and allows a method to be used only knowing what it does, not how it does it. Through method decomposition, a programmer breaks down larger behaviors of the class into smaller behaviors by creating methods to represent each individual smaller behavior. A procedural abstraction may extract shared features to generalize functionality instead of duplicating code. This allows for code reuse, which helps manage complexity.",
+   "tp": "3.1"
+  },
+  {
+   "c": "3.1.A.5",
+   "k": "ek",
+   "t": "Using parameters allows procedures to be generalized, enabling the procedures to be reused with a range of input values or arguments.",
+   "tp": "3.1"
+  },
+  {
+   "c": "3.1.A.6",
+   "k": "ek",
+   "t": "Using procedural abstraction in a program allows programmers to change the internals of a method (to make it faster, more efficient, use less storage, etc.) without needing to notify method users of the change as long as the method signature and what the method does is preserved.",
+   "tp": "3.1"
+  },
+  {
+   "c": "3.1.A.7",
+   "k": "ek",
+   "t": "Prior to implementing a class, it is helpful to take time to design each class including its attributes and behaviors. This design can be represented using natural language or diagrams.",
+   "tp": "3.1"
+  },
+  {
+   "c": "3.2.A",
+   "k": "lo",
+   "t": "Explain the social and ethical implications of computing systems.",
+   "tp": "3.2"
+  },
+  {
+   "c": "3.2.A.1",
+   "k": "ek",
+   "t": "System reliability refers to the program being able to perform its tasks as expected under stated conditions without failure. Programmers should make an effort to maximize system reliability by testing the program with a variety of conditions.",
+   "tp": "3.2"
+  },
+  {
+   "c": "3.2.A.2",
+   "k": "ek",
+   "t": "The creation of programs has impacts on society, the economy, and culture. These impacts can be both beneficial and harmful. Programs meant to fill a need or solve a problem can have unintended harmful effects beyond their intended use.",
+   "tp": "3.2"
+  },
+  {
+   "c": "3.2.A.3",
+   "k": "ek",
+   "t": "Legal issues and intellectual property concerns arise when creating programs. Programmers often reuse code written by others and published as open source and free to use. Incorporation of code that is not published as open source requires the programmer to obtain permission and often purchase the code before integrating it into their program.",
+   "tp": "3.2"
+  },
+  {
+   "c": "3.3.A",
+   "k": "lo",
+   "t": "Develop code to designate access and visibility constraints to classes, data, constructors, and methods.",
+   "tp": "3.3"
+  },
+  {
+   "c": "3.3.A.1",
+   "k": "ek",
+   "t": "Data encapsulation is a technique in which the implementation details of a class are kept hidden from external classes. The keywords public and private affect the access of classes, data, constructors, and methods. The keyword private restricts access to the declaring class, while the keyword public allows access from classes outside the declaring class.",
+   "tp": "3.3"
+  },
+  {
+   "c": "3.3.A.2",
+   "k": "ek",
+   "t": "In this course, classes are always designated public and are declared with the keyword class.",
+   "tp": "3.3"
+  },
+  {
+   "c": "3.3.A.3",
+   "k": "ek",
+   "t": "In this course, constructors are always designated public.",
+   "tp": "3.3"
+  },
+  {
+   "c": "3.3.A.4",
+   "k": "ek",
+   "t": "Instance variables belong to the object, and each object has its own copy of the variable.",
+   "tp": "3.3"
+  },
+  {
+   "c": "3.3.A.5",
+   "k": "ek",
+   "t": "Access to attributes should be kept internal to the class in order to accomplish encapsulation. Therefore, it is good programming practice to designate the instance variables for these attributes as private unless the class specification states otherwise.",
+   "tp": "3.3"
+  },
+  {
+   "c": "3.3.A.6",
+   "k": "ek",
+   "t": "Access to behaviors can be internal or external to the class. Methods designated as public can be accessed internally or externally to a class, whereas methods designated as private can only be accessed internally to the class.",
+   "tp": "3.3"
+  },
+  {
+   "c": "3.4.A",
+   "k": "lo",
+   "t": "Develop code to declare instance variables for the attributes to be initialized in the body of the constructors of a class.",
+   "tp": "3.4"
+  },
+  {
+   "c": "3.4.A.1",
+   "k": "ek",
+   "t": "An object’s state refers to its attributes and their values at a given time and is defined by instance variables belonging to the object. This defines a has-a relationship between the object and its instance variables.",
+   "tp": "3.4"
+  },
+  {
+   "c": "3.4.A.2",
+   "k": "ek",
+   "t": "A constructor is used to set the initial state of an object, which should include initial values for all instance variables. When a constructor is called, memory is allocated for the object and the associated object reference is returned. Constructor parameters, if specified, provide data to initialize instance variables.",
+   "tp": "3.4"
+  },
+  {
+   "c": "3.4.A.3",
+   "k": "ek",
+   "t": "When a mutable object is a constructor parameter, the instance variable should be initialized with a copy of the referenced object. In this way, the instance variable does not hold a reference to the original object, and methods are prevented from modifying the state of the original object.",
+   "tp": "3.4"
+  },
+  {
+   "c": "3.4.A.4",
+   "k": "ek",
+   "t": "When no constructor is written, Java provides a no-parameter constructor, and the instance variables are set to default values according to the data type of the attribute. This constructor is called the default constructor.",
+   "tp": "3.4"
+  },
+  {
+   "c": "3.4.A.5",
+   "k": "ek",
+   "t": "The default value for an attribute of type int is 0. The default value of an attribute of type double is 0.0. The default value of an attribute of type boolean is false. The default value of a reference type is null.",
+   "tp": "3.4"
+  },
+  {
+   "c": "3.5.A",
+   "k": "lo",
+   "t": "Develop code to define behaviors of an object through methods written in a class using primitive values and determine the result of calling these methods.",
+   "tp": "3.5"
+  },
+  {
+   "c": "3.5.A.1",
+   "k": "ek",
+   "t": "A void method does not return a value. Its header contains the keyword void before the method name.",
+   "tp": "3.5"
+  },
+  {
+   "c": "3.5.A.2",
+   "k": "ek",
+   "t": "A non-void method returns a single value. Its header includes the return type in place of the keyword void.",
+   "tp": "3.5"
+  },
+  {
+   "c": "3.5.A.3",
+   "k": "ek",
+   "t": "In non-void methods, a return expression compatible with the return type is evaluated, and the value is returned. This is referred to as",
+   "tp": "3.5"
+  },
+  {
+   "c": "3.5.A.4",
+   "k": "ek",
+   "t": "The return keyword is used to return the flow of control to the point where the method or constructor was called. Any code that is sequentially after a return statement will never be executed. Executing a return statement inside a selection or iteration statement will halt the statement and exit the method or constructor.",
+   "tp": "3.5"
+  },
+  {
+   "c": "3.5.A.5",
+   "k": "ek",
+   "t": "An accessor method allows objects of other classes to obtain a copy of the value of instance variables or class variables. An accessor method is a non-void method.",
+   "tp": "3.5"
+  },
+  {
+   "c": "3.5.A.6",
+   "k": "ek",
+   "t": "A mutator (modifier) method is a method that changes the values of the instance variables or class variables. A mutator method is often a void method.",
+   "tp": "3.5"
+  },
+  {
+   "c": "3.5.A.7",
+   "k": "ek",
+   "t": "Methods with parameters receive values through those parameters and use those values in accomplishing the method’s task.",
+   "tp": "3.5"
+  },
+  {
+   "c": "3.5.A.8",
+   "k": "ek",
+   "t": "When an argument is a primitive value, the parameter is initialized with a copy of that value. Changes to the parameter have no effect on the corresponding argument.",
+   "tp": "3.5"
+  },
+  {
+   "c": "3.6.A",
+   "k": "lo",
+   "t": "Develop code to define behaviors of an object through methods written in a class using object references and determine the result of calling these methods.",
+   "tp": "3.6"
+  },
+  {
+   "c": "3.6.A.1",
+   "k": "ek",
+   "t": "When an argument is an object reference, the parameter is initialized with a copy of that reference; it does not create a new independent copy of the object. If the parameter refers to a mutable object, the method or constructor can use this reference to alter the state of the object. It is good programming practice to not modify mutable objects that are passed as parameters unless required in the specification.",
+   "tp": "3.6"
+  },
+  {
+   "c": "3.6.A.2",
+   "k": "ek",
+   "t": "When the return expression evaluates to an object reference, the reference is returned, not a reference to a new copy of the object.",
+   "tp": "3.6"
+  },
+  {
+   "c": "3.6.A.3",
+   "k": "ek",
+   "t": "Methods cannot access the private data and methods of a parameter that holds a reference to an object unless the parameter is the same type as the method’s enclosing class.",
+   "tp": "3.6"
+  },
+  {
+   "c": "3.7.A",
+   "k": "lo",
+   "t": "Develop code to define behaviors of a class through class methods.",
+   "tp": "3.7"
+  },
+  {
+   "c": "3.7.B",
+   "k": "lo",
+   "t": "Develop code to declare the class variables that belong to the class.",
+   "tp": "3.7"
+  },
+  {
+   "c": "3.7.A.1",
+   "k": "ek",
+   "t": "Class methods cannot access or change the values of instance variables or call instance methods without being passed an instance of the class via a parameter.",
+   "tp": "3.7"
+  },
+  {
+   "c": "3.7.A.2",
+   "k": "ek",
+   "t": "Class methods can access or change the values of class variables and can call other class methods.",
+   "tp": "3.7"
+  },
+  {
+   "c": "3.7.B.1",
+   "k": "ek",
+   "t": "Class variables belong to the class, with all objects of a class sharing a single copy of the class variable. Class variables are designated with the static keyword before the variable type.",
+   "tp": "3.7"
+  },
+  {
+   "c": "3.7.B.2",
+   "k": "ek",
+   "t": "Class variables that are designated public are accessed outside of the class by using the class name and the dot operator, since they are associated with a class, not objects of a class.",
+   "tp": "3.7"
+  },
+  {
+   "c": "3.7.B.3",
+   "k": "ek",
+   "t": "When a variable is declared final, its value cannot be modified.",
+   "tp": "3.7"
+  },
+  {
+   "c": "3.8.A",
+   "k": "lo",
+   "t": "Explain where variables can be used in the code.",
+   "tp": "3.8"
+  },
+  {
+   "c": "3.8.A.1",
+   "k": "ek",
+   "t": "Local variables are variables declared in the headers or bodies of blocks of code. Local variables can only be accessed in the block in which they are declared. Since constructors and methods are blocks of code, parameters to constructors or methods are also considered local variables. These variables may only be used within the constructor or method and cannot be declared to be public or private.",
+   "tp": "3.8"
+  },
+  {
+   "c": "3.8.A.2",
+   "k": "ek",
+   "t": "When there is a local variable or parameter with the same name as an instance variable, the variable name will refer to the local variable instead of the instance variable within the body of the constructor or method.",
+   "tp": "3.8"
+  },
+  {
+   "c": "3.9.A",
+   "k": "lo",
+   "t": "Develop code for expressions that are self-referencing and determine the result of these expressions.",
+   "tp": "3.9"
+  },
+  {
+   "c": "3.9.A.1",
+   "k": "ek",
+   "t": "Within an instance method or a constructor, the keyword this acts as a special variable that holds a reference to the current object— the object whose method or constructor is being called.",
+   "tp": "3.9"
+  },
+  {
+   "c": "3.9.A.2",
+   "k": "ek",
+   "t": "The keyword this can be used to pass the current object as an argument in a method call.",
+   "tp": "3.9"
+  },
+  {
+   "c": "3.9.A.3",
+   "k": "ek",
+   "t": "Class methods do not have a this reference.",
+   "tp": "3.9"
+  },
+  {
+   "c": "4.1.A",
+   "k": "lo",
+   "t": "Explain the risks to privacy from collecting and storing personal data on computer systems.",
+   "tp": "4.1"
+  },
+  {
+   "c": "4.1.B",
+   "k": "lo",
+   "t": "Explain the importance of recognizing data quality and potential issues when using a data set.",
+   "tp": "4.1"
+  },
+  {
+   "c": "4.1.C",
+   "k": "lo",
+   "t": "Identify an appropriate data set to use in order to solve a problem or answer a specific question.",
+   "tp": "4.1"
+  },
+  {
+   "c": "4.1.A.1",
+   "k": "ek",
+   "t": "When using a computer, personal privacy is at risk. When developing new programs, programmers should attempt to safeguard the personal privacy of the user.",
+   "tp": "4.1"
+  },
+  {
+   "c": "4.1.B.1",
+   "k": "ek",
+   "t": "Algorithmic bias describes systemic and repeated errors in a program that create unfair outcomes for a specific group of users.",
+   "tp": "4.1"
+  },
+  {
+   "c": "4.1.B.2",
+   "k": "ek",
+   "t": "Programmers should be aware of the data set collection method and the potential for bias when using this method before using the data to extrapolate new information or drawing conclusions.",
+   "tp": "4.1"
+  },
+  {
+   "c": "4.1.B.3",
+   "k": "ek",
+   "t": "Some data sets are incomplete or contain inaccurate data. Using such data in the development or use of a program can cause the program to work incorrectly or inefficiently.",
+   "tp": "4.1"
+  },
+  {
+   "c": "4.1.C.1",
+   "k": "ek",
+   "t": "Contents of a data set might be related to a specific question or topic and might not be appropriate to give correct answers or extrapolate information for a different question or topic.",
+   "tp": "4.1"
+  },
+  {
+   "c": "4.2.A",
+   "k": "lo",
+   "t": "Represent patterns and algorithms that involve data sets found in everyday life using written language or diagrams.",
+   "tp": "4.2"
+  },
+  {
+   "c": "4.2.A.1",
+   "k": "ek",
+   "t": "A data set is a collection of specific pieces of information or data.",
+   "tp": "4.2"
+  },
+  {
+   "c": "4.2.A.2",
+   "k": "ek",
+   "t": "Data sets can be manipulated and analyzed to solve a problem or answer a question. When analyzing data sets, values within the set are accessed and utilized one at a time and then processed according to the desired outcome.",
+   "tp": "4.2"
+  },
+  {
+   "c": "4.2.A.3",
+   "k": "ek",
+   "t": "Data can be represented in a diagram by using a chart or table. This visual can be used to plan the algorithm that will be used to manipulate the data.",
+   "tp": "4.2"
+  },
+  {
+   "c": "4.3.A",
+   "k": "lo",
+   "t": "Develop code used to represent collections of related data using one-dimensional (1D) array objects.",
+   "tp": "4.3"
+  },
+  {
+   "c": "4.3.A.1",
+   "k": "ek",
+   "t": "An array stores multiple values of the same type. The values can be either primitive values or object references.",
+   "tp": "4.3"
+  },
+  {
+   "c": "4.3.A.2",
+   "k": "ek",
+   "t": "The length of an array is established at the time of creation and cannot be changed. The length of an array can be accessed through the length attribute.",
+   "tp": "4.3"
+  },
+  {
+   "c": "4.3.A.3",
+   "k": "ek",
+   "t": "When an array is created using the keyword new, all of its elements are initialized to the default values for the element data type. The default value for int is 0, for double is 0.0, for boolean is false, and for a reference type is null.",
+   "tp": "4.3"
+  },
+  {
+   "c": "4.3.A.4",
+   "k": "ek",
+   "t": "Initializer lists can be used to create and initialize arrays.",
+   "tp": "4.3"
+  },
+  {
+   "c": "4.3.A.5",
+   "k": "ek",
+   "t": "Square brackets [] are used to access and modify an element in a 1D array using an index.",
+   "tp": "4.3"
+  },
+  {
+   "c": "4.3.A.6",
+   "k": "ek",
+   "t": "The valid index values for an array are 0 through one less than the length of the array, inclusive. Using an index value outside of this range will result in an ArrayIndexOutOfBoundsException.",
+   "tp": "4.3"
+  },
+  {
+   "c": "4.4.A",
+   "k": "lo",
+   "t": "Develop code used to traverse the elements in a 1D array and determine the result of these traversals.",
+   "tp": "4.4"
+  },
+  {
+   "c": "4.4.A.1",
+   "k": "ek",
+   "t": "Traversing an array is when repetition statements are used to access all or an ordered sequence of elements in an array.",
+   "tp": "4.4"
+  },
+  {
+   "c": "4.4.A.2",
+   "k": "ek",
+   "t": "Traversing an array with an indexed for loop or while loop requires elements to be accessed using their indices.",
+   "tp": "4.4"
+  },
+  {
+   "c": "4.4.A.3",
+   "k": "ek",
+   "t": "An enhanced for loop header includes a variable, referred to as the enhanced for loop variable. For each iteration of the enhanced for loop, the enhanced for loop variable is assigned a copy of an element without using its index.",
+   "tp": "4.4"
+  },
+  {
+   "c": "4.4.A.4",
+   "k": "ek",
+   "t": "Assigning a new value to the enhanced for loop variable does not change the value stored in the array.",
+   "tp": "4.4"
+  },
+  {
+   "c": "4.4.A.5",
+   "k": "ek",
+   "t": "When an array stores object references, the attributes can be modified by calling methods on the enhanced for loop variable. This does not change the object references stored in the array.",
+   "tp": "4.4"
+  },
+  {
+   "c": "4.4.A.6",
+   "k": "ek",
+   "t": "Code written using an enhanced for loop to traverse elements in an array can be rewritten using an indexed for loop or a while loop.",
+   "tp": "4.4"
+  },
+  {
+   "c": "4.5.A",
+   "k": "lo",
+   "t": "Develop code for standard and original algorithms for a particular context or specification that involves arrays and determine the result of these algorithms.",
+   "tp": "4.5"
+  },
+  {
+   "c": "4.5.A.1",
+   "k": "ek",
+   "t": "There are standard algorithms that utilize array traversals to: • determine a minimum or maximum value • compute a sum or average • determine if at least one element has a particular property • determine if all elements have a particular property • determine the number of elements having a particular property • access all consecutive pairs of elements • determine the presence or absence of duplicate elements • shift or rotate elements left or right • reverse the order of the elements",
+   "tp": "4.5"
+  },
+  {
+   "c": "4.6.A",
+   "k": "lo",
+   "t": "Develop code to read data from a text file.",
+   "tp": "4.6"
+  },
+  {
+   "c": "4.6.A.1",
+   "k": "ek",
+   "t": "A file is storage for data that persists when the program is not running. The data in a file can be retrieved during program execution.",
+   "tp": "4.6"
+  },
+  {
+   "c": "4.6.A.2",
+   "k": "ek",
+   "t": "A file can be connected to the program using the File and Scanner classes.",
+   "tp": "4.6"
+  },
+  {
+   "c": "4.6.A.3",
+   "k": "ek",
+   "t": "A file can be opened by creating a File object, using the name of the file as the argument of the constructor. • File(String str) is the File constructor that accepts a String file name to open for reading, where str is the pathname for the file.",
+   "tp": "4.6"
+  },
+  {
+   "c": "4.6.A.4",
+   "k": "ek",
+   "t": "When using the File class, it is required to indicate what to do if the file with the provided name cannot be opened. One way to accomplish this is to add throws IOException to the header of the method that uses the file. If the file name is invalid, the program will terminate.",
+   "tp": "4.6"
+  },
+  {
+   "c": "4.6.A.5",
+   "k": "ek",
+   "t": "The File and IOException classes are part of the java.io package. An import statement must be used to make these classes available for use in the program.",
+   "tp": "4.6"
+  },
+  {
+   "c": "4.6.A.6",
+   "k": "ek",
+   "t": "The following Scanner methods and constructor—including what they do and when they are used—are part of the Java Quick Reference: • Scanner(File f) is the Scanner constructor that accepts a File for reading. • int nextInt() returns the next int read from the file or input source if available. If the next int does not exist or is out of range, it will result in an InputMismatchException. • double nextDouble() returns the next double read from the file or input source. If the next double does not exist, it will result in an InputMismatchException. • boolean nextBoolean() returns the next boolean read from the file or input source. If the next boolean does not exist, it will result in an InputMismatchException. • String nextLine() returns the next line of text as a String read from the file or input source; can return the empty string if called immediately after another Scanner method that is reading from the file or input source. • String next() returns the next String read from the file or input source. • boolean hasNext() returns true if there is a next item to read in the file or input source; returns false otherwise. • void close() closes this scanner.",
+   "tp": "4.6",
+   "x": "Accepting input from the keyboard is outside the scope of the AP Computer Science A course and exam."
+  },
+  {
+   "c": "4.6.A.7",
+   "k": "ek",
+   "t": "Using nextLine and the other Scanner methods together on the same input source sometimes requires code to adjust for the methods’ different ways of handling whitespace.",
+   "tp": "4.6",
+   "x": "Writing or analyzing code that uses both nextLine and other Scanner methods on the same input source is outside the scope of the AP Computer Science A course and exam."
+  },
+  {
+   "c": "4.6.A.8",
+   "k": "ek",
+   "t": "The following additional String method— including what it does and when it is used—is part of the Java Quick Reference: • String[] split(String del)",
+   "tp": "4.6"
+  },
+  {
+   "c": "4.6.A.9",
+   "k": "ek",
+   "t": "A while loop can be used to detect if the file still contains elements to read by using the hasNext method as the condition of the loop.",
+   "tp": "4.6"
+  },
+  {
+   "c": "4.6.A.10",
+   "k": "ek",
+   "t": "A file should be closed when the program is finished using it. The close method from Scanner is called to close the file.",
+   "tp": "4.6"
+  },
+  {
+   "c": "4.7.A",
+   "k": "lo",
+   "t": "Develop code to use Integer and Double objects from their primitive counterparts and determine the result of using these objects.",
+   "tp": "4.7"
+  },
+  {
+   "c": "4.7.A.1",
+   "k": "ek",
+   "t": "The Integer class and Double class are part of the java.lang package. An Integer object is immutable, meaning once an Integer object is created, its attributes cannot be changed. A Double object is immutable, meaning once a Double object is created, its attributes cannot be changed.",
+   "tp": "4.7"
+  },
+  {
+   "c": "4.7.A.2",
+   "k": "ek",
+   "t": "Autoboxing is the automatic conversion that the Java compiler makes between primitive types and their corresponding object wrapper classes. This includes converting an int to an Integer and a double to a Double. The Java compiler applies autoboxing when a primitive value is: • passed as a parameter to a method that expects an object of the corresponding wrapper class • assigned to a variable of the corresponding wrapper class",
+   "tp": "4.7"
+  },
+  {
+   "c": "4.7.A.3",
+   "k": "ek",
+   "t": "Unboxing is the automatic conversion that the Java compiler makes from the wrapper class to the primitive type. This includes converting an Integer to an int and a Double to a double. The Java compiler applies unboxing when a wrapper class object is: • passed as a parameter to a method that expects a value of the corresponding primitive type • assigned to a variable of the corresponding primitive type",
+   "tp": "4.7"
+  },
+  {
+   "c": "4.7.A.4",
+   "k": "ek",
+   "t": "The following class Integer method— including what it does and when it is used—is part of the Java Quick Reference: • static int parseInt(String s)",
+   "tp": "4.7"
+  },
+  {
+   "c": "4.7.A.5",
+   "k": "ek",
+   "t": "The following class Double method— including what it does and when it is used—is part of the Java Quick Reference: • static double parseDouble(String s) returns the String argument as a double.",
+   "tp": "4.7"
+  },
+  {
+   "c": "4.8.A",
+   "k": "lo",
+   "t": "Develop code for collections of related objects using ArrayList objects and determine the result of calling methods on these objects. Methods",
+   "tp": "4.8"
+  },
+  {
+   "c": "4.8.A.1",
+   "k": "ek",
+   "t": "An ArrayList object is mutable in size and contains object references.",
+   "tp": "4.8"
+  },
+  {
+   "c": "4.8.A.2",
+   "k": "ek",
+   "t": "The ArrayList constructor ArrayList() constructs an empty list.",
+   "tp": "4.8"
+  },
+  {
+   "c": "4.8.A.3",
+   "k": "ek",
+   "t": "Java allows the generic type ArrayList<E>, where the type parameter E specifies the type of the elements. When ArrayList<E> is specified, the types of the reference parameters and",
+   "tp": "4.8"
+  },
+  {
+   "c": "4.8.A.4",
+   "k": "ek",
+   "t": "The ArrayList class is part of the java.util package. An import statement must be used to make this class available for use in the program.",
+   "tp": "4.8"
+  },
+  {
+   "c": "4.8.A.5",
+   "k": "ek",
+   "t": "The following ArrayList methods— including what they do and when they are used—are part of the Java Quick Reference: • int size() returns the number of elements in the list. • boolean add(E obj) appends obj to end of list; returns true. • void add(int index, E obj) inserts obj at position index (0 <= index <= size), moving elements at position index and higher to the right (adds 1 to their indices) and adds 1 to size. • E get(int index) returns the element at position index in the list. • E set(int index, E obj) replaces the element at position index with obj; returns the element formerly at position index. • E remove(int index) removes element from position index, moving elements at position index + 1 and higher to the left (subtracts 1 from their indices) and subtracts 1 from size; returns the element formerly at position index.",
+   "tp": "4.8"
+  },
+  {
+   "c": "4.8.A.6",
+   "k": "ek",
+   "t": "The indices for an ArrayList start at 0 and end at the number of elements - 1.",
+   "tp": "4.8"
+  },
+  {
+   "c": "4.9.A",
+   "k": "lo",
+   "t": "Develop code used to traverse the elements of an ArrayList and determine the results of these traversals. Traversals",
+   "tp": "4.9"
+  },
+  {
+   "c": "4.9.A.1",
+   "k": "ek",
+   "t": "Traversing an ArrayList is when iteration or recursive statements are used to access all or an ordered sequence of the elements in an ArrayList.",
+   "tp": "4.9"
+  },
+  {
+   "c": "4.9.A.2",
+   "k": "ek",
+   "t": "Deleting elements during a traversal of an ArrayList requires the use of special techniques to avoid skipping elements.",
+   "tp": "4.9"
+  },
+  {
+   "c": "4.9.A.3",
+   "k": "ek",
+   "t": "Attempting to access an index value outside of its range will result in an IndexOutOfBoundsException.",
+   "tp": "4.9"
+  },
+  {
+   "c": "4.9.A.4",
+   "k": "ek",
+   "t": "Changing the size of an ArrayList while traversing it using an enhanced for loop can result in a ConcurrentModificationException. Therefore, when using an enhanced for loop to traverse an ArrayList, you should not add or remove elements.",
+   "tp": "4.9"
+  },
+  {
+   "c": "4.10.A",
+   "k": "lo",
+   "t": "Develop code for standard and original algorithms for a particular context or specification that involve ArrayList objects and determine the result of these algorithms.",
+   "tp": "4.10"
+  },
+  {
+   "c": "4.10.A.1",
+   "k": "ek",
+   "t": "There are standard ArrayList algorithms that utilize traversals to: • determine a minimum or maximum value • compute a sum or average • determine if at least one element has a particular property • determine if all elements have a particular property • determine the number of elements having a particular property • access all consecutive pairs of elements • determine the presence or absence of duplicate elements • shift or rotate elements left or right • reverse the order of the elements • insert elements • delete elements",
+   "tp": "4.10"
+  },
+  {
+   "c": "4.10.A.2",
+   "k": "ek",
+   "t": "Some algorithms require multiple String, array, or ArrayList objects to be traversed simultaneously.",
+   "tp": "4.10"
+  },
+  {
+   "c": "4.11.A",
+   "k": "lo",
+   "t": "Develop code used to represent collections of related data using two-dimensional (2D) array objects.",
+   "tp": "4.11"
+  },
+  {
+   "c": "4.11.A.1",
+   "k": "ek",
+   "t": "A 2D array is stored as an array of arrays. Therefore, the way 2D arrays are created and indexed is similar to 1D array objects. The size of a 2D array is established at the time of creation and cannot be changed. 2D arrays can store either primitive data or object reference data.",
+   "tp": "4.11",
+   "x": "Nonrectangular 2D array objects are outside the scope of the AP Computer Science A course and exam."
+  },
+  {
+   "c": "4.11.A.2",
+   "k": "ek",
+   "t": "When a 2D array is created using the keyword new, all of its elements are initialized to the default values for the element data type. The default value for int is 0, for double is 0.0, for boolean is false, and for a reference type is null.",
+   "tp": "4.11"
+  },
+  {
+   "c": "4.11.A.3",
+   "k": "ek",
+   "t": "The initializer list used to create and initialize a 2D array consists of initializer lists that represent 1D arrays; for example, int[][] arr2D = { {1, 2, 3}, {4, 5, 6} };.",
+   "tp": "4.11"
+  },
+  {
+   "c": "4.11.A.4",
+   "k": "ek",
+   "t": "The square brackets [row][col] are used to access and modify an element in a 2D array. For the purposes of the exam, when accessing the element at arr[first][second], the first index is used for rows, the second index is used for columns.",
+   "tp": "4.11"
+  },
+  {
+   "c": "4.11.A.5",
+   "k": "ek",
+   "t": "A single array that is a row of a 2D array can be accessed using the 2D array name and a single set of square brackets containing the row index.",
+   "tp": "4.11"
+  },
+  {
+   "c": "4.11.A.6",
+   "k": "ek",
+   "t": "The number of rows contained in a 2D array can be accessed through the length attribute. The valid row index values for a 2D array are 0 through one less than the number of rows or the length of the array, inclusive. The number of columns contained in a 2D array can be accessed through the length attribute of one of the rows. The valid column index values for a 2D array are 0 through one less than the number of columns or the length of any given row of the array, inclusive. For example, given a 2D array named values, the number of rows is values. length and the number of columns is values[0].length. Using an index value outside of these ranges will result in an ArrayIndexOutOfBoundsException.",
+   "tp": "4.11"
+  },
+  {
+   "c": "4.12.A",
+   "k": "lo",
+   "t": "Develop code used to traverse the elements in a 2D array and determine the result of these traversals.",
+   "tp": "4.12"
+  },
+  {
+   "c": "4.12.A.1",
+   "k": "ek",
+   "t": "Nested iteration statements are used to traverse and access all or an ordered sequence of elements in a 2D array. Since 2D arrays are stored as arrays of arrays, the way 2D arrays are traversed using for loops and enhanced for loops is similar to 1D array objects. Nested iteration statements can be written to traverse the 2D array in row-major order, column-major order, or a uniquely defined order. Row-major order refers to an ordering of 2D array elements where traversal occurs across each row, whereas column-major order traversal occurs down each column.",
+   "tp": "4.12"
+  },
+  {
+   "c": "4.12.A.2",
+   "k": "ek",
+   "t": "The outer loop of a nested enhanced for loop used to traverse a 2D array traverses the rows. Therefore, the enhanced for loop variable must be the type of each row, which is a 1D array. The inner loop traverses a single row. Therefore, the inner enhanced for loop variable must be the same type as the elements stored in the 1D array. Assigning a new value to the enhanced for loop variable does not change the value stored in the array.",
+   "tp": "4.12"
+  },
+  {
+   "c": "4.13.A",
+   "k": "lo",
+   "t": "Develop code for standard and original algorithms for a particular context or specification that involves 2D arrays and determine the result of these algorithms.",
+   "tp": "4.13"
+  },
+  {
+   "c": "4.13.A.1",
+   "k": "ek",
+   "t": "There are standard algorithms that utilize 2D array traversals to: • determine a minimum or maximum value of all the elements or for a designated row, column, or other subsection • compute a sum or average of all the elements or for a designated row, column, or other subsection • determine if at least one element has a particular property in the entire 2D array or for a designated row, column, or other subsection • determine if all elements of the 2D array or a designated row, column, or other subsection have a particular property • determine the number of elements in the 2D array or in a designated row, column, or other subsection having a particular property • access all consecutive pairs of elements • determine the presence or absence of duplicate elements in the 2D array or in a designated row, column, or other subsection • shift or rotate elements in a row left or right or in a column up or down • reverse the order of the elements in a row or column",
+   "tp": "4.13"
+  },
+  {
+   "c": "4.14.A",
+   "k": "lo",
+   "t": "Develop code used for linear search algorithms to search for specific information in a collection and determine the results of executing a search.",
+   "tp": "4.14"
+  },
+  {
+   "c": "4.14.A.1",
+   "k": "ek",
+   "t": "Linear search algorithms are standard algorithms that check each element in order until the desired value is found or all elements in the array or ArrayList have been checked. Linear search algorithms can begin the search process from either end of the array or ArrayList.",
+   "tp": "4.14"
+  },
+  {
+   "c": "4.14.A.2",
+   "k": "ek",
+   "t": "When applying linear search algorithms to 2D arrays, each row must be accessed then linear search applied to each row of the 2D array.",
+   "tp": "4.14"
+  },
+  {
+   "c": "4.15.A",
+   "k": "lo",
+   "t": "Determine the result of executing each step of sorting algorithms to sort the elements of a collection.",
+   "tp": "4.15"
+  },
+  {
+   "c": "4.15.A.1",
+   "k": "ek",
+   "t": "Selection sort and insertion sort are iterative sorting algorithms that can be used to sort elements in an array or ArrayList.",
+   "tp": "4.15"
+  },
+  {
+   "c": "4.15.A.2",
+   "k": "ek",
+   "t": "Selection sort repeatedly selects the smallest (or largest) element from the unsorted portion of the list and swaps it into its correct (and final) position in the sorted portion of the list.",
+   "tp": "4.15"
+  },
+  {
+   "c": "4.15.A.3",
+   "k": "ek",
+   "t": "Insertion sort inserts an element from the unsorted portion of a list into its correct (but not necessarily final) position in the sorted portion of the list by shifting elements of the sorted portion to make room for the new element.",
+   "tp": "4.15"
+  },
+  {
+   "c": "4.16.A",
+   "k": "lo",
+   "t": "Determine the result of calling recursive methods.",
+   "tp": "4.16"
+  },
+  {
+   "c": "4.16.A.1",
+   "k": "ek",
+   "t": "A recursive method is a method that calls itself. Recursive methods contain at least one base case, which halts the recursion, and at least one recursive call. Recursion is another form of repetition.",
+   "tp": "4.16"
+  },
+  {
+   "c": "4.16.A.2",
+   "k": "ek",
+   "t": "Each recursive call has its own set of local variables, including the parameters. Parameter values capture the progress of a recursive process, much like loop control variable values capture the progress of a loop.",
+   "tp": "4.16"
+  },
+  {
+   "c": "4.16.A.3",
+   "k": "ek",
+   "t": "Any recursive solution can be replicated through the use of an iterative approach and vice versa.",
+   "tp": "4.16",
+   "x": "Writing recursive code is outside the scope of the AP Computer Science A course and exam."
+  },
+  {
+   "c": "4.17.A",
+   "k": "lo",
+   "t": "Determine the result of executing recursive algorithms that use strings or collections.",
+   "tp": "4.17"
+  },
+  {
+   "c": "4.17.B",
+   "k": "lo",
+   "t": "Determine the result of each iteration of a binary search algorithm used to search for information in a collection.",
+   "tp": "4.17"
+  },
+  {
+   "c": "4.17.C",
+   "k": "lo",
+   "t": "Determine the result of each iteration of the merge sort algorithm when used to sort a collection.",
+   "tp": "4.17"
+  },
+  {
+   "c": "4.17.A.1",
+   "k": "ek",
+   "t": "Recursion can be used to traverse String objects, arrays, and ArrayList objects.",
+   "tp": "4.17"
+  },
+  {
+   "c": "4.17.B.1",
+   "k": "ek",
+   "t": "Data must be in sorted order to use the binary search algorithm. Binary search starts at the middle of a sorted array or ArrayList and eliminates half of the array or ArrayList in each recursive call until the desired value is found or all elements have been eliminated.",
+   "tp": "4.17"
+  },
+  {
+   "c": "4.17.B.2",
+   "k": "ek",
+   "t": "Binary search is typically more efficient than linear search.",
+   "tp": "4.17",
+   "x": "Search algorithms other than linear and binary search are outside the scope of the AP Computer Science A course and exam."
+  },
+  {
+   "c": "4.17.B.3",
+   "k": "ek",
+   "t": "The binary search algorithm can be written either iteratively or recursively.",
+   "tp": "4.17"
+  },
+  {
+   "c": "4.17.C.1",
+   "k": "ek",
+   "t": "Merge sort is a recursive sorting algorithm that can be used to sort elements in an array or ArrayList.",
+   "tp": "4.17",
+   "x": "Sorting algorithms other than selection, insertion, and merge sort are outside the scope of the AP Computer Science A course and exam."
+  },
+  {
+   "c": "4.17.C.2",
+   "k": "ek",
+   "t": "Merge sort repeatedly divides an array into smaller subarrays until each subarray is one element and then recursively merges the sorted subarrays back together in sorted order to form the final sorted array.",
+   "tp": "4.17"
+  }
+ ],
+ "skillsByTopic": {
+  "1.1": [
+   "1.A"
+  ],
+  "1.2": [
+   "1.A",
+   "2.A"
+  ],
+  "1.3": [
+   "2.A",
+   "3.A",
+   "3.D"
+  ],
+  "1.4": [
+   "2.A",
+   "4.A"
+  ],
+  "1.5": [
+   "2.A",
+   "4.A"
+  ],
+  "1.6": [
+   "3.A"
+  ],
+  "1.7": [
+   "4.A"
+  ],
+  "1.8": [
+   "4.B"
+  ],
+  "1.9": [
+   "3.C"
+  ],
+  "1.10": [
+   "2.C",
+   "3.C",
+   "3.D"
+  ],
+  "1.11": [
+   "2.C",
+   "4.A"
+  ],
+  "1.12": [
+   "4.A"
+  ],
+  "1.13": [
+   "2.B"
+  ],
+  "1.14": [
+   "2.C",
+   "3.C"
+  ],
+  "1.15": [
+   "2.C",
+   "3.C",
+   "4.A",
+   "4.B"
+  ],
+  "2.1": [
+   "1.A"
+  ],
+  "2.2": [
+   "3.A"
+  ],
+  "2.3": [
+   "2.A",
+   "3.A",
+   "4.A"
+  ],
+  "2.4": [
+   "2.A",
+   "4.A"
+  ],
+  "2.5": [
+   "2.A",
+   "3.A"
+  ],
+  "2.6": [
+   "2.A",
+   "3.A"
+  ],
+  "2.7": [
+   "2.A",
+   "3.A",
+   "4.B"
+  ],
+  "2.8": [
+   "2.A",
+   "3.A",
+   "3.D"
+  ],
+  "2.9": [
+   "2.A",
+   "3.A",
+   "4.A"
+  ],
+  "2.10": [
+   "2.C",
+   "3.C",
+   "3.D"
+  ],
+  "2.11": [
+   "2.A",
+   "3.D",
+   "4.B"
+  ],
+  "2.12": [
+   "4.A"
+  ],
+  "3.1": [
+   "1.A"
+  ],
+  "3.2": [
+   "5.A"
+  ],
+  "3.3": [
+   "1.A",
+   "2.B"
+  ],
+  "3.4": [
+   "2.B",
+   "3.B"
+  ],
+  "3.5": [
+   "2.C",
+   "3.C",
+   "3.D",
+   "4.B"
+  ],
+  "3.6": [
+   "2.C",
+   "4.A"
+  ],
+  "3.7": [
+   "2.C",
+   "3.B"
+  ],
+  "3.8": [
+   "3.B",
+   "3.D",
+   "4.A"
+  ],
+  "3.9": [
+   "2.B"
+  ],
+  "4.1": [
+   "1.B",
+   "5.A"
+  ],
+  "4.2": [
+   "1.B"
+  ],
+  "4.3": [
+   "2.B",
+   "3.B"
+  ],
+  "4.4": [
+   "2.B",
+   "3.B",
+   "3.D"
+  ],
+  "4.5": [
+   "2.B",
+   "3.B",
+   "3.D",
+   "4.A"
+  ],
+  "4.6": [
+   "2.C",
+   "3.C",
+   "4.B"
+  ],
+  "4.7": [
+   "2.B"
+  ],
+  "4.8": [
+   "2.B",
+   "3.B",
+   "3.D"
+  ],
+  "4.9": [
+   "2.B",
+   "3.D",
+   "4.A"
+  ],
+  "4.10": [
+   "2.B",
+   "3.B",
+   "3.D",
+   "4.A"
+  ],
+  "4.11": [
+   "2.B",
+   "3.B"
+  ],
+  "4.12": [
+   "2.B",
+   "3.B",
+   "3.D"
+  ],
+  "4.13": [
+   "3.B",
+   "3.D",
+   "4.A"
+  ],
+  "4.14": [
+   "2.B",
+   "3.B",
+   "4.A"
+  ],
+  "4.15": [
+   "3.B",
+   "4.A",
+   "4.B"
+  ],
+  "4.16": [
+   "3.C",
+   "4.A",
+   "4.B"
+  ],
+  "4.17": [
+   "4.A",
+   "4.B"
+  ]
+ },
+ "skillDesc": {
+  "1.A": "Determine an appropriate program design to solve a problem or accomplish a task.",
+  "2.A": "Write program code to implement an algorithm.",
+  "3.A": "Determine the result or output based on statement execution order in an algorithm.",
+  "3.D": "Explain why a code segment will not compile or work as intended and modify the code to correct the error.",
+  "4.A": "Describe the behavior of a code segment or program.",
+  "4.B": "Describe the initial conditions that must be met for a code segment to work as intended or described.",
+  "3.C": "Determine the result or output based on code that contains procedural abstractions.",
+  "2.C": "Write program code involving procedural abstractions.",
+  "2.B": "Write program code involving data abstractions.",
+  "5.A": "Explain how computing impacts society, economy, and culture.",
+  "3.B": "Determine the result or output based on code that contains data abstractions.",
+  "1.B": "Determine what knowledge can be extracted from data."
+ },
+ "glance": {
+  "1.1": {
+   "title": "Introduction to Algorithms, Programming, and Compilers",
+   "periods": "2"
+  },
+  "1.2": {
+   "title": "Variables and Data Types",
+   "periods": "2"
+  },
+  "1.3": {
+   "title": "Expressions and Output",
+   "periods": "3"
+  },
+  "1.4": {
+   "title": "Assignment Statements and Input",
+   "periods": "2"
+  },
+  "1.5": {
+   "title": "Casting and Range of Variables",
+   "periods": "2"
+  },
+  "1.6": {
+   "title": "Compound Assignment Operators",
+   "periods": "1"
+  },
+  "1.7": {
+   "title": "Application Program Interface (API) and Libraries",
+   "periods": "1"
+  },
+  "1.8": {
+   "title": "Documentation with Comments",
+   "periods": "1"
+  },
+  "1.9": {
+   "title": "Method Signatures",
+   "periods": "1"
+  },
+  "1.10": {
+   "title": "Calling Class Methods",
+   "periods": "3"
+  },
+  "1.11": {
+   "title": "Math Class",
+   "periods": "2"
+  },
+  "1.12": {
+   "title": "Objects: Instances of Classes",
+   "periods": "1"
+  },
+  "1.13": {
+   "title": "Object Creation and Storage (Instantiation)",
+   "periods": "2"
+  },
+  "1.14": {
+   "title": "Calling Instance Methods",
+   "periods": "2"
+  },
+  "1.15": {
+   "title": "String Manipulation",
+   "periods": "4"
+  },
+  "2.1": {
+   "title": "Algorithms with Selection and Repetition",
+   "periods": "1"
+  },
+  "2.2": {
+   "title": "Boolean Expressions",
+   "periods": "1"
+  },
+  "2.3": {
+   "title": "if Statements",
+   "periods": "3"
+  },
+  "2.4": {
+   "title": "Nested if Statements",
+   "periods": "2"
+  },
+  "2.5": {
+   "title": "Compound Boolean Expressions",
+   "periods": "2"
+  },
+  "2.6": {
+   "title": "Comparing Boolean Expressions",
+   "periods": "2"
+  },
+  "2.7": {
+   "title": "while Loops",
+   "periods": "3"
+  },
+  "2.8": {
+   "title": "for Loops",
+   "periods": "3"
+  },
+  "2.9": {
+   "title": "Implementing Selection and Iteration Algorithms",
+   "periods": "3"
+  },
+  "2.10": {
+   "title": "Implementing String Algorithms",
+   "periods": "3"
+  },
+  "2.11": {
+   "title": "Nested Iteration",
+   "periods": "2"
+  },
+  "2.12": {
+   "title": "Informal Run-Time Analysis",
+   "periods": "1"
+  },
+  "3.1": {
+   "title": "Abstraction and Program Design",
+   "periods": "2"
+  },
+  "3.2": {
+   "title": "Impact of Program Design",
+   "periods": "1"
+  },
+  "3.3": {
+   "title": "Anatomy of a Class",
+   "periods": "2"
+  },
+  "3.4": {
+   "title": "Constructors",
+   "periods": "2"
+  },
+  "3.5": {
+   "title": "Methods: How to Write Them",
+   "periods": "4"
+  },
+  "3.6": {
+   "title": "Methods: Passing and Returning References of an Object",
+   "periods": "2"
+  },
+  "3.7": {
+   "title": "Class Variables and Methods",
+   "periods": "2"
+  },
+  "3.8": {
+   "title": "Scope and Access",
+   "periods": "2"
+  },
+  "3.9": {
+   "title": "this Keyword",
+   "periods": "1"
+  },
+  "4.1": {
+   "title": "Ethical and Social Issues Around Data Collection",
+   "periods": "1"
+  },
+  "4.2": {
+   "title": "Introduction to Using Data Sets",
+   "periods": "1"
+  },
+  "4.3": {
+   "title": "Array Creation and Access",
+   "periods": "2"
+  },
+  "4.4": {
+   "title": "Array Traversals",
+   "periods": "3"
+  },
+  "4.5": {
+   "title": "Implementing Array Algorithms",
+   "periods": "4"
+  },
+  "4.6": {
+   "title": "Using Text Files",
+   "periods": "3"
+  },
+  "4.7": {
+   "title": "Wrapper Classes",
+   "periods": "1"
+  },
+  "4.8": {
+   "title": "ArrayList Methods",
+   "periods": "3"
+  },
+  "4.9": {
+   "title": "ArrayList Traversals",
+   "periods": "3"
+  },
+  "4.10": {
+   "title": "Implementing ArrayList Algorithms",
+   "periods": "4"
+  },
+  "4.11": {
+   "title": "2D Array Creation and Access",
+   "periods": "2"
+  },
+  "4.12": {
+   "title": "2D Array Traversals",
+   "periods": "3"
+  },
+  "4.13": {
+   "title": "Implementing 2D Array Algorithms",
+   "periods": "4"
+  },
+  "4.14": {
+   "title": "Searching Algorithms",
+   "periods": "3"
+  },
+  "4.15": {
+   "title": "Sorting Algorithms",
+   "periods": "3"
+  },
+  "4.16": {
+   "title": "Recursion",
+   "periods": "3"
+  },
+  "4.17": {
+   "title": "Recursive Searching and Sorting",
+   "periods": "2"
+  }
+ }
+}

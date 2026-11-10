@@ -418,11 +418,29 @@
 		addRows(null);
 		table.append(thead, tbody);
 
+		// countdown to the exam: content classes left before review, and topics that don't fit
+		const chk = S.plan.examCheck(d);
+		let examLine = null;
+		if (chk) {
+			const today = S.today();
+			const left = S.genDays(d).filter((x) => x.meet && x.date >= today && chk.contentEnd && x.date <= chk.contentEnd).length;
+			examLine = el(
+				'p',
+				{ class: 'sched-summary' + (chk.late.length ? ' error' : '') },
+				el('strong', { text: `${chk.name} ${S.fmtShort(chk.date)}` }),
+				chk.contentEnd
+					? ` · new content through ${S.fmtShort(chk.contentEnd)} (${left} class${left === 1 ? '' : 'es'} left from today) · ${chk.review} review class${chk.review === 1 ? '' : 'es'}`
+					: ' · not enough classes before the exam for the review asked for',
+				chk.late.length ? ` · ${chk.late.length} topic${chk.late.length === 1 ? '' : 's'} planned past that (Catch up… fits them in)` : ''
+			);
+		}
+
 		container.replaceChildren(
 			el(
 				'div',
 				{ class: 'sched-page' },
 				tabs,
+				examLine,
 				el(
 					'div',
 					{ class: 'cm-bar' },
@@ -478,11 +496,37 @@
 	/* Settings: course, days off, goals, columns, tags                    */
 	/* ------------------------------------------------------------------ */
 
+	/* Which subject the course belongs to in the shared library (whose activities it sees, and how its own
+	   shared activities are tagged): the built-in frameworks' subjects, or its own (named after the course). */
+	function subjectField(d, set) {
+		const cur = S.courseSubject(d);
+		const known = [S.PHYSICS1];
+		for (const seed of Object.values(HT.schedulerSeeds || {})) if (seed.subject && !known.some((k) => k.id === seed.subject.id)) known.push(seed.subject);
+		const own = { id: S.subjectSlug(d.course.title), label: d.course.title };
+		const opts = known.map((k) => [k.id, k.label]);
+		if (!known.some((k) => k.id === cur.id)) opts.push([cur.id, cur.label + ' (its own)']);
+		else if (!known.some((k) => k.id === own.id || k.label.toLowerCase() === own.label.trim().toLowerCase())) opts.push([own.id, own.label + ' (its own)']);
+		const s = app.select(opts, cur.id);
+		s.addEventListener('change', () => {
+			const pick = known.find((k) => k.id === s.value) || (s.value === cur.id ? cur : own);
+			set((dd) => (dd.course.subject = { id: pick.id, label: pick.label }));
+		});
+		const f = app.field('Library subject', s);
+		f.title = 'The shared library shows activities from courses with the same subject, and tags what you share with it.';
+		return f;
+	}
+
 	function renderSettings(container) {
 		const d = app.data;
 		const c = d.course;
 		const keep = { keep: true };
-		const set = (fn) => app.commit(fn, keep);
+		const P = S.plan;
+		// calendar changes move the review meetings, so the review block follows (when there is an exam)
+		const set = (fn) =>
+			app.commit((dd) => {
+				fn(dd);
+				if ((dd.course.exam && dd.course.exam.date) || dd.units.some((u) => u.review)) P.placeReview(dd);
+			}, keep);
 
 		const inp = (label, value, type, onchange, attrs = {}) => {
 			const i = app.input({ type, value: value ?? '', ...attrs });
@@ -497,6 +541,7 @@
 				'div',
 				{ class: 'set-grid' },
 				inp('Course name', c.title, 'text', (v) => set((dd) => (dd.course.title = v.trim() || 'Course'))),
+				subjectField(d, set),
 				inp('First day of the term', c.termStart, 'date', (v, i) => (S.isDate(v) && v < c.termEnd ? set((dd) => (dd.course.termStart = v)) : (i.value = c.termStart))),
 				inp('Last day of the term', c.termEnd, 'date', (v, i) => (S.isDate(v) && v > c.termStart ? set((dd) => (dd.course.termEnd = v)) : (i.value = c.termEnd))),
 				inp('Second semester starts (blank = none)', c.semester2Start, 'date', (v, i) =>
@@ -506,6 +551,43 @@
 			app.btn('Step-by-step setup (School calendar…)', () => app.setupWizard({ isNew: false }))
 		);
 		const schedule = scheduleSection(d, set, inp);
+
+		// Exam and review
+		const ex0 = c.exam || {};
+		const setExam = (patch) => set((dd) => (dd.course.exam = { name: S.defaultExamName(S.courseSubject(dd)), review: 5, date: null, ...(dd.course.exam || {}), ...patch }));
+		const exName = app.select(S.EXAM_NAMES.map((n) => [n, n]), ex0.name || S.defaultExamName(S.courseSubject(d)));
+		exName.addEventListener('change', () => setExam({ name: exName.value }));
+		const sug = P.suggestExamDate(S.courseSubject(d), c.termEnd);
+		const chk = P.examCheck(d);
+		const examNote = !chk
+			? 'Without an exam date, plans can run to the last day of school.'
+			: !chk.contentEnd
+				? 'There aren’t enough class meetings before the exam for that much review.'
+				: `New content has to be done by ${S.fmtShort(chk.contentEnd)}. ` +
+					(chk.review ? `Review: ${chk.review} class${chk.review === 1 ? '' : 'es'}, ${S.fmtShort(chk.reviewStart)} – ${S.fmtShort(chk.reviewEnd)} (the “${chk.name} review” unit on the calendar).` : 'No review classes.');
+		const exam = section(
+			'Exam and review',
+			el(
+				'div',
+				{ class: 'set-grid' },
+				app.field('Course ends with', exName),
+				inp('Exam date (blank = none)', ex0.date, 'date', (v, i) => (!v || S.isDate(v) ? setExam({ date: v || null }) : (i.value = ex0.date || ''))),
+				inp('Class periods kept for review', ex0.review ?? 5, 'number', (v) => setExam({ review: Math.max(0, parseInt(v, 10) || 0) }), { min: '0', max: '60', step: '1' })
+			),
+			sug && sug !== ex0.date ? app.btn(`Use the 2027 AP Exam date (${S.fmtShort(sug)})`, () => setExam({ date: sug })) : null,
+			el('p', { class: 'sched-hint', text: examNote }),
+			chk && chk.late.length
+				? el(
+						'p',
+						{ class: 'sched-summary error' },
+						`${chk.late.length} topic${chk.late.length === 1 ? ' runs' : 's run'} past ${S.fmtShort(chk.contentEnd || chk.date)}: ${chk.late
+							.slice(0, 4)
+							.map((t) => t.title)
+							.join('; ')}${chk.late.length > 4 ? '…' : ''}. `,
+						app.btn('Catch up…', () => app.catchUpDialog && app.catchUpDialog())
+					)
+				: null
+		);
 
 		// Days off
 		const breaks = el('div', { class: 'set-list' });
@@ -655,7 +737,7 @@
 			app.btn('+ Add tag set', () => set((dd) => dd.tagSets.push({ id: S.newId('set'), name: 'New tag set', tags: [] })))
 		);
 
-		container.replaceChildren(el('div', { class: 'sched-page settings' }, course, schedule, daysOff, goals, columns, tags));
+		container.replaceChildren(el('div', { class: 'sched-page settings' }, course, exam, schedule, daysOff, goals, columns, tags));
 	}
 
 	/* ---- Schedule: meets on, class length, weekday pattern, repeat rules, preview ---- */

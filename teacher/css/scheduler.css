@@ -288,6 +288,8 @@ textarea.ht-input { resize: vertical; font: inherit; font-size: 0.875rem; }
 .cal-block.pinned::after { content: '📌'; position: absolute; top: 1px; right: 3px; font-size: 0.6875rem; }
 .cal-row.sem-start { border-top: 3px solid #7c3aed; }
 .cal-note.sem { background: #7c3aed; }
+.cal-note.exam { background: #dc2626; }
+.exam-box { border: 1px solid #fecaca; background: #fff7f7; border-radius: 0.5rem; padding: 0.75rem; }
 .wiz-steps { list-style: none; padding: 0; margin: 0; }
 /* [hidden] must win over display rules like .btn / .ht-field */
 .sched [hidden], .sched-dialog [hidden] { display: none !important; }
@@ -314,6 +316,7 @@ textarea.ht-input { resize: vertical; font: inherit; font-size: 0.875rem; }
 .lib-chip { font-size: 0.6875rem; font-weight: 600; border: 1px solid #d1d5db; color: #374151; border-radius: 9999px; padding: 0 0.5rem; background: #fff; }
 .lib-chip.formative { background: #fef9c3; border-color: #fde68a; }
 .lib-chip.summative { background: #fee2e2; border-color: #fecaca; }
+.lib-chip.lib-course { background: #e0e7ff; border-color: #c7d2fe; color: #3730a3; }
 .lib-meta { display: flex; gap: 0.5rem; font-size: 0.75rem; color: #6b7280; }
 .lib-dtitle { font-size: 1.125rem; font-weight: 700; }
 .lib-dwrap { display: flex; flex-direction: column; gap: 0.625rem; }

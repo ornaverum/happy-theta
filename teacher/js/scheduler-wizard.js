@@ -27,7 +27,9 @@
 		for (const f of saved) out.push({ id: f.id, name: f.meta.title, tpl: f.data, file: f });
 		return out;
 	}
-	const tplSummary = (t) => `${t.units.length} units · ${t.topics.length} topics · ${t.activities.filter((a) => a.anchor).length} dated activities`;
+	const tplSummary = (t) =>
+		`${t.units.length} units · ${t.topics.length} topics · ${t.activities.filter((a) => a.anchor).length} dated activities` +
+		(t.series && t.series.length ? ` · ${t.series.reduce((n, s) => n + s.items.length, 0)} AP Daily videos (evening before class)` : '');
 
 	/* The "where and how" form for applying a template. `getData()` returns course data whose dates/semesters
 	   decide the ranges (the wizard passes its draft). Returns { node, opts() }. */
@@ -128,6 +130,8 @@
 			(r.banked ? `; ${r.banked} undated activities went to the bank` : '') +
 			(r.kept ? ` (starting ${S.fmtShort(r.startedOn)}, after ${r.kept} topic${r.kept === 1 ? '' : 's'} already there)` : '') +
 			(r.overflow ? `. ${r.overflow} meetings’ worth didn’t fit and piled up at the end` : '') +
+			(r.review ? `. ${r.review.review} class${r.review.review === 1 ? '' : 'es'} before the ${r.review.name} (${S.fmtShort(r.review.date)}) are kept for review` : '') +
+			(r.late ? ` — but ${r.late} topic${r.late === 1 ? ' runs' : 's run'} into them` : '') +
 			'.'
 		);
 	}
@@ -154,6 +158,7 @@
 			});
 			d.breaks = breaks.map((b) => ({ ...b }));
 			if (!keepRules || !keepRules.checked) d.course.rules = qp.rules();
+			d.course.exam = { date: S.isDate(f.examDate.value) ? f.examDate.value : null, name: f.examName.value, review: Math.max(0, parseInt(f.review.value, 10) || 0) };
 			return d;
 		};
 
@@ -164,12 +169,46 @@
 			sem2: app.input({ type: 'date', value: c.semester2Start || P.suggestSemester2(c.termStart, c.termEnd) || '' }),
 			meets: app.select([['A', 'A days'], ['B', 'B days']], c.meetsOn),
 			mins: app.input({ type: 'number', min: '1', step: '5', value: c.classMinutes || 50 }),
-			seed: app.select([...Object.values(seeds).map((s) => [s.id, s.title]), ['', 'None (start empty)']], Object.keys(seeds)[0] || '')
+			seed: app.select([...Object.values(seeds).map((s) => [s.id, s.title]), ['', 'None (start empty)']], Object.keys(seeds)[0] || ''),
+			examName: app.select(S.EXAM_NAMES.map((n) => [n, n]), (c.exam && c.exam.name) || S.defaultExamName(S.courseSubject(base))),
+			examDate: app.input({ type: 'date', value: (c.exam && c.exam.date) || '' }),
+			review: app.input({ type: 'number', min: '0', max: '60', step: '1', value: c.exam && c.exam.review != null ? c.exam.review : 5 })
 		};
+		f.examName.title = 'AP courses build to the AP Exam; others to a final exam.';
+		// the subject this course will have (for exam-date suggestions)
+		const subjectNow = () => {
+			if (!isNew) return S.courseSubject(app.data);
+			const seed = seeds[f.seed.value];
+			if (seed) return seed.subject || S.courseSubject({ course: { title: f.title.value }, objectiveTrees: seed.data.objectiveTrees });
+			return { id: S.subjectSlug(f.title.value), label: f.title.value.trim() || 'Course' };
+		};
+		let examAuto = null; // a suggested date the teacher hasn't changed
+		const suggestExam = (force) => {
+			const sub = subjectNow();
+			const sug = P.suggestExamDate(sub, f.end.value);
+			if (force ? sug : !f.examDate.value || f.examDate.value === examAuto) f.examDate.value = sug || '';
+			examAuto = sug;
+			if (isNew && (!f.examName.dataset.touched)) f.examName.value = S.defaultExamName(sub);
+		};
+		f.examName.addEventListener('change', () => (f.examName.dataset.touched = '1'));
+		if (isNew) {
+			suggestExam(false);
+			// after the course name has followed the framework (that listener comes later)
+			f.seed.addEventListener('change', () => setTimeout(() => suggestExam(false)));
+			f.title.addEventListener('change', () => suggestExam(false));
+		}
 		let breaks = (base.breaks || []).map((b) => ({ ...b }));
 		const qp = app.quickPattern(isNew ? null : c.rules);
 		const simple = isNew || S.isRotation(c.rules) || JSON.stringify(S.rulesFromPattern(S.patternFromRules(c.rules), null).map((r) => [r.type, r.days, r.first])) === JSON.stringify(c.rules.map((r) => [r.type, r.days, r.first]));
 		const keepRules = !isNew && !simple ? el('input', { type: 'checkbox', checked: true }) : null;
+		if (isNew) {
+			// the course name follows the chosen framework until the teacher types their own
+			const nameFor = (id) => (seeds[id] ? seeds[id].courseTitle || (seeds[id].subject && seeds[id].subject.label) || 'AP Physics 1' : 'New course');
+			let auto = (f.title.value = nameFor(f.seed.value));
+			f.seed.addEventListener('change', () => {
+				if (f.title.value.trim() === auto) f.title.value = auto = nameFor(f.seed.value);
+			});
+		}
 
 		/* ---- step bodies ---- */
 		const stepYear = () =>
@@ -301,7 +340,33 @@
 			};
 			planMode.addEventListener('change', sync);
 			sync();
-			return el('div', { class: 'sched-form' }, app.field('Units, topics and activities', planMode), tplWrap, bankWrap);
+			const examInfo = el('p', { class: 'sched-hint' });
+			const drawExam = () => {
+				const ex = S.examPlan(draft());
+				examInfo.textContent = !f.examDate.value
+					? 'No exam date: the plan can run to the last day of school.'
+					: !ex || !ex.contentEnd
+						? 'There aren’t enough class meetings before that date for this much review.'
+						: `New content ends ${S.fmtShort(ex.contentEnd)}; ` +
+							(ex.review ? `${ex.review} class${ex.review === 1 ? '' : 'es'} (${S.fmtShort(ex.reviewStart)} – ${S.fmtShort(ex.reviewEnd)}) are kept for review` : 'no review classes') +
+							` before the ${ex.name} on ${S.fmtShort(ex.date)}.` +
+							(examAuto && f.examDate.value === examAuto ? ' (Date from the 2027 AP Exam schedule — check it against your school’s.)' : '');
+			};
+			for (const x of [f.examName, f.examDate, f.review]) x.addEventListener('change', () => (drawExam(), pf.refresh()));
+			drawExam();
+			const examBox = el(
+				'div',
+				{ class: 'sched-form exam-box' },
+				el(
+					'div',
+					{ class: 'sched-row2' },
+					app.field('Course ends with', f.examName),
+					el('div', { class: 'set-line' }, app.field('Exam date', f.examDate), app.btn('Suggest', () => (suggestExam(true), drawExam(), pf.refresh())))
+				),
+				app.field('Class periods kept for review before the exam', f.review),
+				examInfo
+			);
+			return el('div', { class: 'sched-form' }, examBox, app.field('Units, topics and activities', planMode), tplWrap, bankWrap);
 		};
 
 		const steps = [
@@ -359,6 +424,8 @@
 				fresh.course = d.course;
 				fresh.breaks = d.breaks;
 				Object.assign(d, { objectiveTrees: fresh.objectiveTrees, suggestedSkills: fresh.suggestedSkills, activities: fresh.activities });
+				// which library subject this course belongs to (decides whose shared activities it sees)
+				d.course.subject = seed && seed.subject ? { ...seed.subject } : S.courseSubject({ ...d, course: { ...d.course, subject: null } });
 			}
 			if (planMode.value === 'template' && pf) {
 				const o = pf.opts();
@@ -366,6 +433,11 @@
 				const r = P.applyTemplate(d, o.tpl, o);
 				if (r.error) return m.error(r.error);
 				summary = describeApply(r);
+			} else {
+				// no new layout: just (re)build the review block for the exam settings
+				const ex = P.placeReview(d);
+				const chk = P.examCheck(d);
+				if (ex) summary = `${ex.review} class${ex.review === 1 ? '' : 'es'} before the ${ex.name} kept for review.` + (chk.late.length ? ` ${chk.late.length} topic${chk.late.length === 1 ? ' runs' : 's run'} into them — use Catch up… to fit them in.` : '');
 			}
 			m.close();
 			if (isNew) app.openData(d);
@@ -538,7 +610,7 @@
 			const keep = scope.value;
 			const opts = [];
 			if (ranges.length > 1 && r.id !== 'year') opts.push(['sem', `Squeeze into the rest of ${r.name} (through ${S.fmtShort(r.end)})`]);
-			opts.push(['year', `Spread over the rest of the year (through ${S.fmtShort(d.course.termEnd)})`]);
+			opts.push(['year', `Spread over the rest of the year (through ${S.fmtShort(ranges[0].end)}${ranges[0].end !== d.course.termEnd ? ', before review' : ''})`]);
 			opts.push(['date', 'Spread over the time until a date…']);
 			opts.push(['keep', 'Keep each topic’s length and push everything later']);
 			scope.replaceChildren(...opts.map(([v, t]) => el('option', { value: v, text: t })));
@@ -552,7 +624,8 @@
 			return {
 				topicId: topicSel.value,
 				asOf: asOf.value,
-				until: v === 'sem' ? r.end : v === 'date' ? until.value : d.course.termEnd,
+				until: v === 'sem' ? r.end : v === 'date' ? until.value : ranges[0].end,
+				all: v === 'year' || (v === 'sem' && r.end === ranges[0].end), // the time left before review: everything must fit
 				fit: v !== 'keep'
 			};
 		};

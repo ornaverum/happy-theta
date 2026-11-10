@@ -20,7 +20,7 @@
 		undo: [],
 		redo: [],
 		views: {}, // name -> { title, render(container) } (scheduler-views.js adds more)
-		VERSION: '2026-10-27c'
+		VERSION: '2026-11-10b'
 	});
 
 	/* ------------------------------------------------------------------ */
@@ -514,6 +514,11 @@
 			if (r.date === d.course.semester2Start || (i > 0 && d.course.semester2Start > rows[i - 1].date && d.course.semester2Start <= r.date)) {
 				cls.push('sem-start');
 				frag.append(el('div', { class: 'cal-note sem', style: { gridRow: gr, gridColumn: `4 / -1` }, text: 'Semester 2' }));
+			}
+			const exam = d.course.exam && d.course.exam.date === r.date;
+			if (exam) {
+				cls.push('exam-day');
+				if (r.school) frag.append(el('div', { class: 'cal-note exam', style: { gridRow: gr, gridColumn: `4 / -1` }, text: d.course.exam.name || 'Exam' }));
 			}
 			const c = cls.join(' ');
 			frag.append(
