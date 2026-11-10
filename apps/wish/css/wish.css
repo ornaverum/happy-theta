@@ -170,7 +170,7 @@ h2 { font-size: 30px; line-height: 1.15; }
 }
 
 .field { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
-.field > span { font-size: 14px; font-weight: 600; }
+.field > span, .field > label:first-child { font-size: 14px; font-weight: 600; }
 .field small { color: var(--muted); font-size: 13px; }
 .input, .select, .textarea {
 	width: 100%;
@@ -184,6 +184,19 @@ h2 { font-size: 30px; line-height: 1.15; }
 .msg { min-height: 1.4em; margin: 6px 0 0; font-size: 14px; }
 .msg.error { color: var(--bad); }
 .msg.ok { color: var(--good); }
+.msg.note { color: var(--muted); }
+.check { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; color: var(--muted); font-weight: 400; }
+.check input { accent-color: var(--star); width: 16px; height: 16px; }
+.optional { font-style: normal; color: var(--muted); font-weight: 400; }
+.linkish { background: none; border: 0; padding: 0; color: inherit; font: inherit; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.linkish:hover { color: var(--ink, inherit); }
+.signin .switch { margin-top: 18px; }
+.guest-pass { display: grid; gap: 6px; }
+.guest-pass .phrase { flex: 1; font: 600 17px/1.3 ui-monospace, "Cascadia Mono", Consolas, monospace; padding: 8px 12px; border-radius: 10px; background: color-mix(in srgb, var(--muted) 12%, transparent); user-select: all; overflow-wrap: anywhere; }
+.guest-pass small, .muted { color: var(--muted); font-size: 13px; }
+.note-box { margin: 0; padding: 10px 12px; border-radius: 10px; border: 1px dashed var(--muted); color: var(--muted); }
+.subhead-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 4px; }
+.subhead-row .subhead { margin: 0; }
 
 /* ---------- sign in ---------- */
 .signin {

@@ -5,10 +5,13 @@ server (`server/wishlist.js`, `server/wish-preview.js`, `server/wish-compare.js`
 
 ## Who does what
 
-- **Owners** share one login. At the top they pick who they're "wishing as" (Mom, Dad, Lily…) and
-  add, edit or delete that person's wishes. "People" adds, renames, recolors or removes people.
-  "Shopper logins" creates the logins for relatives. Owners never see what's been bought.
-- **Shoppers** sign in with the email and passphrase an owner gave them. They search, filter (person,
+- **Owners** sign in with their email and passphrase ("List owner? Sign in here" on the sign-in page). At
+  the top they pick who they're "wishing as" (Mom, Dad, Lily…) and add, edit or delete that person's
+  wishes. "People" adds, renames, recolors or removes people. "Guests" sets, shows, changes or turns off
+  the family passphrase, lists who has signed in, and can sign guests out. Owners never see what's been bought.
+- **Guests (shoppers)** sign in with the one family passphrase, their name, and optionally their email
+  (the page remembers name and email). Coming back with the same email, or the same name, brings back
+  their purchases. They search, filter (person,
   priority, price) and sort (newest, oldest, most wanted, price, person, name). **Buy** opens the shop
   page in a new tab and asks "Did you buy it?". Yes takes it off the list for every shopper; it moves
   to that shopper's **My purchases**, where "I didn't buy it" puts it back.
@@ -55,7 +58,7 @@ npm run dev                                     # then open http://localhost:300
 2. Update the server code on the droplet (`server/`: wishlist.js, wish-preview.js, wish.js, server.js,
    wish-compare.js, package.json) and `sudo systemctl restart happytheta-api`. The tables are created on start.
 3. Add `server/deploy/nginx-wish-api.conf` to the site's nginx `server` block and reload nginx.
-4. Make the owner login (see server/README.md, "WishIMay").
+4. Make the owner login and set the family guest passphrase (see server/README.md, "WishIMay").
 
 Needs HTTPS like the rest of the site (the sign-in cookie is `Secure`).
 
@@ -64,7 +67,7 @@ Needs HTTPS like the rest of the site (the sign-in cookie is `Secure`).
 ```
 index.html      page shell (twilight band + app area)
 css/wish.css    all styles (light + dark)
-js/wish.js      the app: sign in, owner view, shopper view, dialogs
-js/wish-demo.js guest demo (?demo=1): a made-up list in localStorage, Owner/Shopper switch, no server
+js/wish.js      the app: guest + owner sign-in, owner view, shopper view, dialogs
+js/wish-demo.js guest demo (?demo=1): a made-up list in localStorage, Owner/Guest switch, no server
 star.svg        favicon
 ```

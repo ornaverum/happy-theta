@@ -1,7 +1,7 @@
 /* Wish I May — guest demo. Opened as wish/?demo=1 (from the My Apps guest preview).
    Stands in for the server: a made-up family list kept in this browser's localStorage only.
    wish.js sends every API call to WishDemo.handle() when this is loaded and ?demo is in the URL.
-   Switch between the owner and shopper views with the bar at the top. */
+   Switch between the owner and guest (shopper) views with the bar at the top. */
 'use strict';
 (function () {
 	if (!new URLSearchParams(location.search).has('demo')) return;
@@ -173,8 +173,16 @@
 			}
 		}
 		if (path === 'preview') return fail(422, 'The demo can’t read shop pages. Fill in the details by hand.');
-		if (path === 'shoppers' && method === 'GET') return { shoppers: [{ id: 50, email: 'aunt.jo@example.com', name: 'Aunt Jo', created_at: daysAgo(30), last_login_at: daysAgo(1) }] };
-		if (res === 'shoppers' || path === 'passphrase') return fail(400, 'Logins can’t be changed in the demo.');
+		if (path === 'guest-status') return { open: true };
+		if (path === 'guest-access' && method === 'GET')
+			return {
+				passphrase: 'maple comet otter pickle', setAt: daysAgo(30), signedIn: 2,
+				guests: [
+					{ id: 50, email: 'aunt.jo@example.com', name: 'Aunt Jo', created_at: daysAgo(30), last_login_at: daysAgo(1) },
+					{ id: 51, email: '', name: 'Grandpa', created_at: daysAgo(20), last_login_at: daysAgo(4) }
+				]
+			};
+		if (res === 'guest-access' || res === 'guests' || path === 'passphrase') return fail(400, 'Sign-in settings can’t be changed in the demo.');
 		if (path === 'compare-status') return { enabled: false };
 		return fail(404, 'Not part of the demo.');
 	}
@@ -187,7 +195,7 @@
 		b.innerHTML =
 			'<span><b>Demo list</b> — made-up family, saved in this browser only.</span>' +
 			'<span class="demo-views" role="group" aria-label="View as">View as ' +
-			'<button type="button" data-role="owner">Owner</button><button type="button" data-role="shopper">Shopper</button></span>' +
+			'<button type="button" data-role="owner">Owner</button><button type="button" data-role="shopper">Guest</button></span>' +
 			'<button type="button" class="demo-link" data-reset>Start over</button>' +
 			'<a class="demo-link" href="../">Back to My Apps</a>';
 		b.querySelectorAll('[data-role]').forEach((btn) => {

@@ -1,4 +1,5 @@
-/* Wish I May — family wish list (owners add wishes as different people; shoppers browse and buy).
+/* Wish I May — family wish list (owners add wishes as different people; guests sign in with the
+   family passphrase and their name, then browse and buy).
    Talks to the API at ./api/ (server/wishlist.js). Plain JS, no build step. */
 'use strict';
 
@@ -73,7 +74,7 @@
 		try {
 			data = await res.json();
 		} catch {}
-		if (res.status === 401 && path !== 'login') {
+		if (res.status === 401 && path !== 'login' && path !== 'guest-login') {
 			S.account = null;
 			render();
 		}
@@ -221,15 +222,13 @@
 			if (S.people.length) bandTools.append(el('span', { class: 'persona' }, el('label', { for: 'personaSel', text: 'Wishing as' }), sel));
 			bandTools.append(
 				el('button', { type: 'button', class: 'band-btn', text: 'People', onclick: peopleDialog }),
-				el('button', { type: 'button', class: 'band-btn', text: 'Shopper logins', onclick: shoppersDialog })
+				el('button', { type: 'button', class: 'band-btn', text: 'Guests', title: 'The family passphrase and who has signed in', onclick: guestsDialog }),
+				el('button', { type: 'button', class: 'band-btn', text: 'Passphrase', title: 'Change your owner passphrase', onclick: passphraseDialog })
 			);
 		} else {
 			bandTools.append(el('span', { class: 'who' }, 'Shopping as ', el('b', { text: S.account.name || S.account.email })));
 		}
-		bandTools.append(
-			el('button', { type: 'button', class: 'band-btn', text: 'Passphrase', title: 'Change your passphrase', onclick: passphraseDialog }),
-			el('button', { type: 'button', class: 'band-btn', text: 'Sign out', onclick: signOut })
-		);
+		bandTools.append(el('button', { type: 'button', class: 'band-btn', text: 'Sign out', onclick: signOut }));
 	}
 
 	async function signOut() {
@@ -243,11 +242,50 @@
 	}
 
 	/* ---------- sign in ---------- */
+	// Guests: the family passphrase + their name (+ email if they like). Owners: email + own passphrase.
+	let signInMode = 'guest';
 	function renderSignIn() {
-		const email = el('input', { class: 'input', type: 'email', name: 'email', autocomplete: 'username', required: true, autofocus: true });
-		const pass = el('input', { class: 'input', type: 'password', name: 'passphrase', autocomplete: 'current-password', required: true });
 		const msg = el('p', { class: 'msg', role: 'alert' });
-		const btn = el('button', { class: 'btn btn-primary', type: 'submit', text: 'Sign in' });
+		const btn = el('button', { class: 'btn btn-primary', type: 'submit' });
+		const pass = el('input', { class: 'input', type: 'password', id: 'guestPass', name: 'passphrase', autocomplete: 'current-password', required: true });
+		let fields, submit, title, hint;
+		if (signInMode === 'guest') {
+			const remembered = store.get('guest', {});
+			const name = el('input', { class: 'input', name: 'name', autocomplete: 'name', required: true, maxlength: 80, value: remembered.name || '' });
+			const email = el('input', { class: 'input', type: 'email', name: 'email', autocomplete: 'email', maxlength: 254, value: remembered.email || '' });
+			const showPass = el('input', { type: 'checkbox' });
+			showPass.addEventListener('change', () => (pass.type = showPass.checked ? 'text' : 'password'));
+			pass.setAttribute('autocomplete', 'off');
+			btn.textContent = 'Come in';
+			title = 'Shop the list';
+			hint = 'Ask the family for the passphrase. Your name tells them who’s shopping; nobody on the list sees what you buy.';
+			fields = [
+				el('div', { class: 'field' }, el('label', { for: 'guestPass', text: 'Family passphrase' }), pass, el('label', { class: 'check' }, showPass, ' Show it')),
+				el('label', { class: 'field' }, el('span', { text: 'Your name' }), name),
+				el('label', { class: 'field' }, el('span', null, 'Email ', el('em', { class: 'optional', text: '(optional)' })), email,
+					el('small', { text: 'Use the same email (or the same name) next time to see your purchases again.' }))
+			];
+			submit = async () => {
+				const d = await api('guest-login', { method: 'POST', body: { passphrase: pass.value, name: name.value, email: email.value } });
+				store.set('guest', { name: name.value.trim(), email: email.value.trim() });
+				return d;
+			};
+			setTimeout(() => pass.focus(), 0);
+			// Let guests know up front when the family has turned guest sign-in off.
+			api('guest-status')
+				.then((st) => {
+					if (st && st.open === false) setMsg(msg, 'Guest sign-in is turned off right now. Ask the family to turn it on.', 'note');
+				})
+				.catch(() => {});
+		} else {
+			const email = el('input', { class: 'input', type: 'email', name: 'email', autocomplete: 'username', required: true });
+			btn.textContent = 'Sign in';
+			title = 'Owner sign-in';
+			hint = 'For the people who edit the list.';
+			fields = [el('label', { class: 'field' }, el('span', { text: 'Email' }), email), el('label', { class: 'field' }, el('span', { text: 'Passphrase' }), pass)];
+			submit = () => api('login', { method: 'POST', body: { email: email.value, passphrase: pass.value } });
+			setTimeout(() => email.focus(), 0);
+		}
 		const form = el(
 			'form',
 			{
@@ -256,32 +294,49 @@
 					btn.disabled = true;
 					setMsg(msg, '');
 					try {
-						const d = await api('login', { method: 'POST', body: { email: email.value, passphrase: pass.value } });
+						const d = await submit();
 						S.account = d.account;
 						await start();
 					} catch (err) {
 						setMsg(msg, err.message);
 						btn.disabled = false;
+						if (err.data && err.data.guest) {
+							signInMode = 'guest';
+							renderSignIn();
+							return;
+						}
 						pass.select();
 					}
 				}
 			},
-			el('label', { class: 'field' }, el('span', { text: 'Email' }), email),
-			el('label', { class: 'field' }, el('span', { text: 'Passphrase' }), pass),
+			...fields,
 			btn,
 			msg
 		);
+		const other = signInMode === 'guest' ? 'owner' : 'guest';
 		show(
 			el(
 				'section',
 				{ class: 'signin' },
-				el('h1', { text: 'Sign in' }),
+				el('h1', { text: title }),
 				el('p', { class: 'verse', text: 'I wish I may, I wish I might…' }),
 				form,
-				el('p', { class: 'hint', text: 'Use the email and passphrase the family gave you.' })
+				el('p', { class: 'hint', text: hint }),
+				el(
+					'p',
+					{ class: 'hint switch' },
+					el('button', {
+						type: 'button',
+						class: 'linkish',
+						text: other === 'owner' ? 'List owner? Sign in here' : 'Shopping? Use the family passphrase',
+						onclick: () => {
+							signInMode = other;
+							renderSignIn();
+						}
+					})
+				)
 			)
 		);
-		email.focus();
 	}
 
 	/* ================================================================== */
@@ -1041,104 +1096,147 @@
 		newName.focus();
 	}
 
-	/* ----- shopper logins ----- */
+	/* ----- guests: the family passphrase + who has signed in ----- */
 	const suggestPassphrase = () => {
 		const pick = () => WORDS[crypto.getRandomValues(new Uint32Array(1))[0] % WORDS.length];
-		return `${pick()} ${pick()} ${pick()}`;
+		return `${pick()} ${pick()} ${pick()} ${pick()}`;
 	};
 
-	async function shoppersDialog() {
-		const listEl = el('ul', { class: 'list' });
+	async function guestsDialog() {
+		let info = { passphrase: '', setAt: null, signedIn: 0, guests: [] };
 		const msg = el('p', { class: 'msg', role: 'alert' });
-		let shoppers = [];
-		const paint = () => {
+		const current = el('div', { class: 'guest-pass' });
+		const listEl = el('ul', { class: 'list' });
+		const signOutAllBtn = el('button', {
+			type: 'button',
+			class: 'btn btn-sm',
+			text: 'Sign out every guest',
+			onclick: async () => {
+				const ok = await confirmBox({ title: 'Sign out every guest?', body: 'They can come back in with the family passphrase.', ok: 'Sign them out', danger: false });
+				if (!ok) return;
+				await act(() => api('guests/sign-out', { method: 'POST' }), 'Every guest is signed out.');
+			}
+		});
+		const pass = el('input', { class: 'input', value: suggestPassphrase(), 'aria-label': 'New family passphrase', required: true, maxlength: 200 });
+		const kick = el('input', { type: 'checkbox', checked: true });
+
+		async function act(fn, okText) {
+			try {
+				info = await fn();
+				paint();
+				if (okText) setMsg(msg, okText, 'ok');
+			} catch (err) {
+				setMsg(msg, err.message);
+			}
+		}
+		function paint() {
+			current.replaceChildren();
+			if (info.passphrase) {
+				const shown = el('code', { class: 'phrase', text: info.passphrase });
+				current.append(
+					el('p', { class: 'subhead', text: 'Family passphrase' }),
+					el(
+						'div',
+						{ class: 'pass-row' },
+						shown,
+						el('button', {
+							type: 'button',
+							class: 'btn btn-sm',
+							text: 'Copy',
+							onclick: async () => {
+								try {
+									await navigator.clipboard.writeText(info.passphrase);
+									toast('Passphrase copied.');
+								} catch {
+									const r = document.createRange();
+									r.selectNodeContents(shown);
+									getSelection().removeAllRanges();
+									getSelection().addRange(r);
+								}
+							}
+						}),
+						el('button', {
+							type: 'button',
+							class: 'btn btn-sm btn-danger',
+							text: 'Turn off',
+							onclick: async () => {
+								const ok = await confirmBox({ title: 'Turn off guest sign-in?', body: 'Every guest is signed out and nobody new can come in until you set a passphrase again. Their purchases stay hidden.', ok: 'Turn off' });
+								if (ok) await act(() => api('guest-access', { method: 'DELETE' }), 'Guest sign-in is off.');
+							}
+						})
+					),
+					el('small', { class: 'muted', text: `Set ${info.setAt ? shortDate(info.setAt) : ''}. Guests type it with their name; spaces and capitals don’t matter.` })
+				);
+			} else {
+				current.append(el('p', { class: 'note-box', text: 'Guest sign-in is off. Set a family passphrase below to let people shop the list.' }));
+			}
 			listEl.replaceChildren(
-				...shoppers.map((s) =>
+				...info.guests.map((g) =>
 					el(
 						'li',
 						null,
 						el(
 							'div',
 							{ class: 'grow' },
-							el('b', { text: s.name || s.email }),
-							el('small', { text: `${s.name ? s.email + ' · ' : ''}${s.last_login_at ? 'last signed in ' + shortDate(s.last_login_at) : 'hasn’t signed in yet'}` })
+							el('b', { text: g.name || g.email || 'Guest' }),
+							el('small', { text: `${g.email ? g.email + ' · ' : ''}${g.last_login_at ? 'last here ' + shortDate(g.last_login_at) : 'hasn’t signed in'}` })
 						),
-						el('button', { type: 'button', class: 'btn btn-sm', text: 'New passphrase', onclick: () => resetPass(s) }),
 						el('button', {
 							type: 'button',
 							class: 'btn btn-sm btn-danger',
-							text: 'Remove',
+							text: 'Forget',
 							onclick: async () => {
-								const ok = await confirmBox({ title: `Remove ${s.name || s.email}?`, body: 'They won’t be able to sign in. Anything they marked as bought stays off the list.', ok: 'Remove' });
-								if (!ok) return;
-								try {
-									shoppers = (await api(`shoppers/${s.id}`, { method: 'DELETE' })).shoppers;
-									paint();
-								} catch (err) {
-									setMsg(msg, err.message);
-								}
+								const ok = await confirmBox({ title: `Forget ${g.name || g.email}?`, body: 'They’re signed out. Anything they marked as bought stays off the list, and they can still come back in with the family passphrase.', ok: 'Forget' });
+								if (ok) await act(() => api(`guests/${g.id}`, { method: 'DELETE' }));
 							}
 						})
 					)
 				)
 			);
-			if (!shoppers.length) listEl.append(el('li', null, el('span', { class: 'grow', text: 'No shopper logins yet. Add one below.' })));
-		};
-		async function resetPass(s) {
-			const pass = suggestPassphrase();
-			const ok = await confirmBox({ title: 'Give a new passphrase?', body: `${s.name || s.email}’s new passphrase will be “${pass}”. They’ll be signed out until they use it.`, ok: 'Set passphrase', danger: false });
-			if (!ok) return;
-			try {
-				shoppers = (await api(`shoppers/${s.id}`, { method: 'PUT', body: { passphrase: pass } })).shoppers;
-				paint();
-				setMsg(msg, `New passphrase for ${s.email}: “${pass}”. Pass it on to them.`, 'ok');
-			} catch (err) {
-				setMsg(msg, err.message);
-			}
+			if (!info.guests.length) listEl.append(el('li', null, el('span', { class: 'grow', text: 'Nobody has signed in as a guest yet.' })));
+			signOutAllBtn.hidden = !info.signedIn;
+			setBtn.textContent = info.passphrase ? 'Change passphrase' : 'Turn on guest sign-in';
+			kickRow.hidden = !info.passphrase;
 		}
-
-		const email = el('input', { class: 'input', type: 'email', placeholder: 'Email', 'aria-label': 'Shopper email', required: true });
-		const name = el('input', { class: 'input', placeholder: 'Name (e.g. Aunt Sue)', 'aria-label': 'Shopper name', maxlength: 80 });
-		const pass = el('input', { class: 'input', value: suggestPassphrase(), 'aria-label': 'Passphrase', required: true, minlength: 6 });
+		const setBtn = el('button', { type: 'submit', class: 'btn btn-primary full' });
+		const kickRow = el('label', { class: 'check full' }, kick, ' Sign out guests using the old passphrase');
 		const form = el(
 			'form',
 			{
 				class: 'add-row',
 				onsubmit: async (e) => {
 					e.preventDefault();
-					try {
-						const given = pass.value;
-						shoppers = (await api('shoppers', { method: 'POST', body: { email: email.value, name: name.value, passphrase: given } })).shoppers;
-						setMsg(msg, `Added ${email.value.trim()}. Their passphrase is “${given}”. Pass it on with the site address.`, 'ok');
-						email.value = name.value = '';
-						pass.value = suggestPassphrase();
-						paint();
-					} catch (err) {
-						setMsg(msg, err.message);
-					}
+					const given = pass.value.trim();
+					await act(
+						() => api('guest-access', { method: 'PUT', body: { passphrase: given, signOutGuests: !!info.passphrase && kick.checked } }),
+						`The family passphrase is now “${given}”. Send it to your shoppers with the site link.`
+					);
+					pass.value = suggestPassphrase();
 				}
 			},
-			email,
-			name,
 			el('div', { class: 'pass-row full' }, pass, el('button', { type: 'button', class: 'btn', text: 'Suggest', onclick: () => (pass.value = suggestPassphrase()) })),
-			el('button', { type: 'submit', class: 'btn btn-primary full', text: 'Add shopper' })
+			kickRow,
+			setBtn
 		);
 
 		modal((d) =>
 			el(
 				'div',
 				{ class: 'dlg' },
-				el('h2', { text: 'Shopper logins' }),
-				el('p', { class: 'lede', text: 'Shoppers sign in with an email and passphrase you give them. They see every wish, but not this page.' }),
-				listEl,
-				el('p', { class: 'subhead', text: 'Add a shopper' }),
+				el('h2', { text: 'Guests' }),
+				el('p', { class: 'lede', text: 'Shoppers sign in with one family passphrase and their name (email is optional). They see every wish, but not this page, and you never see what they bought.' }),
+				current,
+				el('p', { class: 'subhead', text: 'Set a new passphrase' }),
 				form,
+				el('div', { class: 'subhead-row' }, el('p', { class: 'subhead', text: 'Who has signed in' }), signOutAllBtn),
+				listEl,
 				msg,
 				el('div', { class: 'dlg-actions' }, el('button', { type: 'button', class: 'btn', text: 'Done', onclick: () => d.close() }))
 			)
 		);
+		paint();
 		try {
-			shoppers = (await api('shoppers')).shoppers;
+			info = await api('guest-access');
 		} catch (err) {
 			setMsg(msg, err.message);
 		}

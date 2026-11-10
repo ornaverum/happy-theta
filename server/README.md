@@ -154,18 +154,25 @@ isn't on HTTPS yet, `sudo certbot --nginx` sets it up; for a temporary http-only
 
 `wishlist.js` adds a separate app at `/apps/wish/api` (pages in `apps/wish/`, served at `/apps/wish/`). It has its
 own logins, cookie (`wish_session`, Path=/apps/wish, 60 days) and tables (`wish_accounts`, `wish_sessions`,
-`wish_people`, `wish_items`, `wish_purchases`, plus `wish_offers`, `wish_offer_checks`, `wish_api_usage` for
+`wish_people`, `wish_items`, `wish_purchases`, `wish_settings`, plus `wish_offers`, `wish_offer_checks`, `wish_api_usage` for
 price comparison), all in the same database file. School accounts and
 wish-list logins never mix.
 
-- **Owner**: one shared login for the family. Switches between people ("personas") to manage each
-  person's items, and creates shopper logins. Owner responses never include purchase information.
-- **Shopper**: email + passphrase made by an owner. Sees every unbought item plus their own purchases.
-  Marking an item bought hides it from every other shopper (first one wins; a second gets 409).
+- **Owner**: email + passphrase (made with `wish.js owner`). Switches between people ("personas") to
+  manage each person's items, and sets the family guest passphrase. Owner responses never include
+  purchase information.
+- **Guest** (role `shopper` in the tables): signs in with the ONE family guest passphrase plus their name,
+  and an email if they like. No passphrase of their own. Each guest gets a record (found again by email,
+  or by name when they gave no email), so "My purchases" follows them. Sees every unbought item plus
+  their own purchases. Marking an item bought hides it from every other guest (first one wins; a second
+  gets 409). The guest passphrase is matched ignoring case, spaces and punctuation, and is stored readable
+  in `wish_settings` so owners can see and copy it again. No guest passphrase = guest sign-in is off.
 
 | Method | Path | Who | Does |
 |--------|------|-----|------|
-| POST | `/login` | anyone | `{email, passphrase}` → signs in |
+| POST | `/login` | anyone | owners: `{email, passphrase}` → signs in (guest records are refused) |
+| POST | `/guest-login` | anyone | `{passphrase, name, email?}` → signs in as a guest (403 `closed` when guest sign-in is off) |
+| GET | `/guest-status` | anyone | `{open}`: is guest sign-in on |
 | POST | `/logout` | anyone | ends the session |
 | GET | `/me` | anyone | `{account: {role, email, name}}` or `{account: null}` |
 | GET | `/list` | signed in | `{people, items, compare}`; each item has `offers` + `offersCheckedAt`; shoppers also get `purchasedAt` on their own purchases |
@@ -175,9 +182,12 @@ wish-list logins never mix.
 | POST/DELETE | `/items/:id/purchase` | shopper | mark bought / undo (own purchase only) |
 | POST | `/items/:id/offers` | signed in | look the item up at other stores → `{offers, checkedAt, error}` (saved results if recent) |
 | GET | `/compare-status` | owner | `{enabled, used, limit}` SerpApi searches this month |
-| GET/POST | `/shoppers` | owner | list / add shopper logins `{email, name, passphrase}` |
-| PUT/DELETE | `/shoppers/:id` | owner | rename or new passphrase (signs them out) / remove |
-| POST | `/passphrase` | signed in | `{current, next}` change your own passphrase |
+| GET | `/guest-access` | owner | `{passphrase, setAt, signedIn, guests}` |
+| PUT | `/guest-access` | owner | `{passphrase, signOutGuests}` set or change it (8+ letters/digits) |
+| DELETE | `/guest-access` | owner | turn guest sign-in off and sign every guest out |
+| POST | `/guests/sign-out` | owner | sign every guest out |
+| DELETE | `/guests/:id` | owner | forget one guest (signs them out; their purchases stay hidden) |
+| POST | `/passphrase` | owner | `{current, next}` change your own passphrase |
 
 **Reading shop pages safely** (`wish-preview.js`): http/https only, ports 80/443/8080/8443, at most 5
 redirects, 12 s and 2 MB for the whole fetch. Every connection (redirects too) must go to a public
@@ -185,22 +195,24 @@ address: private, loopback, link-local/metadata (169.254.x.x), CGNAT, IPv6 local
 droplet's own addresses are refused, checked at connect time so DNS tricks don't get around it.
 Tests: `node tests/wish-preview-test.js`.
 
-Limits: 200 sign-in requests per IP and 10 wrong passphrases per email per 15 min (then even the right
-one waits); 60 page reads per owner per 15 min.
+Limits: 200 sign-in requests per IP per 15 min; owners 10 wrong passphrases per email per 15 min; guests
+20 wrong family passphrases per IP per 15 min and 100 per hour from everywhere together (then even the
+right one waits); 60 page reads per owner per 15 min.
 
 **Logins from the shell** (`wish.js`, same DB_PATH as the server):
 ```
 cd /opt/happytheta-server
 alias wish='sudo -u happytheta DB_PATH=/var/lib/happytheta/happytheta.db node wish.js'
-wish owner family@example.com --name "The Waddells"   # create the shared owner login (asks for a passphrase)
-wish shopper aunt@example.com --name "Aunt Sue"       # owners can also do this on the site
-wish passphrase someone@example.com                   # new passphrase, signs them out
-wish list                                             # every login
-wish remove aunt@example.com                          # remove a shopper (their purchases stay hidden)
+wish owner family@example.com --name "The Waddells"   # create an owner login (asks for a passphrase)
+wish passphrase family@example.com                    # new owner passphrase, signs them out
+wish guest-pass                                       # set the family guest passphrase (owners can do this on the site)
+wish guest-pass --off                                 # turn guest sign-in off, sign every guest out
+wish list                                             # owners, the guest passphrase, guests who have signed in
+wish remove aunt@example.com                          # forget a guest who gave an email (purchases stay hidden)
 ```
 Locally: `npm run wish:dev -- owner you@example.com`, then `npm run dev` → http://localhost:3000/apps/wish/.
 Without signing in, `apps/wish/?demo=1` (the My Apps guest preview) runs a made-up list in the browser only
-(`apps/wish/js/wish-demo.js`), with an Owner / Shopper switch.
+(`apps/wish/js/wish-demo.js`), with an Owner / Guest switch.
 
 nginx: add `deploy/nginx-wish-api.conf` next to the `/api/` block.
 
@@ -220,8 +232,13 @@ headline is the cheapest *new* offer; used ones are listed and labeled. `SERPAPI
 the server; the browser only ever gets store names, prices and links. Without a key, nothing about this
 shows on the site. Tests (fake SerpApi, no searches used): `node tests/wish-compare-test.js`.
 
-Known limit: owners make the shoppers' passphrases, so an owner could sign in as a shopper and see
-what that shopper bought. Shoppers can change their own passphrase (the Passphrase button) to keep it private.
+Known limit: guests share one passphrase, so anyone who has it can sign in under another guest's name
+(or email) and see that guest's "My purchases". Owners know the passphrase too. Fine for a family list;
+it keeps the surprise from the people on the list, not between shoppers.
+
+Moving from per-shopper logins (before 2026-11-10): existing shopper records stay; they can no longer use
+`/login`. When they come in with the family passphrase and the same email, they get their old purchases.
+Set the guest passphrase (Guests dialog, or `wish guest-pass`) after updating, or guest sign-in stays off.
 
 ## Managing accounts (teacher.js)
 

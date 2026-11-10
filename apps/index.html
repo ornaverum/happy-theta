@@ -73,11 +73,11 @@
   if (guest) {
     $('wishLink').href = 'wish/?demo=1';
     $('wishLink').textContent = 'Try the demo';
-    $('wishNote').textContent = 'Guest preview opens a made-up family list that lives only in this browser. The real list has its own family sign-in (owners and shoppers).';
+    $('wishNote').textContent = 'Guest preview opens a made-up family list that lives only in this browser. The real list has its own family sign-in: owners use their email, shoppers just the family passphrase and their name.';
     $('foot').textContent = 'Guest preview: everything you do here is saved in this browser only.';
   } else {
     $('hello').textContent = 'Signed in as ' + ctx.user.email + '. Your Theta Marks collections are saved to your account.';
-    $('wishNote').textContent = 'Wish I May uses its own family sign-in (owner and shopper pass phrases), separate from this account.';
+    $('wishNote').textContent = 'Wish I May uses its own family sign-in (owner logins, plus one family passphrase for shoppers), separate from this account.';
     $('foot').textContent = 'Pictures you add to a Theta Marks node stay on the computer you added them on.';
     const g = HTGate.guestSaves(['marks']);
     if (g.length) {

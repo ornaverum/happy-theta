@@ -2,11 +2,13 @@
 /* WishIMay — a family wish list, served at /apps/wish/ with its API at /apps/wish/api/.
 
    Two kinds of login, both separate from the Happy Theta school accounts:
-   - owner: one shared account for the family. Inside it you switch "persona" (a person on the list)
-     to add, edit and delete that person's items. Owners never see what's been bought.
-   - shopper: an email + passphrase the owners hand out. Shoppers browse, sort and filter, open the
-     shop page, and mark items bought. A bought item disappears for every shopper; the buyer still
-     sees it under "My purchases" and can undo.
+   - owner: email + passphrase, for editing the list. Inside it you switch "persona" (a person on the
+     list) to add, edit and delete that person's items. Owners never see what's been bought.
+   - guest (role 'shopper' in the tables): the ONE family guest passphrase the owners set, plus the
+     guest's name and, if they like, their email. Guests browse, sort and filter, open the shop page,
+     and mark items bought. A bought item disappears for every guest; the buyer still sees it under
+     "My purchases" and can undo. Signing in again with the same email (or, without an email, the
+     same name) picks up the same guest record, so "My purchases" follows them.
    The first owner login is made on the droplet with `node wish.js owner <email>` (no web sign-up). */
 const crypto = require('crypto');
 const express = require('express');
@@ -67,6 +69,12 @@ CREATE TABLE IF NOT EXISTS wish_purchases (
 	shopper_id   INTEGER REFERENCES wish_accounts(id) ON DELETE SET NULL,
 	purchased_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))
 );
+-- Site-wide settings. guest_passphrase is kept readable on purpose: it's the shared family code the
+-- owners hand out, so they need to be able to see and copy it again.
+CREATE TABLE IF NOT EXISTS wish_settings (
+	key   TEXT PRIMARY KEY,
+	value TEXT NOT NULL
+);
 `);
 // Added with price comparison: optional words to search other stores with (blank = the item's name).
 if (!db.prepare('PRAGMA table_info(wish_items)').all().some((c) => c.name === 'search_query'))
@@ -123,12 +131,55 @@ const q = {
 	// No purchase counts here: owners must not be able to tell what's been bought.
 	shoppers: db.prepare(
 		`SELECT a.id, a.email, a.name, a.created_at, a.last_login_at
-		 FROM wish_accounts a WHERE a.role = 'shopper' ORDER BY a.name COLLATE NOCASE, a.email`
+		 FROM wish_accounts a WHERE a.role = 'shopper' ORDER BY a.last_login_at IS NULL, a.last_login_at DESC, a.name COLLATE NOCASE`
 	),
 	accountInsert: db.prepare('INSERT INTO wish_accounts (role, email, name, pass_hash) VALUES (?, ?, ?, ?) RETURNING id, role, email, name, created_at'),
 	accountUpdateName: db.prepare('UPDATE wish_accounts SET name = ? WHERE id = ?'),
 	accountUpdatePass: db.prepare('UPDATE wish_accounts SET pass_hash = ? WHERE id = ?'),
-	accountDelete: db.prepare("DELETE FROM wish_accounts WHERE id = ? AND role = 'shopper'")
+	accountDelete: db.prepare("DELETE FROM wish_accounts WHERE id = ? AND role = 'shopper'"),
+	// a guest who signed in without an email, found again by name
+	guestByName: db.prepare(`SELECT * FROM wish_accounts WHERE role = 'shopper' AND email LIKE '%${'@guest.invalid'}' AND name = ? COLLATE NOCASE ORDER BY id LIMIT 1`),
+	guestSessionsAll: db.prepare("DELETE FROM wish_sessions WHERE account_id IN (SELECT id FROM wish_accounts WHERE role = 'shopper')"),
+	guestsSignedIn: db.prepare(
+		"SELECT COUNT(DISTINCT s.account_id) AS n FROM wish_sessions s JOIN wish_accounts a ON a.id = s.account_id WHERE a.role = 'shopper' AND s.expires_at > ?"
+	),
+	setting: db.prepare('SELECT value FROM wish_settings WHERE key = ?'),
+	settingSet: db.prepare('INSERT INTO wish_settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value'),
+	settingDelete: db.prepare('DELETE FROM wish_settings WHERE key = ?')
+};
+
+/* ---------- the family guest passphrase ---------- */
+const GUEST_DOMAIN = '@guest.invalid'; // stand-in email for guests who didn't give one (never shown)
+const NO_PASS = '!guest'; // pass_hash of a guest record: no passphrase of its own, can't use /login
+const isStandInEmail = (e) => String(e || '').toLowerCase().endsWith(GUEST_DOMAIN);
+// Forgiving match: case, spaces and punctuation between words don't matter ("Maple River" = "maple-river").
+const normPass = (p) =>
+	String(p || '')
+		.toLowerCase()
+		.normalize('NFKC')
+		.replace(/[^\p{L}\p{N}]+/gu, ' ')
+		.trim();
+const guestAccess = {
+	get() {
+		const p = q.setting.get('guest_passphrase');
+		const at = q.setting.get('guest_passphrase_set_at');
+		return { passphrase: p ? p.value : '', setAt: at ? at.value : null };
+	},
+	set(pass) {
+		q.settingSet.run('guest_passphrase', pass);
+		q.settingSet.run('guest_passphrase_set_at', new Date().toISOString());
+	},
+	off() {
+		q.settingDelete.run('guest_passphrase');
+		q.settingDelete.run('guest_passphrase_set_at');
+	},
+	matches(given) {
+		const cur = q.setting.get('guest_passphrase');
+		if (!cur) return false;
+		const a = crypto.createHash('sha256').update(normPass(cur.value)).digest();
+		const b = crypto.createHash('sha256').update(normPass(given)).digest();
+		return crypto.timingSafeEqual(a, b) && normPass(given) !== '';
+	}
 };
 
 /* ---------- sessions (own cookie, scoped to /wish) ---------- */
@@ -231,7 +282,12 @@ const itemOut = (r, withPurchase) => {
 	if (withPurchase) o.purchasedAt = r.purchased_at || null; // only ever the viewer's own purchase
 	return o;
 };
-const accountOut = (a) => ({ role: a.role, email: a.email, name: a.name });
+const accountOut = (a) => ({ role: a.role === 'shopper' ? 'shopper' : a.role, email: isStandInEmail(a.email) ? '' : a.email, name: a.name });
+const shopperOut = (s) => ({ id: s.id, name: s.name, email: isStandInEmail(s.email) ? '' : s.email, created_at: s.created_at, last_login_at: s.last_login_at });
+const guestAccessOut = () => {
+	const g = guestAccess.get();
+	return { passphrase: g.passphrase, setAt: g.setAt, signedIn: q.guestsSignedIn.get(Date.now()).n, guests: q.shoppers.all().map(shopperOut) };
+};
 
 /* ---------- rate limits (in memory) ---------- */
 function limiter(max, windowMs) {
@@ -254,7 +310,9 @@ function limiter(max, windowMs) {
 	return hit;
 }
 const ipLimit = limiter(200, 15 * 60 * 1000);
-const failLimit = limiter(10, 15 * 60 * 1000); // failed logins per email
+const failLimit = limiter(10, 15 * 60 * 1000); // failed owner logins per email
+const guestFailIp = limiter(20, 15 * 60 * 1000); // wrong guest passphrases per IP (a whole household can share one)
+const guestFailAll = limiter(100, 60 * 60 * 1000); // wrong guest passphrases from everywhere together, per hour
 const previewLimit = limiter(60, 15 * 60 * 1000); // page fetches per owner session
 const offersLimit = limiter(20, 60 * 60 * 1000); // other-store checks per login per hour (each = 2 SerpApi searches)
 const TOO_MANY = { error: 'Too many attempts. Try again in a few minutes.' };
@@ -300,6 +358,7 @@ const idParam = (req) => {
 	return Number.isInteger(n) && n > 0 ? n : null;
 };
 
+/* Owner sign-in: email + the owner's own passphrase. */
 router.post('/login', (req, res) => {
 	if (!ipLimit(req.ip)) return res.status(429).json(TOO_MANY);
 	const email = str(req.body?.email, 254).toLowerCase();
@@ -307,15 +366,53 @@ router.post('/login', (req, res) => {
 	// After 10 wrong passphrases for an email, even the right one waits out the 15 minutes.
 	if (failLimit.over(email)) return res.status(429).json(TOO_MANY);
 	const acct = q.accountByEmail.get(email);
-	const ok = auth.verifyPassword(pass, acct ? acct.pass_hash : auth.DUMMY_HASH) && !!acct;
+	const hash = acct && acct.role === 'owner' ? acct.pass_hash : auth.DUMMY_HASH;
+	const ok = auth.verifyPassword(pass, hash) && !!acct && acct.role === 'owner';
 	if (!ok) {
 		if (!failLimit(email)) return res.status(429).json(TOO_MANY);
-		return res.status(401).json({ error: 'That email and passphrase don’t match. Check with whoever set up your login.' });
+		if (acct && acct.role === 'shopper')
+			return res.status(401).json({ error: 'This sign-in is for the list owners. Shoppers use “Shop the list” with the family passphrase.', guest: true });
+		return res.status(401).json({ error: 'That email and passphrase don’t match.' });
 	}
 	q.touchLogin.run(acct.id);
 	startSession(res, acct.id);
 	res.json({ account: accountOut(acct) });
 });
+
+/* Guest sign-in: the family passphrase + the guest's name (+ email if they like). */
+router.post('/guest-login', (req, res) => {
+	if (!ipLimit(req.ip)) return res.status(429).json(TOO_MANY);
+	const key = 'guest:' + req.ip;
+	if (guestFailIp.over(key) || guestFailAll.over('all')) return res.status(429).json(TOO_MANY);
+	const name = str(req.body?.name, 80);
+	const email = str(req.body?.email, 254).toLowerCase();
+	if (!guestAccess.get().passphrase)
+		return res.status(403).json({ error: 'Guest sign-in is turned off right now. Ask the family to turn it on.', closed: true });
+	if (!name) return res.status(400).json({ error: 'Type your name so the family knows who’s shopping.' });
+	if (email && (!EMAIL_RE.test(email) || isStandInEmail(email))) return res.status(400).json({ error: 'That email doesn’t look right. You can leave it empty.' });
+	if (!guestAccess.matches(req.body?.passphrase)) {
+		guestFailAll('all');
+		if (!guestFailIp(key)) return res.status(429).json(TOO_MANY);
+		return res.status(401).json({ error: 'That isn’t the family passphrase. Check with whoever sent you the link.' });
+	}
+	let acct = null;
+	if (email) {
+		acct = q.accountByEmail.get(email);
+		if (acct && acct.role !== 'shopper') return res.status(409).json({ error: 'That email belongs to an owner login. Use “Owner sign-in” instead, or leave the email empty.' });
+	} else acct = q.guestByName.get(name);
+	if (acct) {
+		if (acct.name !== name) q.accountUpdateName.run(name, acct.id);
+	} else {
+		const stand = email || 'g' + crypto.randomBytes(9).toString('hex') + GUEST_DOMAIN;
+		acct = q.accountInsert.get('shopper', stand, name, NO_PASS);
+	}
+	q.touchLogin.run(acct.id);
+	startSession(res, acct.id);
+	res.json({ account: accountOut({ ...acct, name }) });
+});
+
+// Tells the sign-in page whether guests can come in (never says what the passphrase is).
+router.get('/guest-status', (req, res) => res.json({ open: !!guestAccess.get().passphrase }));
 
 router.post('/logout', (req, res) => {
 	const token = readToken(req);
@@ -462,42 +559,34 @@ router.post(
 );
 router.get('/compare-status', ownerOnly, (req, res) => res.json(compare.status()));
 
-/* ----- shopper logins (owners manage them) ----- */
-router.get('/shoppers', ownerOnly, (req, res) => res.json({ shoppers: q.shoppers.all() }));
-router.post('/shoppers', ownerOnly, (req, res) => {
-	const email = str(req.body?.email, 254).toLowerCase();
-	const name = str(req.body?.name, 80);
-	const pass = String(req.body?.passphrase || '');
-	if (!EMAIL_RE.test(email)) return res.status(400).json({ error: 'Enter the shopper’s email address.' });
-	const pErr = passphraseProblem(pass);
-	if (pErr) return res.status(400).json({ error: pErr });
-	if (q.accountByEmail.get(email)) return res.status(409).json({ error: 'There’s already a login with that email.' });
-	q.accountInsert.get('shopper', email, name, auth.hashPassword(pass));
-	res.status(201).json({ shoppers: q.shoppers.all() });
+/* ----- guest access (owners manage it) ----- */
+router.get('/guest-access', ownerOnly, (req, res) => res.json(guestAccessOut()));
+router.put('/guest-access', ownerOnly, (req, res) => {
+	const pass = str(req.body?.passphrase, 200).replace(/\s+/g, ' ');
+	if (normPass(pass).replace(/ /g, '').length < 8) return res.status(400).json({ error: 'Use at least 8 letters or digits. A few random words works well.' });
+	guestAccess.set(pass);
+	if (req.body?.signOutGuests) q.guestSessionsAll.run(); // anyone using the old one has to type the new one
+	res.json(guestAccessOut());
 });
-router.put('/shoppers/:id', ownerOnly, (req, res) => {
-	const id = idParam(req);
-	const acct = id && q.accountById.get(id);
-	if (!acct || acct.role !== 'shopper') return res.status(404).json({ error: 'That shopper login doesn’t exist.' });
-	if (typeof req.body?.name === 'string') q.accountUpdateName.run(str(req.body.name, 80), id);
-	if (req.body?.passphrase !== undefined) {
-		const pass = String(req.body.passphrase);
-		const pErr = passphraseProblem(pass);
-		if (pErr) return res.status(400).json({ error: pErr });
-		q.accountUpdatePass.run(auth.hashPassword(pass), id);
-		q.sessionsForAccount.run(id); // signs them out everywhere; they use the new passphrase
-	}
-	res.json({ shoppers: q.shoppers.all() });
+router.delete('/guest-access', ownerOnly, (req, res) => {
+	guestAccess.off();
+	q.guestSessionsAll.run();
+	res.json(guestAccessOut());
 });
-router.delete('/shoppers/:id', ownerOnly, (req, res) => {
+router.post('/guests/sign-out', ownerOnly, (req, res) => {
+	q.guestSessionsAll.run();
+	res.json(guestAccessOut());
+});
+// Forget one guest: signs them out; anything they marked bought stays off the list.
+router.delete('/guests/:id', ownerOnly, (req, res) => {
 	const id = idParam(req);
 	const info = id ? q.accountDelete.run(id) : { changes: 0 };
-	if (!info.changes) return res.status(404).json({ error: 'That shopper login doesn’t exist.' });
-	res.json({ shoppers: q.shoppers.all() });
+	if (!info.changes) return res.status(404).json({ error: 'That guest isn’t on the list.' });
+	res.json(guestAccessOut());
 });
 
-/* ----- the owner account's own passphrase ----- */
-router.post('/passphrase', signedIn, (req, res) => {
+/* ----- the owner's own passphrase ----- */
+router.post('/passphrase', ownerOnly, (req, res) => {
 	const acct = q.accountByEmail.get(req.wish.email);
 	if (!auth.verifyPassword(String(req.body?.current || ''), acct.pass_hash)) return res.status(400).json({ error: 'Your current passphrase isn’t right.' });
 	const next = String(req.body?.next || '');
@@ -523,3 +612,5 @@ setInterval(purgeExpired, 60 * 60 * 1000).unref();
 module.exports = router;
 module.exports.WISH_BASE = WISH_BASE;
 module.exports.queries = q; // for wish.js (the command-line tool)
+module.exports.guestAccess = guestAccess;
+module.exports.isStandInEmail = isStandInEmail;
