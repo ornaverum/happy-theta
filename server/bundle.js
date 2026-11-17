@@ -12,7 +12,7 @@
    whose own data.assets are moved into `assets`. */
 const crypto = require('crypto');
 
-const TOOLS = ['fbd', 'energy', 'motion', 'graph', 'scheduler', 'schedtemplate', 'mindmap', 'marks'];
+const TOOLS = ['fbd', 'energy', 'motion', 'graph', 'scheduler', 'schedtemplate', 'mindmap', 'marks', 'qbank', 'qquiz'];
 const ID_RE = /^[A-Za-z0-9_-]{1,64}$/;
 const newId = () => 's_' + crypto.randomBytes(6).toString('base64url').replace(/[-_]/g, 'x').slice(0, 8).toLowerCase();
 

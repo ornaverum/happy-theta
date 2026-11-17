@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS user_docs (
 // Which tools each role may store. Teacher tools (scheduler, maps) are for teacher accounts only.
 const TOOLS = {
 	student: ['fbd', 'energy', 'motion', 'graph', 'marks'],
-	teacher: ['fbd', 'energy', 'motion', 'graph', 'marks', 'scheduler', 'schedtemplate', 'mindmap']
+	teacher: ['fbd', 'energy', 'motion', 'graph', 'marks', 'scheduler', 'schedtemplate', 'mindmap', 'qbank', 'qquiz']
 };
 const MAX_DOC = Number(process.env.DOC_MAX_BYTES || 3 * 1024 * 1024); // one save
 const MAX_TOTAL = Number(process.env.DOC_QUOTA_BYTES || 60 * 1024 * 1024); // everything one user stores

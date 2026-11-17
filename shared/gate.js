@@ -38,10 +38,10 @@
 
 	const SECTIONS = {
 		phys: { name: 'Happy Theta Physics', short: 'Physics', home: 'phys/index.html', tools: ['fbd', 'energy', 'motion', 'graph'] },
-		teacher: { name: 'Teacher Tools', short: 'Teacher tools', home: 'teacher/index.html', tools: ['scheduler', 'schedtemplate', 'mindmap'], teacherOnly: true },
+		teacher: { name: 'Teacher Tools', short: 'Teacher tools', home: 'teacher/index.html', tools: ['scheduler', 'schedtemplate', 'mindmap', 'qbank', 'qquiz'], teacherOnly: true },
 		apps: { name: 'My Apps', short: 'My apps', home: 'apps/index.html', tools: ['marks'] }
 	};
-	const TOOL_NAMES = { fbd: 'Free Body Diagram', energy: 'Energy Diagram', motion: 'Motion Diagram', graph: 'Graph Maker', scheduler: 'Theta Scheduler', schedtemplate: 'Scheduler template', mindmap: 'Theta Maps', marks: 'Theta Marks' };
+	const TOOL_NAMES = { fbd: 'Free Body Diagram', energy: 'Energy Diagram', motion: 'Motion Diagram', graph: 'Graph Maker', scheduler: 'Theta Scheduler', schedtemplate: 'Scheduler template', mindmap: 'Theta Maps', marks: 'Theta Marks', qbank: 'Theta Questions', qquiz: 'Quiz Builder' };
 
 	/* ---------------- small helpers ---------------- */
 	const ls = {

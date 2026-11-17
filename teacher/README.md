@@ -83,3 +83,55 @@ js/scheduler-seed-ap1.js    AP Physics 1 framework + Unit 0 + science practices 
 `maps.html` — mind maps, debate maps and flow charts (was `phys/maps/theta-maps.html`). Saves are the usual
 envelope, tool `mindmap`; attachments live in this browser's IndexedDB (`happytheta-mindmap`) and are not synced.
 Three example maps are added the first time it opens in a space (each account, and guest, gets its own).
+
+## Theta Questions (question bank)
+
+`questions.html` — write, tag, sort and share questions. Each **bank** is one save (tool `qbank`, file
+`name.qbank.json`): `{ framework, description, questions }`. A bank with six example physics questions is made
+the first time the page opens with no banks.
+
+```
+questions.html              the bank page
+quiz-builder.html           the Quiz Builder page
+css/qbank.css               styles for both
+js/qb-core.js               question model, expression evaluator, randomizer, checks, tags, filters (also runs in Node)
+js/qb-formats.js            Canvas QTI 1.2 export/import, GIFT, Aiken, CSV, plain text, Google Forms JSON, zip
+js/qb-ui.js                 shared UI: dialogs, objective picker (reads the scheduler seeds), import dialog, preview, library API
+js/questions.js             the bank app
+js/quiz-builder.js          the Quiz Builder app
+```
+
+- Types: multiple choice (one correct), multiple answer, numerical (answer + unit + tolerance as % or ±), matching
+  (pairs + extra wrong matches). The type is also an automatic tag, with Randomized / Calculated / Image / Math.
+- Tags: unit, topics, objectives (codes from the bank's framework: AP Physics 1, the Waddell sequence, CSA, CSP,
+  Precalculus — loaded on demand from `js/scheduler-seed-*.js`; practices as `SP-1.A`), difficulty 1–5, free tags.
+  Filters: text, type, difficulty range, unit, topic, objective (a code matches broader and narrower codes), tag,
+  randomized. Sorts: bank order (drag), recently changed, difficulty, objective, unit, type, title.
+- Text markup: `**bold**`, `*italic*`, `x^2^`, `v~0~`, `` `code` ``, LaTeX in `\( … \)` (preview uses KaTeX from
+  cdnjs; Canvas renders it itself). One image per question (pasted or chosen; big ones are scaled to 1000 px).
+- Randomizing: variables with min/max/step, worked values (`a = (v1 - v0)/t`), an optional condition
+  (`v1 > v0 + 2`), re-rolled up to 300 times. Text templates: `{v0}`, `{v0:3s}` (sig figs), `{v0:2f}` (decimals),
+  `{=F/m}` (inline expression). Numerical answers can be a formula. Functions: sqrt, sin/cos/tan (radians),
+  sind/cosd/tand/asind… (degrees), ln, log (base 10), exp, abs, min, max, round(x, n), pow, atan2, pi, e.
+- Import (any mix of files, or pasted text): Canvas QTI .zip / .xml (classic quiz exports; groups and points kept
+  for the Quiz Builder), Moodle GIFT, Aiken, CSV (columns in `QF.CSV_COLUMNS`), quick-entry text, Google Forms
+  (`.gform.json` from the Apps Script shown in the import dialog — Google Classroom quizzes are Forms), bank and
+  quiz files. Duplicates of questions already in the bank start unticked.
+- Export: Canvas QTI .zip, CSV, bank file — all questions, the filtered ones, or the selected ones.
+- Shared library tab (teacher accounts): search by framework, type, difficulty, objective, owner; preview; add a
+  linked copy; share selected questions (others get copies; only the owner can change or remove). Badges show
+  Shared / Changed since shared / From library / Update available.
+
+## Quiz Builder (Canvas QTI)
+
+`quiz-builder.html` — saves of tool `qquiz`. Pick questions from a bank, from imported files, or from the shared
+library; drag to order; make "pick N of these" groups with points per question; set time limit, attempts,
+shuffling, one-at-a-time. Each entry keeps a snapshot of its question plus a link to the bank question, and offers
+"Bank copy changed · update" when the bank version differs. **Download for Canvas** writes a QTI 1.2 .zip
+(imsmanifest.xml, the QTI file, Canvas `assessment_meta.xml`, images in `web_resources/Uploaded Media/`).
+
+Randomized questions go to Canvas one of three ways (per question): **Canvas formula** (a Formula question with
+pre-computed value sets that honour the condition; numerical only, text may show variables but not worked values),
+**Versions** (N rolls in a "pick 1" group — works for every type), or **One roll**. Canvas has no unit box, so
+numerical questions get "Give your answer in (unit)." (setting). Import in Canvas: Settings › Import Course Content ›
+QTI .zip file.

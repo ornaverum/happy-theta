@@ -9,12 +9,13 @@ branding/           logo, icons, favicons
 
 phys/               physics tools. phys/index.html = Physics dashboard (sign in / guest; teacher and student views)
 teacher/            Teacher Tools. teacher/index.html = dashboard (teacher accounts / guest)
-                      scheduler.html (Theta Scheduler), maps.html (Theta Maps)
+                      scheduler.html (Theta Scheduler), maps.html (Theta Maps),
+                      questions.html (Theta Questions bank), quiz-builder.html (Canvas QTI quizzes)
 apps/               apps/index.html = My Apps dashboard (any account / guest)
                       marks/  Theta Marks      wish/  Wish I May (its own family logins; ?demo=1 = guest demo)
                       countdown-game/, maze2d/, crochet/ (Stitch Sculpt) — open to everyone, no sign-in
 
-server/             Node API (accounts, saved work, messages, scheduler library, WishIMay) — not part of the web root
+server/             Node API (accounts, saved work, messages, scheduler + question libraries, WishIMay) — not part of the web root
 tools/              build scripts (tools/build-waddell-seed.js → teacher/js/scheduler-seed-waddell.js)
 ```
 

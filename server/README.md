@@ -88,6 +88,24 @@ Items keep only: title, type/interaction tags (id, label, color), assessment, ex
 meetings spanned, objective codes (AP-style, e.g. `1.2.A`, `2.4.A.3`; science practices as `SP-1.A`), a
 topic hint, http(s) links and notes. Course dates are never sent.
 
+## Question library (Theta Questions / Quiz Builder)
+
+`qlibrary.js` is the same idea for single questions, mounted at `/api/qlibrary` (teachers only; 12 MB body
+limit because questions may carry an image). Its table, `question_library` (owner, `{question, course}` JSON,
+version, forked_from, pulls), is created on start — no migration step. A question is stored in the bank's own
+shape (see `teacher/js/qb-core.js`); the server keeps known fields with size limits, images ≤ ~1 MB.
+
+- `GET /qlibrary` — search: `q`, `type` (mc,ma,num,match), `course` (framework id), `codes` (same/narrower/broader
+  objective), `unit`, `topic`, `diffMin`/`diffMax`, `randomized` (1/0), `mine`, `sort` (new|popular|difficulty),
+  `limit`/`offset`. Results leave out image data (`hasImage` says there is one).
+- `GET /qlibrary/facets`, `GET /qlibrary/versions?ids=`, `GET /qlibrary/:id` (with the image),
+  `POST /qlibrary/:id/pull` (counts a pull).
+- `POST /qlibrary/batch` (`{entries:[{question, course, id?, baseVersion?}]}`, up to 200): your own id → update
+  (stale `baseVersion` → `conflict`), someone else's id → a new item `forked_from` it, no id → new item.
+- `DELETE /qlibrary/:id` — owner only, JSON body `{}`.
+
+Question banks and quizzes themselves sync like other saves (`docs.js` tools `qbank`, `qquiz`, teachers only).
+
 ## Email setup
 
 DigitalOcean blocks the usual email ports (25, 465, 587) on every droplet, so the server sends

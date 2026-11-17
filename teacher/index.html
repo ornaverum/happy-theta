@@ -16,7 +16,7 @@
     <img src="../branding/happy-theta-icon.svg" alt="">
     <div>
       <h1>Teacher Tools</h1>
-      <p id="hello">Plan courses and map out ideas.</p>
+      <p id="hello">Plan courses, map out ideas, write questions and build Canvas quizzes.</p>
     </div>
     <a class="crumb" href="../index.html" data-site="home" data-path="index.html">← All Happy Theta apps</a>
   </header>
@@ -47,6 +47,26 @@
       <ul class="recent" id="mapsList"></ul>
       <p class="empty-note" id="mapsEmpty" hidden>No maps yet. Three examples are added the first time you open Theta Maps.</p>
     </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6V14M12 17.5h.01"/></svg></div>
+        <div><h3>Theta Questions</h3><p>A question bank: multiple choice, numerical with units, matching, multiple answer; tags, AP objectives, randomized values.</p></div>
+        <a class="btn open" href="questions.html">Open</a>
+      </div>
+      <ul class="recent" id="qbankList"></ul>
+      <p class="empty-note" id="qbankEmpty" hidden>No banks yet. A bank with a few example questions is made the first time you open Theta Questions.</p>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></div>
+        <div><h3>Quiz Builder</h3><p>Pick questions from your banks, Canvas, GIFT, CSV or Google Forms files; arrange them and download a Canvas quiz (QTI).</p></div>
+        <a class="btn open" href="quiz-builder.html">Open</a>
+      </div>
+      <ul class="recent" id="qquizList"></ul>
+      <p class="empty-note" id="qquizEmpty" hidden>No quizzes yet.</p>
+    </div>
   </div>
 
   <section id="more">
@@ -70,7 +90,7 @@
   const el = HTGate.el;
   const when = (iso) => { const d = new Date(iso); return isNaN(d) ? '' : d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: d.getFullYear() === new Date().getFullYear() ? undefined : 'numeric' }); };
   const draw = () => {
-    for (const [list, empty, tools] of [['schedList', 'schedEmpty', ['scheduler']], ['mapsList', 'mapsEmpty', ['mindmap']]]) {
+    for (const [list, empty, tools] of [['schedList', 'schedEmpty', ['scheduler']], ['mapsList', 'mapsEmpty', ['mindmap']], ['qbankList', 'qbankEmpty', ['qbank']], ['qquizList', 'qquizEmpty', ['qquiz']]]) {
       const saves = HTGate.listSaves(tools);
       $(list).replaceChildren(...saves.slice(0, 6).map((s) => el('li', null, el('span', { text: s.title }), el('span', { class: 'when', text: when(s.modified) }))));
       $(empty).hidden = saves.length > 0;
@@ -81,15 +101,15 @@
 
   if (ctx.kind === 'guest') {
     $('more').hidden = true;
-    $('foot').textContent = 'Guest preview: courses and maps are saved in this browser only. The shared activity library needs a teacher account.';
+    $('foot').textContent = 'Guest preview: courses, maps, question banks and quizzes are saved in this browser only. The shared libraries need a teacher account.';
   } else {
-    $('hello').textContent = 'Signed in as ' + ctx.user.email + '. Your courses and maps are saved to your account.';
+    $('hello').textContent = 'Signed in as ' + ctx.user.email + '. Your courses, maps, question banks and quizzes are saved to your account.';
     $('foot').textContent = 'Files attached to Theta Maps nodes stay on the computer you attached them on.';
-    const tools = ['scheduler', 'schedtemplate', 'mindmap'];
+    const tools = ['scheduler', 'schedtemplate', 'mindmap', 'qbank', 'qquiz'];
     const g = HTGate.guestSaves(tools);
     if (g.length) {
-      const c = g.filter((f) => f.tool === 'scheduler').length, m = g.filter((f) => f.tool === 'mindmap').length, t = g.length - c - m;
-      const parts = [c && `${c} course${c === 1 ? '' : 's'}`, m && `${m} map${m === 1 ? '' : 's'}`, t && `${t} template${t === 1 ? '' : 's'}`].filter(Boolean);
+      const c = g.filter((f) => f.tool === 'scheduler').length, m = g.filter((f) => f.tool === 'mindmap').length, b = g.filter((f) => f.tool === 'qbank').length, z = g.filter((f) => f.tool === 'qquiz').length, t = g.length - c - m - b - z;
+      const parts = [c && `${c} course${c === 1 ? '' : 's'}`, m && `${m} map${m === 1 ? '' : 's'}`, b && `${b} question bank${b === 1 ? '' : 's'}`, z && `${z} quiz${z === 1 ? '' : 'zes'}`, t && `${t} template${t === 1 ? '' : 's'}`].filter(Boolean);
       $('importText').textContent = `This browser has ${parts.join(', ')} from a guest preview. Copy them into your account?`;
       $('importBanner').hidden = false;
       $('importNo').onclick = () => ($('importBanner').hidden = true);
