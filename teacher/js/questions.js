@@ -258,7 +258,17 @@
 		const empty = !total
 			? h('div', { class: 'qb-empty' }, h('p', { text: 'This bank is empty.' }), h('div', { class: 'qb-row' }, U.btn('Add a question', () => addQuestion('mc'), 'primary', 'plus'), U.btn('Import questions', importQuestions, '', 'down')))
 			: !shown.length ? h('p', { class: 'qb-empty', text: 'No questions match the filters.' }) : null;
-		U.fill($.list, head, bulk || '', h('div', { class: 'qb-rows' }, rows, empty || ''));
+		// keep the list where it was scrolled: the rows box is rebuilt on every change
+		const old = $.list.querySelector('.qb-rows');
+		const top = old ? old.scrollTop : 0;
+		const box = h('div', { class: 'qb-rows' }, rows, empty || '');
+		U.fill($.list, head, bulk || '', box);
+		box.scrollTop = top;
+		if (S.revealCur) {
+			S.revealCur = false;
+			const cur = box.querySelector('.qb-qrow.on');
+			if (cur) cur.scrollIntoView({ block: 'nearest' });
+		}
 	}
 	async function bulkEdit(kind, val) {
 		const sel = S.bank.questions.filter((q) => S.checked.has(q.id));
@@ -309,6 +319,7 @@
 		S.bank.questions.splice(at || S.bank.questions.length, 0, q);
 		S.cur = q.id;
 		S.tab = 'questions';
+		S.revealCur = true;
 		touch();
 		renderAll();
 		const ta = $.editor.querySelector('textarea.stem');
@@ -412,7 +423,6 @@
 						h('div', { class: 'qb-col' }, U.btn('', () => { if (i > 0) { [q.choices[i - 1], q.choices[i]] = [q.choices[i], q.choices[i - 1]]; changed(); draw(); } }, 'icon xs', 'chev', 'Move up'), U.btn('', () => { q.choices.splice(i, 1); changed(); draw(); }, 'icon xs', 'x', 'Remove')))),
 					h('div', { class: 'qb-row' }, U.btn('Add choice', () => { q.choices.push({ id: QB.newId('c'), text: '', correct: false, feedback: '' }); changed(); draw(); box.querySelectorAll('.qb-choice input.qb-input:not(.sub)')[q.choices.length - 1].focus(); }, 'sm', 'plus'), h('label', { class: 'qb-check' }, h('input', { type: 'checkbox', checked: q.shuffle, onchange: (e) => { q.shuffle = e.target.checked; changed(); } }), ' Shuffle choices'))
 				);
-				box.querySelectorAll('.qb-choice .qi.chev').forEach((s) => (s.style.transform = 'rotate(180deg)'));
 			};
 			draw();
 		} else if (q.type === 'num') {

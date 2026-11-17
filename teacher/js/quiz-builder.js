@@ -352,7 +352,9 @@
 		$.entries = h('div', { class: 'qz-entries' });
 		const end = h('div', { class: 'qz-drop-end', text: S.quiz.entries.length ? 'Drop here to add at the end' : 'Choose questions on the left and click “Add to quiz”, or drag them here.' });
 		dropTarget(end, { end: true });
+		const top = $.quizPane.scrollTop;
 		U.fill($.quizPane, h('div', { class: 'qz-quiz-in' }, settingsCard(), h('section', { class: 'qb-sec' }, $.summary, $.entries, end)));
+		$.quizPane.scrollTop = top;
 		renderSummary();
 		let n = 0;
 		for (const e of S.quiz.entries) {
