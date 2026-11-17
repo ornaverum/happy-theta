@@ -7,7 +7,7 @@ const auth = require('./auth');
 const mail = require('./mail');
 const passphrase = require('./passphrase');
 
-const BASE = process.env.BASE_PATH || '/phys';
+const BASE = process.env.BASE_PATH ?? '/phys'; // where phys/ is served; BASE_PATH= (empty) on physics.happytheta.com
 const PORT = Number(process.env.PORT || 3000);
 const HOST = process.env.HOST || '127.0.0.1';
 const MAX_MESSAGE = 2000;
@@ -250,7 +250,7 @@ api.use((err, req, res, _next) => {
 });
 
 app.use('/api', api);
-app.use(`${BASE}/api`, api); // old address, used before the site was split into apps/ teacher/ phys/
+if (BASE) app.use(`${BASE}/api`, api); // old address, used before the site was split into apps/ teacher/ phys/
 
 // WishIMay (family wish list): its own logins, cookie and tables; see wishlist.js.
 const wishlist = require('./wishlist');

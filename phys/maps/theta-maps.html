@@ -8,6 +8,6 @@
 </head>
 <body>
 <p>This page moved to <a href="../../teacher/maps.html">Teacher tools › Theta Maps</a>.</p>
-<script>location.replace('../../teacher/maps.html' + location.hash);</script>
+<script>location.replace((/^physics\.happytheta\.com$/i.test(location.hostname) ? 'https://teacher.happytheta.com/maps.html' : '../../teacher/maps.html') + location.hash);</script>
 </body>
 </html>

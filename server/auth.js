@@ -32,6 +32,9 @@ const SESSION_DAYS = Number(process.env.SESSION_DAYS || 30);
 // The whole site (phys/, teacher/, apps/) shares one sign-in, so the cookie covers every path.
 const COOKIE_PATH = process.env.COOKIE_PATH || '/';
 const SECURE = process.env.COOKIE_SECURE !== '0'; // set COOKIE_SECURE=0 only for local http testing
+// Live site on subdomains (physics., teacher., apps.happytheta.com): COOKIE_DOMAIN=happytheta.com shares the
+// sign-in between them. Leave it unset for one address (and for local testing).
+const COOKIE_DOMAIN = process.env.COOKIE_DOMAIN || '';
 
 const sha256 = (s) => crypto.createHash('sha256').update(s).digest('hex');
 
@@ -55,6 +58,7 @@ const q = {
 
 function cookieHeader(value, maxAgeSec) {
 	const parts = [`${COOKIE}=${value}`, `Path=${COOKIE_PATH}`, 'HttpOnly', 'SameSite=Lax', `Max-Age=${maxAgeSec}`];
+	if (COOKIE_DOMAIN) parts.push(`Domain=${COOKIE_DOMAIN}`);
 	if (SECURE) parts.push('Secure');
 	return parts.join('; ');
 }

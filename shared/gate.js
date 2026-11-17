@@ -22,6 +22,13 @@
 	const script = document.currentScript;
 	const SITE = new URL('../', script.src).href; // shared/gate.js → site root
 	const API = SITE + 'api/';
+	// The live site is split across subdomains (physics., teacher., apps., wish.happytheta.com), one folder
+	// each. Anywhere else (happytheta.com itself, the local dev server, a file:// copy) it is one tree of
+	// folders. siteUrl('teacher', 'maps.html') gives the right address either way.
+	const SPLIT = /^(physics|teacher|apps|wish)\.happytheta\.com$/i.test(location.hostname);
+	const HOSTS = { home: 'https://happytheta.com/', phys: 'https://physics.happytheta.com/', teacher: 'https://teacher.happytheta.com/', apps: 'https://apps.happytheta.com/', wish: 'https://wish.happytheta.com/' };
+	const FOLDERS = { home: '', phys: 'phys/', teacher: 'teacher/', apps: 'apps/', wish: 'apps/wish/' };
+	const siteUrl = (part, path = '') => (SPLIT ? HOSTS[part] : SITE + FOLDERS[part]) + path;
 	const PREFIX = 'happytheta:';
 	const SAVE_PREFIX = 'happytheta:save:';
 	const META_KEY = 'happytheta:sync:meta'; // lives inside the space, so it moves with it
@@ -353,7 +360,7 @@
 	function sectionOf(name) {
 		const s = SECTIONS[name];
 		if (!s) throw new Error('Unknown section ' + name);
-		return { ...s, key: name, homeUrl: SITE + s.home };
+		return { ...s, key: name, homeUrl: siteUrl(name, 'index.html') };
 	}
 	const canUse = (sec, user) => !!user && (!sec.teacherOnly || user.role === 'teacher');
 	const cachedUser = () => json(ls.get('htsync:user'), null); // last signed-in user, for offline use
@@ -424,7 +431,7 @@
 				}
 			});
 			const guestNote = el('p', { class: 'htg-note', text: 'Try everything without an account. Guest work is saved in this browser only.' });
-			const foot = el('p', { class: 'htg-foot' }, el('a', { href: SITE + 'index.html', text: '← All Happy Theta apps' }));
+			const foot = el('p', { class: 'htg-foot' }, el('a', { href: siteUrl('home', 'index.html'), text: '← All Happy Theta apps' }));
 			const card = el('div', { class: 'htg-card' });
 			const screen = el('div', { class: 'htg-screen' }, card);
 
@@ -433,7 +440,7 @@
 				card.append(
 					brand(sec, 'Teacher accounts only'),
 					el('p', null, 'You’re signed in as ', el('strong', { text: user.email }), ', which is a student account. Teacher tools need a teacher account.'),
-					el('div', { class: 'htg-stack' }, guestBtn, el('button', { type: 'button', class: 'htg-btn htg-ghost htg-wide', text: 'Sign out', onclick: () => Gate.signOut() }), el('a', { class: 'htg-btn htg-ghost htg-wide', href: SITE + 'phys/index.html', text: 'Go to Physics' })),
+					el('div', { class: 'htg-stack' }, guestBtn, el('button', { type: 'button', class: 'htg-btn htg-ghost htg-wide', text: 'Sign out', onclick: () => Gate.signOut() }), el('a', { class: 'htg-btn htg-ghost htg-wide', href: siteUrl('phys', 'index.html'), text: 'Go to Physics' })),
 					foot
 				);
 				document.body.append(screen);
@@ -515,7 +522,7 @@
 					{ novalidate: true },
 					emailInput('htgEmail', remembered.email),
 					el('label', { class: 'htg-field' }, el('span', { text: 'Pass phrase' }), el('div', { class: 'htg-pass' }, pass, show)),
-					el('p', { class: 'htg-link-right' }, el('a', { href: SITE + 'phys/account/forgot.html', text: 'Forgot your pass phrase?' })),
+					el('p', { class: 'htg-link-right' }, el('a', { href: siteUrl('phys', 'account/forgot.html'), text: 'Forgot your pass phrase?' })),
 					go
 				);
 				form.addEventListener('submit', async (e) => {
@@ -809,6 +816,7 @@
 	/* ---------------- public ---------------- */
 	const Gate = {
 		SITE,
+		siteUrl,
 		API,
 		SECTIONS,
 		TOOL_NAMES,
@@ -1059,6 +1067,13 @@
 		}
 	};
 	window.HTGate = Gate;
+
+	// Static links between sections: <a data-site="phys" data-path="index.html" href="(fallback)">.
+	function fixSiteLinks() {
+		document.querySelectorAll('a[data-site]').forEach((a) => (a.href = siteUrl(a.dataset.site, a.dataset.path || '')));
+	}
+	if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fixSiteLinks);
+	else fixSiteLinks();
 
 	// Tool pages: gate, then run the page's own scripts.
 	if (script.dataset.gate === 'tool') {

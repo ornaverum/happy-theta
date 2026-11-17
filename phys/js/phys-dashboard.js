@@ -59,7 +59,7 @@
 						? 'Pick a tool to draw a figure. Everything you save goes to your account.'
 						: 'Try any tool. What you save stays in this browser; sign in to keep it on every computer.' })
 			),
-			teacher ? el('a', { class: 'btn btn-blue', href: '../teacher/', text: 'Teacher tools →' }) : null
+			teacher ? el('a', { class: 'btn btn-blue', href: HTGate.siteUrl('teacher'), text: 'Teacher tools →' }) : null
 		)
 	);
 
@@ -182,6 +182,6 @@
 	}
 
 	page.append(el('div', { class: 'pd-data' }, HTGate.dataPanel({ onImported: () => setTimeout(() => location.reload(), 1800) })));
-	page.append(el('p', { class: 'pd-foot' }, el('a', { href: '../index.html', text: '← All Happy Theta apps' })));
+	page.append(el('p', { class: 'pd-foot' }, el('a', { href: HTGate.siteUrl('home', 'index.html'), text: '← All Happy Theta apps' })));
 	page.hidden = false;
 })();

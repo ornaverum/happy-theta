@@ -33,6 +33,8 @@ HT.safeNext = function (next) {
 
 HT.loginUrl = function () {
 	const here = location.pathname + location.search;
+	// On the live subdomains each site's front page is its dashboard, which shows the sign-in screen.
+	if (/^(physics|teacher|apps|wish)\.happytheta\.com$/i.test(location.hostname)) return location.origin + '/index.html?next=' + encodeURIComponent(here);
 	return HT.root + 'account/login.html?next=' + encodeURIComponent(here);
 };
 

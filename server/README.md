@@ -40,7 +40,7 @@ dashboard. `phys/dashboard.html` is the full table of student messages for teach
 - Limits: 10 failed sign-ins per email per 15 min; 5 emails to one address per hour; 300 account
   requests per network address per 15 min (high on purpose: a whole school shares one address).
 
-## API (all under `/api/`; `/phys/api/` is the same thing)
+## API (all under `/api/`; `/phys/api/` is the same thing unless BASE_PATH is empty)
 
 | Method | Path               | Who       | Does |
 |--------|--------------------|-----------|------|
@@ -256,6 +256,30 @@ ht reset-link someone@asmsa.org   # print a 1-hour reset link to send them yours
 ht export someone@asmsa.org > /root/their-work.json   # all their saved work as one backup file
 ht import someone@asmsa.org /tmp/their-work.json      # add a backup (or tool file) to their account
 ```
+
+## Subdomains (the live setup)
+
+| Address | Folder of the web root |
+|---|---|
+| happytheta.com | `index.html` (landing page); old `/phys/`, `/teacher/`, `/apps/`, `/wish` paths redirect |
+| physics.happytheta.com | `phys/` |
+| teacher.happytheta.com | `teacher/` |
+| apps.happytheta.com | `apps/` |
+| wish.happytheta.com | `apps/wish/` |
+
+- The repo layout and the deploy script don't change: everything still goes to `/var/www/happytheta.com/public`,
+  and nginx points each subdomain at one folder of it (`deploy/nginx-subdomains.conf`, which includes
+  `deploy/nginx-happytheta-common.conf` as `/etc/nginx/snippets/happytheta-common.conf`). `/shared/`,
+  `/branding/` and (for teacher/apps) `/phys/js|css|assets/` are aliased, so the pages' relative links work.
+- Old addresses: `deploy/nginx-old-paths.conf` goes in the happytheta.com HTTPS server block.
+- `api.env`: `PUBLIC_URL=https://physics.happytheta.com`, `BASE_PATH=` (empty), `COOKIE_DOMAIN=happytheta.com`
+  (one sign-in for physics/teacher/apps), `WISH_BASE_PATH=/wish` (nginx maps wish.happytheta.com/api/ there
+  and rewrites the WishIMay cookie path to `/`).
+- Links between sections come from `HTGate.siteUrl(part, path)` (shared/gate.js) or `<a data-site="…"
+  data-path="…">`: full subdomain URLs on the four subdomains, folder paths anywhere else (happytheta.com,
+  `npm run dev`, file://). So local testing works as before.
+- Browser storage is per address: guest saves, Theta Marks pictures and Theta Maps attachments made at
+  happytheta.com/… don't appear on the subdomains. Move them with **Export all my work** / **Import…**.
 
 ## Updating and backups
 

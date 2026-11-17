@@ -18,7 +18,7 @@
       <h1>My Apps</h1>
       <p id="hello">Bookmarks, notes and wish lists.</p>
     </div>
-    <a class="crumb" href="../index.html">← All Happy Theta apps</a>
+    <a class="crumb" href="../index.html" data-site="home" data-path="index.html">← All Happy Theta apps</a>
   </header>
 
   <div class="banner" id="importBanner" hidden>
@@ -58,6 +58,7 @@
   const $ = (id) => document.getElementById(id);
   const ctx = await HTGate.start({ section: 'apps' });
   $('bar').append(HTGate.userBar());
+  $('wishLink').href = HTGate.siteUrl('wish');
   $('page').hidden = false;
   const guest = ctx.kind === 'guest';
   const when = (iso) => { const d = new Date(iso); return isNaN(d) ? '' : d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: d.getFullYear() === new Date().getFullYear() ? undefined : 'numeric' }); };
@@ -71,7 +72,7 @@
   $('data').append(HTGate.dataPanel({ onImported: () => setTimeout(() => location.reload(), 1800) }));
 
   if (guest) {
-    $('wishLink').href = 'wish/?demo=1';
+    $('wishLink').href = HTGate.siteUrl('wish', '?demo=1');
     $('wishLink').textContent = 'Try the demo';
     $('wishNote').textContent = 'Guest preview opens a made-up family list that lives only in this browser. The real list has its own family sign-in: owners use their email, shoppers just the family passphrase and their name.';
     $('foot').textContent = 'Guest preview: everything you do here is saved in this browser only.';

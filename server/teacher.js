@@ -24,7 +24,7 @@ const { db, DB_PATH } = require('./db');
 
 const [cmd, emailArg, fileArg] = args;
 const email = String(emailArg || '').trim().toLowerCase();
-const BASE = process.env.BASE_PATH || '/phys';
+const BASE = process.env.BASE_PATH ?? '/phys';
 
 function usage() {
 	console.log('Usage: node teacher.js add|remove|verify|reset-link|export <email>  |  import <email> <file>  |  list  |  users');

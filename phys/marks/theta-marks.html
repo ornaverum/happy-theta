@@ -8,6 +8,6 @@
 </head>
 <body>
 <p>This page moved to <a href="../../apps/marks/">My apps › Theta Marks</a>.</p>
-<script>location.replace('../../apps/marks/' + location.hash);</script>
+<script>location.replace((/^physics\.happytheta\.com$/i.test(location.hostname) ? 'https://apps.happytheta.com/marks/' : '../../apps/marks/') + location.hash);</script>
 </body>
 </html>

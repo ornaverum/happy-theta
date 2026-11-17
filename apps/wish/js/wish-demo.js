@@ -6,6 +6,8 @@
 (function () {
 	if (!new URLSearchParams(location.search).has('demo')) return;
 	const KEY = 'wishimay:demo:v1';
+	// On wish.happytheta.com, My Apps is another subdomain; elsewhere it's the folder above.
+	const MY_APPS = /^wish\.happytheta\.com$/i.test(location.hostname) ? 'https://apps.happytheta.com/' : '../';
 	const now = () => new Date().toISOString();
 	const daysAgo = (d) => new Date(Date.now() - d * 86400000).toISOString();
 
@@ -97,7 +99,7 @@
 
 		if (path === 'me') return { account: account(s) };
 		if (path === 'logout') {
-			location.href = '../';
+			location.href = MY_APPS;
 			return new Promise(() => {});
 		}
 		if (path === 'list') {
@@ -197,7 +199,7 @@
 			'<span class="demo-views" role="group" aria-label="View as">View as ' +
 			'<button type="button" data-role="owner">Owner</button><button type="button" data-role="shopper">Guest</button></span>' +
 			'<button type="button" class="demo-link" data-reset>Start over</button>' +
-			'<a class="demo-link" href="../">Back to My Apps</a>';
+			'<a class="demo-link" href="' + MY_APPS + '">Back to My Apps</a>';
 		b.querySelectorAll('[data-role]').forEach((btn) => {
 			btn.setAttribute('aria-pressed', String(btn.dataset.role === s.role));
 			btn.onclick = () => {

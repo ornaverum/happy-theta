@@ -18,6 +18,7 @@
 				var path = ok ? new URL(next, location.origin).pathname : '';
 				var rel = path.indexOf(root.pathname) === 0 ? path.slice(root.pathname.length) : '';
 				var dash = /^teacher\//.test(rel) ? 'teacher/' : /^apps\//.test(rel) ? 'apps/' : 'phys/';
+				if (/^physics\.happytheta\.com$/i.test(location.hostname)) dash = ''; // physics.happytheta.com: the dashboard is the front page
 				location.replace(new URL(dash, root).href + (ok ? '?next=' + encodeURIComponent(next) : ''));
 			})();
 		</script>

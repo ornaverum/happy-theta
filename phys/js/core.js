@@ -136,7 +136,7 @@ HT.actions = {
 		apps: [
 			['My apps', 'index.html'],
 			['Theta Marks', 'marks/index.html'],
-			['Wish I May', 'wish/']
+			['Wish I May', /^apps\.happytheta\.com$/i.test(location.hostname) ? 'https://wish.happytheta.com/' : 'wish/']
 		]
 	};
 	const links = NAVS[document.body.dataset.nav] || NAVS.phys;
@@ -149,7 +149,7 @@ HT.actions = {
 			'ul',
 			null,
 			links.map(([t, href]) => {
-				const a = HT.el('a', { href: nr + href, text: t });
+				const a = HT.el('a', { href: /^https?:/.test(href) ? href : nr + href, text: t });
 				if (new URL(a.href).pathname.replace(/index\.html$/, '') === here) a.setAttribute('aria-current', 'page');
 				return HT.el('li', null, a);
 			})
