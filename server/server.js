@@ -20,7 +20,9 @@ const ALLOWED_DOMAINS = (process.env.ALLOWED_EMAIL_DOMAINS || '')
 const q = {
 	userByEmail: db.prepare('SELECT id, email, role, password_hash, email_verified_at FROM users WHERE email = ?'),
 	userById: db.prepare('SELECT id, email, role FROM users WHERE id = ?'),
-	addUser: db.prepare('INSERT INTO users (email, password_hash) VALUES (?, ?)'),
+	addUser: db.prepare('INSERT INTO users (email, password_hash, role) VALUES (?, ?, ?)'),
+	inviteFind: db.prepare('SELECT 1 FROM teacher_invites WHERE email = ?'),
+	inviteUse: db.prepare('DELETE FROM teacher_invites WHERE email = ?'),
 	setPassword: db.prepare('UPDATE users SET password_hash = ? WHERE id = ?'),
 	markVerified: db.prepare(
 		"UPDATE users SET email_verified_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') WHERE id = ? AND email_verified_at IS NULL"
@@ -133,7 +135,12 @@ api.post(
 		if (!mailLimit(email))
 			return res.status(429).json({ error: "We've sent several emails to that address recently. Check your inbox (and spam folder), or try again in an hour." });
 		if (!user) {
-			const info = q.addUser.run(email, auth.UNVERIFIED_HASH);
+			// Pre-approved teachers (teacher.js add) start as teachers.
+			const info = db.transaction(() => {
+				const invited = !!q.inviteFind.get(email);
+				if (invited) q.inviteUse.run(email);
+				return q.addUser.run(email, auth.UNVERIFIED_HASH, invited ? 'teacher' : 'student');
+			})();
 			user = { id: info.lastInsertRowid, email };
 		}
 		try {

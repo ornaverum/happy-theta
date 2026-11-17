@@ -246,10 +246,11 @@ Run on the droplet as the service user, pointing at the live database:
 
 ```
 cd /opt/happytheta-server
-alias ht='sudo -u happytheta DB_PATH=/var/lib/happytheta/happytheta.db PUBLIC_URL=https://your-domain node teacher.js'
-ht add jack@asmsa.org          # make a teacher (they sign up on the site first)
-ht remove someone@asmsa.org    # back to student
-ht list                        # teachers
+alias ht='sudo -u happytheta DB_PATH=/var/lib/happytheta/happytheta.db PUBLIC_URL=https://physics.happytheta.com BASE_PATH= node teacher.js'
+ht add jack@asmsa.org          # make a teacher; an email with no account yet is pre-approved (teacher from sign-up)
+ht add a@asmsa.org b@asmsa.org # several at once (or: ht add $(cat teachers.txt))
+ht remove someone@asmsa.org    # back to student, or cancel a pre-approval
+ht list                        # teachers, then pre-approved emails not signed up yet
 ht users                       # every account, and whether it's confirmed
 ht verify someone@asmsa.org    # confirm an email by hand (their sign-up pass phrase then works)
 ht reset-link someone@asmsa.org   # print a 1-hour reset link to send them yourself

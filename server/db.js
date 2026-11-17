@@ -45,6 +45,12 @@ CREATE TABLE IF NOT EXISTS messages (
 	created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))
 );
 CREATE INDEX IF NOT EXISTS messages_created ON messages(created_at);
+-- Emails pre-approved as teachers (teacher.js add, before they have an account). Used up when that
+-- email signs up: the new account starts as a teacher. It still has to confirm the email to sign in.
+CREATE TABLE IF NOT EXISTS teacher_invites (
+	email    TEXT PRIMARY KEY COLLATE NOCASE,
+	added_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))
+);
 `);
 
 // Migration for databases made before email verification existed: add the column and

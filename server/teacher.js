@@ -1,8 +1,10 @@
 'use strict';
 /* Manage accounts from the droplet's shell. Use the same DB_PATH (and PUBLIC_URL) as the server.
-     node teacher.js add someone@asmsa.org         make an account a teacher
-     node teacher.js remove someone@asmsa.org      back to student
-     node teacher.js list                          show all teachers
+     node teacher.js add someone@asmsa.org …       make accounts teachers. Emails with no account yet are
+                                                   pre-approved: they start as teachers when they sign up.
+                                                   Several at once: add a@asmsa.org b@asmsa.org, or add $(cat list.txt)
+     node teacher.js remove someone@asmsa.org …    back to student (or no longer pre-approved)
+     node teacher.js list                          show all teachers and pre-approved emails
      node teacher.js users                         show every account and whether it's confirmed
      node teacher.js verify someone@asmsa.org      confirm an email by hand (if the email never arrived)
      node teacher.js reset-link someone@asmsa.org  print a 1-hour pass-phrase reset link to pass on yourself
@@ -23,11 +25,12 @@ if (process.argv.includes('--dev')) process.env.DB_PATH = path.join(__dirname, '
 const { db, DB_PATH } = require('./db');
 
 const [cmd, emailArg, fileArg] = args;
+const emails = args.slice(1).map((e) => String(e).trim().toLowerCase()).filter(Boolean);
 const email = String(emailArg || '').trim().toLowerCase();
 const BASE = process.env.BASE_PATH ?? '/phys';
 
 function usage() {
-	console.log('Usage: node teacher.js add|remove|verify|reset-link|export <email>  |  import <email> <file>  |  list  |  users');
+	console.log('Usage: node teacher.js add|remove <email> [more emails…]  |  verify|reset-link|export <email>  |  import <email> <file>  |  list  |  users');
 	process.exit(1);
 }
 
@@ -41,19 +44,40 @@ function findUser() {
 	return u;
 }
 
-function setRole(role) {
-	const u = findUser();
-	db.prepare('UPDATE users SET role = ? WHERE id = ?').run(role, u.id);
-	console.log(`${u.email} is now a ${role}.`);
-	if (!u.email_verified_at) console.log(`Note: ${u.email} hasn't confirmed their email yet, so they can't sign in until they do.`);
-}
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const userRow = db.prepare('SELECT id, email, role, email_verified_at FROM users WHERE email = ?');
 
-if (cmd === 'add') setRole('teacher');
-else if (cmd === 'remove') setRole('student');
-else if (cmd === 'list') {
+if (cmd === 'add' || cmd === 'remove') {
+	if (!emails.length) usage();
+	const teacher = cmd === 'add';
+	for (const e of emails) {
+		const u = userRow.get(e);
+		if (u) {
+			db.prepare('UPDATE users SET role = ? WHERE id = ?').run(teacher ? 'teacher' : 'student', u.id);
+			db.prepare('DELETE FROM teacher_invites WHERE email = ?').run(e);
+			console.log(`${u.email} is now a ${teacher ? 'teacher' : 'student'}.`);
+			if (teacher && !u.email_verified_at) console.log(`  Note: ${u.email} hasn't confirmed their email yet, so they can't sign in until they do.`);
+		} else if (teacher) {
+			if (!EMAIL_RE.test(e)) {
+				console.log(`Skipped "${e}": not an email address.`);
+				continue;
+			}
+			db.prepare('INSERT OR IGNORE INTO teacher_invites (email) VALUES (?)').run(e);
+			console.log(`${e} is pre-approved: no account yet, it starts as a teacher when they sign up.`);
+		} else {
+			const gone = db.prepare('DELETE FROM teacher_invites WHERE email = ?').run(e).changes;
+			console.log(gone ? `${e} is no longer pre-approved.` : `No account or pre-approval for ${e}.`);
+		}
+	}
+} else if (cmd === 'list') {
 	const rows = db.prepare("SELECT email, created_at FROM users WHERE role = 'teacher' ORDER BY email").all();
 	if (!rows.length) console.log('No teachers yet.');
 	rows.forEach((r) => console.log(`${r.email}  (signed up ${r.created_at.slice(0, 10)})`));
+	const inv = db.prepare('SELECT email, added_at FROM teacher_invites ORDER BY email').all();
+	if (inv.length) {
+		console.log('\nPre-approved, not signed up yet:');
+		inv.forEach((r) => console.log(`${r.email}  (added ${r.added_at.slice(0, 10)})`));
+	}
 } else if (cmd === 'users') {
 	const rows = db.prepare('SELECT email, role, created_at, email_verified_at FROM users ORDER BY created_at').all();
 	if (!rows.length) console.log('No accounts yet.');
