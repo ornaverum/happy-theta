@@ -10,7 +10,8 @@ branding/           logo, icons, favicons
 phys/               physics tools. phys/index.html = Physics dashboard (sign in / guest; teacher and student views)
 teacher/            Teacher Tools. teacher/index.html = dashboard (teacher accounts / guest)
                       scheduler.html (Theta Scheduler), maps.html (Theta Maps),
-                      questions.html (Theta Questions bank), quiz-builder.html (Canvas QTI quizzes)
+                      questions.html (Theta Questions bank), quiz-builder.html (Canvas QTI quizzes),
+                      canvas.html (Theta Canvas: manage a Canvas course's content through the API)
 apps/               apps/index.html = My Apps dashboard (any account / guest)
                       marks/  Theta Marks      wish/  Wish I May (its own family logins; ?demo=1 = guest demo)
                       countdown-game/, maze2d/, crochet/ (Stitch Sculpt) — open to everyone, no sign-in

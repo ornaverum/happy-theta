@@ -100,7 +100,7 @@
 		]);
 		$.head = h('header', { class: 'qb-head' },
 			h('div', { class: 'qb-title' }, h('span', { class: 'qb-app', text: 'Quiz Builder' }), h('div', { class: 'qb-row tight' }, $.quizSel, quizMenu)),
-			h('div', { class: 'qb-actions' }, $.status, h('a', { class: 'qb-btn', href: 'questions.html' }, U.icon('copy'), h('span', { text: 'Theta Questions' })), U.btn('Download for Canvas', exportQTI, 'primary', 'down'))
+			h('div', { class: 'qb-actions' }, $.status, h('a', { class: 'qb-btn', href: 'questions.html' }, U.icon('copy'), h('span', { text: 'Theta Questions' })), U.btn('Download .zip', exportQTI, '', 'down', 'Download a Canvas QTI .zip to import by hand'), HT.Canvas ? U.btn('Send to Canvas', sendToCanvas, 'primary', 'cloud', 'Put this quiz straight into one of your Canvas courses') : null)
 		);
 		$.src = h('section', { class: 'qz-src', 'aria-label': 'Add questions' });
 		$.quizPane = h('section', { class: 'qz-quiz', 'aria-label': 'Quiz' });
@@ -532,6 +532,18 @@
 			),
 			h('p', { class: 'qb-hint', text: 'New Quizzes: Canvas can also import QTI into New Quizzes (Quizzes › ⋮ › Import, or migrate the classic quiz). Formula questions become “Formula” items.' })
 		), [{ label: 'Done', cls: 'primary' }], { wide: true });
+	}
+	/* Build the same QTI package and hand it to Canvas through Theta Canvas's connection. */
+	async function sendToCanvas() {
+		saveNow();
+		if (!S.quiz.entries.length) return U.toast('Add some questions first.', { error: true });
+		if (!U.isTeacher()) return U.modal('Send to Canvas', h('p', { text: 'Sign in with a teacher account and connect Canvas in Theta Canvas to send quizzes directly. In guest preview, use “Download .zip” and import it in Canvas.' }), [{ label: 'OK', cls: 'primary' }]);
+		const bad = allItems().filter((it) => QB.errors(it.q).length);
+		if (bad.length && !(await U.confirm('Some questions need fixing', `${bad.length} question${bad.length === 1 ? ' has' : 's have'} problems (marked “fix”). Send anyway?`, 'Send anyway'))) return;
+		let out;
+		try { out = QF.toQTI(quizForExport()); } catch (e) { return U.toast('Export failed: ' + e.message, { error: true }); }
+		if (out.warnings.length) U.toast(out.warnings.length + ' note' + (out.warnings.length === 1 ? '' : 's') + ' (see Download .zip for details)', { ms: 4000 });
+		await HT.Canvas.sendDialog({ name: QF.slug(S.env.meta.title) + '.qti.zip', bytes: out.zip, title: S.env.meta.title });
 	}
 	async function openQuizFile() {
 		const [f] = await U.pickFiles({ accept: '.json' });

@@ -135,3 +135,22 @@ pre-computed value sets that honour the condition; numerical only, text may show
 **Versions** (N rolls in a "pick 1" group — works for every type), or **One roll**. Canvas has no unit box, so
 numerical questions get "Give your answer in (unit)." (setting). Import in Canvas: Settings › Import Course Content ›
 QTI .zip file.
+
+## Theta Canvas (Canvas course content)
+
+`canvas.html` + `js/canvas.js` (app) + `js/canvas-api.js` (connection; also used by Quiz Builder). Needs a teacher
+account and `CANVAS_TOKEN_KEY` on the server (see `server/README.md`). The teacher connects once with a Canvas
+access token (saved encrypted to their account); the course choice is remembered per browser.
+
+Tabs: **Assignments** (by group; create/edit/delete, publish, group weights on/off, groups with weights, delete a
+group moving its assignments), **Quizzes** (Classic + New Quizzes: settings, publish, delete, view questions —
+Classic questions can be renamed/re-worded/re-pointed or removed; empty quiz; import a QTI .zip), **Modules**
+(add/rename/lock/reorder/publish/delete; items: add assignment/quiz/page/header/link, reorder, indent, move to another
+module, publish, remove), **Pages** (create/edit HTML/publish/front page/delete), **Announcements** (post now or
+scheduled, edit, delete), **Dates** (due/available/until for every assignment and quiz; select rows and shift by N
+days; save only what changed). HTML previews render in sandboxed iframes.
+
+Quiz Builder: **Send to Canvas** builds the same QTI package and imports it through the API (Classic or New Quizzes,
+question bank name), polls until Canvas finishes and lists Canvas's import notes. **Download .zip** still works.
+
+Theta Canvas never reads students, submissions or grades; the server refuses those requests (see `server/canvas.js`).

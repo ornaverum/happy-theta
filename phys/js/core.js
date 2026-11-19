@@ -133,7 +133,8 @@ HT.actions = {
 			['Theta Scheduler', 'scheduler.html'],
 			['Theta Maps', 'maps.html'],
 			['Theta Questions', 'questions.html'],
-			['Quiz Builder', 'quiz-builder.html']
+			['Quiz Builder', 'quiz-builder.html'],
+			['Theta Canvas', 'canvas.html']
 		],
 		apps: [
 			['My apps', 'index.html'],

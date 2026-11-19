@@ -22,7 +22,7 @@
 	const G = typeof window !== 'undefined' ? window : globalThis;
 	const HT = (G.HT = G.HT || {});
 	const QB = {};
-	HT.QB_VERSION = '2026-11-17b'; // cache-buster for files loaded on demand (framework seeds)
+	HT.QB_VERSION = '2026-11-19a'; // cache-buster for files loaded on demand (framework seeds)
 
 	QB.TYPES = { mc: 'Multiple choice', ma: 'Multiple answer', num: 'Numerical', match: 'Matching' };
 	QB.TYPE_SHORT = { mc: 'MC', ma: 'MA', num: 'NUM', match: 'MATCH' };

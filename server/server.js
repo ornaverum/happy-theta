@@ -113,6 +113,8 @@ api.use(auth.loadUser);
 api.use('/library', require('./library'));
 // Shared question library for Theta Questions / Quiz Builder (teachers only; its own larger body limit)
 api.use('/qlibrary', require('./qlibrary'));
+// Theta Canvas: course-content calls to the teacher's Canvas (teachers only; allowlisted; own body limit)
+api.use('/canvas', require('./canvas'));
 // Signed-in users' saved work (synced from the browser; its own larger body limit)
 api.use('/docs', require('./docs'));
 api.use(express.json({ limit: '16kb' }));

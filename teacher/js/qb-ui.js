@@ -75,7 +75,7 @@
 					if (!b.click) return done(b.value);
 					try {
 						const r = await b.click({ setMessage: (t, err = true) => { msg.textContent = t; msg.classList.toggle('error', err); } });
-						if (r !== false) done(r === undefined ? b.value : r);
+						if (r !== false) done(r === undefined ? (b.value === undefined ? true : b.value) : r);
 					} catch (e) { msg.textContent = e.message; msg.classList.add('error'); }
 				} }, b.label));
 			}

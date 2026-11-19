@@ -5,6 +5,7 @@
 const path = require('path');
 process.env.SITE_DIR ||= path.join(__dirname, '..');
 process.env.COOKIE_SECURE ||= '0';
+process.env.CANVAS_TOKEN_KEY ||= 'dev-only-canvas-key-not-for-production';
 process.env.DB_PATH ||= path.join(__dirname, 'data', 'dev.db');
 const app = require('./server.js');
 const PORT = Number(process.env.PORT || 3000);

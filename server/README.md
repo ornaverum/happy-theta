@@ -106,6 +106,33 @@ shape (see `teacher/js/qb-core.js`); the server keeps known fields with size lim
 
 Question banks and quizzes themselves sync like other saves (`docs.js` tools `qbank`, `qquiz`, teachers only).
 
+## Theta Canvas (Canvas API, course content only)
+
+`canvas.js`, mounted at `/api/canvas` (teachers only), lets `teacher/canvas.html` and Quiz Builder work on a
+teacher's Canvas course with their own Canvas access token. **Turn it on** by adding a key to
+`/etc/happytheta/api.env` and restarting:
+
+```bash
+echo "CANVAS_TOKEN_KEY=$(openssl rand -base64 32)" | sudo tee -a /etc/happytheta/api.env
+sudo systemctl restart happytheta-api
+```
+
+Keep the key secret and don't change it (saved tokens would stop decrypting; teachers would re-enter them).
+`CANVAS_ALLOWED_HOSTS` (default `*.instructure.com`) limits which Canvas addresses can be used. Without the key
+the app says it isn't switched on.
+
+- Tokens: table `canvas_tokens` (one per user): AES-256-GCM with the key (bound to the user id), last 4 characters
+  kept as a hint. Never logged, never returned. `DELETE /canvas/connection` forgets it.
+- `POST /canvas/call {method, path, query, body}` forwards to Canvas only if the path is on the allowlist in
+  `canvas.js` (`ROUTES`: assignments, assignment groups, classic quizzes + questions + groups, New Quizzes + items,
+  modules + items, pages, discussion topics/announcements, content migrations, progress, `users/self`, the teacher's
+  own course list). Users, enrollments, submissions, grades, gradebook, analytics, discussion entries… are refused;
+  `include[]` is limited to harmless values and student-related query options are refused; student-related fields
+  (submission, needs_grading_count, overrides, all_dates, enrollments, …) are stripped from every response
+  (`SCRUB`). GETs follow Canvas's `Link` pages (same host only).
+- `POST /canvas/qti {courseId, name, data, newQuizzes, bankName}` creates a `qti_converter` content migration,
+  uploads the zip to the address Canvas gives (without the token), and returns the migration to poll.
+
 ## Email setup
 
 DigitalOcean blocks the usual email ports (25, 465, 587) on every droplet, so the server sends
