@@ -10,6 +10,7 @@ server.js     the API (routes below)
 auth.js       pass phrase hashing (scrypt), cookie sessions, one-time email links
 passphrase.js makes up pass phrases (4–6 word camelCase sentences) and checks a phrase is one of ours
 docs.js       signed-in users' saved work (/api/docs), synced from the browser by shared/gate.js
+assets.js     pictures in Theta Questions banks / Quiz Builder quizzes (/api/assets), stored once by content id
 bundle.js     the backup-file format ("Export all my work"), used by teacher.js export / import
 mail.js       sends the confirmation and pass-phrase-reset emails
 db.js         SQLite tables: users, sessions, email_tokens, messages
@@ -105,6 +106,14 @@ shape (see `teacher/js/qb-core.js`); the server keeps known fields with size lim
 - `DELETE /qlibrary/:id` — owner only, JSON body `{}`.
 
 Question banks and quizzes themselves sync like other saves (`docs.js` tools `qbank`, `qquiz`, teachers only).
+Their pictures are kept separately (`assets.js`, table `user_assets`, teachers only): the saves hold
+`image: {name, mime, alt, ref}` and the picture is stored once under `ref` = `i` + 28 base-36 digits (cyrb128 of the
+data: URL; `picId` in assets.js and shared/gate.js must match — the server checks it).
+- `GET /assets` → `{ids, bytes, quota}` (also deletes, once a day, pictures over a day old that no save uses)
+- `POST /assets/fetch` `{ids}` → `{assets: [{id, mime, data}]}` (about 8 MB per answer; ask again for the rest)
+- `POST /assets/put` `{assets: [{id, data}]}` → `{stored, errors}`; `GET /assets/:id`
+Limits: 3 MB per picture (`ASSET_MAX_BYTES`), 200 MB per account (`ASSET_QUOTA_BYTES`). `teacher.js export` puts
+the pictures back inside the banks.
 
 ## Theta Canvas (Canvas API, course content only)
 

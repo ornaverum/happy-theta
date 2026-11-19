@@ -10,8 +10,9 @@
      node teacher.js reset-link someone@asmsa.org  print a 1-hour pass-phrase reset link to pass on yourself
      node teacher.js export someone@asmsa.org > their-work.json
                                                    everything they've saved, as one backup file (the same kind the
-                                                   dashboards' "Export all my work" makes, minus pictures/attachments,
-                                                   which only live in their browser). --out file.json writes a file instead.
+                                                   dashboards' "Export all my work" makes; question-bank pictures are put back
+                                                   inside their banks, but Theta Marks / Maps pictures and attachments only
+                                                   live in their browser). --out file.json writes a file instead.
      node teacher.js import someone@asmsa.org file.json
                                                    add the saves in a backup or tool file to their account (nothing is
                                                    overwritten: a save whose id is already there gets a new id)
@@ -113,8 +114,9 @@ if (cmd === 'add' || cmd === 'remove') {
 	const u = findUser();
 	const bundle = require('./bundle');
 	require('./docs'); // makes sure the user_docs table exists
+	const assets = require('./assets'); // question pictures go back inside their banks / quizzes
 	const rows = db.prepare('SELECT data FROM user_docs WHERE user_id = ? AND data IS NOT NULL ORDER BY tool, modified').all(u.id);
-	const out = bundle.make(rows.map((r) => JSON.parse(r.data)), { who: u.email, from: 'server' });
+	const out = bundle.make(rows.map((r) => assets.inline(u.id, JSON.parse(r.data))), { who: u.email, from: 'server' });
 	const text = JSON.stringify(out, null, 1);
 	if (outFile) {
 		require('fs').writeFileSync(outFile, text);

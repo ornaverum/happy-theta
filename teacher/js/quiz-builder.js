@@ -31,14 +31,20 @@
 			entries: (Array.isArray(x.entries) ? x.entries : []).map((e) => (e.kind === 'group' ? { id: e.id || eid(), kind: 'group', title: String(e.title || 'Question group'), pick: Number(e.pick) || 1, points: Number(e.points) || 1, items: (e.items || []).filter((it) => it && it.q).map(item) } : e.q ? { ...item(e), kind: 'q' } : null)).filter(Boolean)
 		};
 	}
-	function saveNow() {
+	const pics = () => (window.HTGate && HTGate.pictures) || null;
+	function saveNow(retried) {
 		clearTimeout(S.saveTimer); S.saveTimer = null;
 		if (!S.quiz) return;
 		try {
 			S.env = HT.files.wrap(TOOL, { title: S.env.meta.title, data: S.quiz }, S.env);
 			HT.files.write(S.env);
 			setStatus('Saved');
-		} catch (e) { setStatus(/quota|exceed/i.test(String(e)) ? 'Not saved: browser storage is full.' : 'Not saved: ' + e.message, true); }
+		} catch (e) {
+			const full = /quota|exceed/i.test(String(e));
+			// New pictures stay inside the save until IndexedDB has them; wait for that and try once more.
+			if (full && !retried && pics() && pics().busy()) { setStatus('Saving pictures…'); pics().flush().then(() => saveNow(true)); return; }
+			setStatus(full ? 'Not saved: browser storage is full. Delete banks or quizzes you no longer need.' : 'Not saved: ' + e.message, true);
+		}
 	}
 	function touch() { setStatus('Saving…'); clearTimeout(S.saveTimer); S.saveTimer = setTimeout(saveNow, 600); }
 	window.addEventListener('beforeunload', () => { if (S.saveTimer) saveNow(); });

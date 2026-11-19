@@ -109,6 +109,14 @@ js/quiz-builder.js          the Quiz Builder app
   randomized. Sorts: bank order (drag), recently changed, difficulty, objective, unit, type, title.
 - Text markup: `**bold**`, `*italic*`, `x^2^`, `v~0~`, `` `code` ``, LaTeX in `\( … \)` (preview uses KaTeX from
   cdnjs; Canvas renders it itself). One image per question (pasted or chosen; big ones are scaled to 1000 px).
+- Pictures are stored once, outside the save (2026-11-19): `shared/gate.js` keeps each picture in IndexedDB
+  (`happytheta-qassets`, key = an id made from its content) and the bank/quiz save holds `image: {name, mime, alt,
+  ref}`. `HT.files` packs on write and fills `image.data` back in on read, so the pages see whole pictures.
+  A new picture stays inline until IndexedDB has it, then the save is re-written with the reference. Older saves
+  (in every account/guest space on the computer) are converted when a Teacher Tools page opens. Signed-in
+  teachers' pictures are copied to the server (`/api/assets`) and fetched on other computers. Downloaded bank and
+  quiz files, backups and Canvas exports carry the pictures inline. Same picture in several questions/banks →
+  stored once.
 - Randomizing: variables with min/max/step, worked values (`a = (v1 - v0)/t`), an optional condition
   (`v1 > v0 + 2`), re-rolled up to 300 times. Text templates: `{v0}`, `{v0:3s}` (sig figs), `{v0:2f}` (decimals),
   `{=F/m}` (inline expression). Numerical answers can be a formula. Functions: sqrt, sin/cos/tan (radians),

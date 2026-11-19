@@ -117,6 +117,8 @@ api.use('/qlibrary', require('./qlibrary'));
 api.use('/canvas', require('./canvas'));
 // Signed-in users' saved work (synced from the browser; its own larger body limit)
 api.use('/docs', require('./docs'));
+// Pictures in Theta Questions banks / Quiz Builder quizzes, stored once by content id (teachers only)
+api.use('/assets', require('./assets'));
 api.use(express.json({ limit: '16kb' }));
 
 /* Create an account, or (for an email not yet confirmed) send a fresh confirmation link.

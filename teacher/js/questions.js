@@ -17,17 +17,26 @@
 
 	/* ======================== storage ======================== */
 	const banks = () => { try { return HT.files.list(TOOL); } catch { return []; } };
-	function saveNow() {
+	const pics = () => (window.HTGate && HTGate.pictures) || null;
+	function saveNow(retried) {
 		clearTimeout(S.saveTimer);
 		S.saveTimer = null;
 		if (!S.bank) return;
 		try {
 			S.env = HT.files.wrap(TOOL, { title: S.env.meta.title, data: S.bank }, S.env);
 			HT.files.write(S.env);
-			const kb = Math.round(JSON.stringify(S.env).length / 1024);
-			setStatus(kb > 2500 ? `Saved · ${(kb / 1024).toFixed(1)} MB — large (images); the server keeps banks up to 3 MB` : 'Saved', kb > 2500);
+			// what's actually stored: pictures live in IndexedDB, the save only refers to them
+			const kb = Math.round((ls.get(HT.files.key(TOOL, S.env.id)) || '').length / 1024);
+			setStatus(kb > 2500 ? `Saved · ${(kb / 1024).toFixed(1)} MB — large; the server keeps banks up to 3 MB` : 'Saved', kb > 2500);
 		} catch (e) {
-			setStatus(/quota|exceed/i.test(String(e)) ? 'Not saved: this browser’s storage is full. Remove images or delete old work.' : 'Not saved: ' + e.message, true);
+			const full = /quota|exceed/i.test(String(e));
+			// New pictures stay inside the save until IndexedDB has them; wait for that and try once more.
+			if (full && !retried && pics() && pics().busy()) {
+				setStatus('Saving pictures…');
+				pics().flush().then(() => saveNow(true));
+				return;
+			}
+			setStatus(full ? 'Not saved: this browser’s storage is full. Delete banks or quizzes you no longer need.' : 'Not saved: ' + e.message, true);
 		}
 	}
 	function touch(q) {
@@ -370,7 +379,7 @@
 		const imgBox = h('div', { class: 'qb-img' });
 		const drawImg = () => {
 			U.fill(imgBox, 
-				q.image ? h('div', { class: 'qb-img-has' }, h('img', { src: q.image.data, alt: '' }), h('div', { class: 'qb-col' }, inp(() => q.image.alt, (v) => (q.image.alt = v), { placeholder: 'Alt text (describe the picture for screen readers)' }), h('div', { class: 'qb-row' }, h('span', { class: 'qb-hint', text: `${q.image.name} · ${Math.round(q.image.data.length * 0.75 / 1024)} KB` }), U.btn('Replace', pickImg, 'sm'), U.btn('Remove', () => { q.image = null; changed(); drawImg(); }, 'sm danger')))) : U.btn('Add image', pickImg, 'sm', 'img')
+				q.image ? h('div', { class: 'qb-img-has' }, q.image.data ? h('img', { src: q.image.data, alt: '' }) : h('span', { class: 'qb-hint', text: 'Picture not on this computer yet' }), h('div', { class: 'qb-col' }, inp(() => q.image.alt, (v) => (q.image.alt = v), { placeholder: 'Alt text (describe the picture for screen readers)' }), h('div', { class: 'qb-row' }, h('span', { class: 'qb-hint', text: `${q.image.name} · ${Math.round(q.image.data.length * 0.75 / 1024)} KB` }), U.btn('Replace', pickImg, 'sm'), U.btn('Remove', () => { q.image = null; changed(); drawImg(); }, 'sm danger')))) : U.btn('Add image', pickImg, 'sm', 'img')
 			);
 		};
 		const pickImg = async () => {

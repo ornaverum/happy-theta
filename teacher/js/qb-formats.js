@@ -317,6 +317,7 @@
 		const ctx = {
 			next: 1,
 			addImage(img) {
+				if (!img.data) return ''; // picture missing on this computer (QB.check reports it)
 				if (!images.has(img.data)) {
 					const ext = MIME_EXT[img.mime] || (img.name.split('.').pop() || 'png').toLowerCase();
 					let base = QF.slug(String(img.name).replace(/\.[^.]+$/, ''), 'image');

@@ -286,7 +286,7 @@
 	U.preview = function (q, inst, { key = true } = {}) {
 		const out = h('div', { class: 'qb-preview' });
 		out.append(U.rich(inst.stem, 'qb-stem'));
-		if (q.image) out.append(h('img', { class: 'qb-qimg', src: q.image.data, alt: q.image.alt || '' }));
+		if (q.image) out.append(q.image.data ? h('img', { class: 'qb-qimg', src: q.image.data, alt: q.image.alt || '' }) : h('p', { class: 'qb-hint', text: '[Picture not on this computer yet]' }));
 		if (q.type === 'mc' || q.type === 'ma') {
 			out.append(h('ul', { class: 'qb-pv-choices ' + q.type }, inst.choices.filter((c) => String(c.text).trim()).map((c) => h('li', { class: key && c.correct ? 'right' : '' }, h('span', { class: 'mark' }, q.type === 'mc' ? '○' : '☐'), U.rich(c.text, '', false), key && c.feedback ? h('em', { class: 'qb-hint', text: ' — ' + c.feedback }) : null))));
 		} else if (q.type === 'num') {

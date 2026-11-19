@@ -698,6 +698,15 @@ HT.files = {
 	/* ---- localStorage (every call can throw: private mode, quota, blocked storage) ---- */
 	key: (tool, id) => STORE_PREFIX + tool + ':' + id,
 
+	/* Optional per-tool packing (shared/gate.js sets one for qbank/qquiz): pack.replacer is a JSON.stringify
+	   replacer used when saving (pictures → references), pack.unpack(file) fills them back in on reading,
+	   pack.written(file) is told about every save. Tools always see the unpacked file. */
+	packers: {},
+	unpack(f) {
+		const p = f && HT.files.packers[f.tool];
+		return p && p.unpack ? p.unpack(f) : f;
+	},
+
 	list(tool) {
 		const out = [];
 		const pre = STORE_PREFIX + tool + ':';
@@ -706,7 +715,7 @@ HT.files = {
 			if (!k || !k.startsWith(pre)) continue;
 			try {
 				const f = HT.files.parse(localStorage.getItem(k), tool);
-				out.push(f);
+				out.push(HT.files.unpack(f));
 			} catch (err) {
 				console.warn('Skipping unreadable save', k, err);
 			}
@@ -716,12 +725,15 @@ HT.files = {
 
 	read(tool, id) {
 		const raw = localStorage.getItem(HT.files.key(tool, id));
-		return raw ? HT.files.parse(raw, tool) : null;
+		return raw ? HT.files.unpack(HT.files.parse(raw, tool)) : null;
 	},
 
 	// window.HTSync (shared/gate.js) copies a signed-in user's saves to the server.
 	write(file) {
-		localStorage.setItem(HT.files.key(file.tool, file.id), JSON.stringify(file));
+		const p = HT.files.packers[file.tool];
+		const text = p ? JSON.stringify(file, p.replacer) : JSON.stringify(file);
+		if (p && p.written) p.written(file);
+		localStorage.setItem(HT.files.key(file.tool, file.id), text);
 		if (window.HTSync) window.HTSync.changed(file.tool, file.id);
 	},
 

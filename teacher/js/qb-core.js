@@ -22,7 +22,7 @@
 	const G = typeof window !== 'undefined' ? window : globalThis;
 	const HT = (G.HT = G.HT || {});
 	const QB = {};
-	HT.QB_VERSION = '2026-11-19a'; // cache-buster for files loaded on demand (framework seeds)
+	HT.QB_VERSION = '2026-11-19b'; // cache-buster for files loaded on demand (framework seeds)
 
 	QB.TYPES = { mc: 'Multiple choice', ma: 'Multiple answer', num: 'Numerical', match: 'Matching' };
 	QB.TYPE_SHORT = { mc: 'MC', ma: 'MA', num: 'NUM', match: 'MATCH' };
@@ -345,7 +345,7 @@
 		q.id = typeof r.id === 'string' && /^[\w-]{1,64}$/.test(r.id) ? r.id : q.id;
 		q.title = str(r.title, 200);
 		q.stem = str(r.stem);
-		q.image = r.image && typeof r.image.data === 'string' && /^data:image\//.test(r.image.data) ? { name: str(r.image.name, 120) || 'image', mime: str(r.image.mime, 60) || r.image.data.slice(5, r.image.data.indexOf(';')), data: r.image.data, alt: str(r.image.alt, 300) } : null;
+		q.image = QB.normImage(r.image);
 		q.points = num(r.points, 1);
 		if (type === 'mc' || type === 'ma') {
 			q.choices = (Array.isArray(r.choices) ? r.choices : []).map((c) => ({ id: typeof c.id === 'string' ? c.id : rid('c'), text: str(c.text, 4000), correct: !!c.correct, feedback: str(c.feedback, 4000) }));
@@ -388,6 +388,20 @@
 		if (type === 'mc' && !out.choices.some((c) => c.correct) && out.choices[0]) out.choices[0].correct = true;
 		return out;
 	};
+
+	/* A picture: {name, mime, data: 'data:image/…', alt}. Saves keep only a reference ({…, ref}, see
+	   shared/gate.js) and the data is filled back in from this computer's store; if it isn't here yet the
+	   picture keeps its ref and data is ''. */
+	QB.normImage = function (im) {
+		if (!im || typeof im !== 'object') return null;
+		const has = typeof im.data === 'string' && /^data:image\//.test(im.data);
+		const ref = typeof im.ref === 'string' && /^i[0-9a-z]{28}$/.test(im.ref) ? im.ref : '';
+		if (!has && !ref) return null;
+		const out = { name: str(im.name, 120) || 'image', mime: str(im.mime, 60) || (has ? im.data.slice(5, im.data.indexOf(';')) : 'image/png'), data: has ? im.data : '', alt: str(im.alt, 300) };
+		if (!has) out.ref = ref;
+		return out;
+	};
+	QB.imageMissing = (q) => !!(q.image && !q.image.data);
 
 	QB.copy = function (q, keepId) {
 		const c = QB.normalize(JSON.parse(JSON.stringify(q)));
@@ -434,6 +448,7 @@
 		const err = (msg) => out.push({ level: 'error', msg });
 		const warn = (msg) => out.push({ level: 'warn', msg });
 		if (!String(q.stem || '').trim()) err('The question has no text.');
+		if (QB.imageMissing(q)) err('Its picture hasn’t reached this computer yet (open it signed in and online, or re-add the picture).');
 		const names = new Set();
 		for (const v of q.vars || []) {
 			if (!v.name) { err('A variable has no name.'); continue; }
@@ -519,7 +534,7 @@
 
 	/* Content signature: stays the same when only tags/ids/dates change. */
 	QB.sig = function (q) {
-		const pick = { type: q.type, title: q.title, stem: q.stem, img: q.image ? q.image.data.length + q.image.data.slice(-40) : '', choices: (q.choices || []).map((c) => [c.text, c.correct, c.feedback]), answer: q.type === 'num' ? q.answer : null, pairs: (q.pairs || []).map((p) => [p.left, p.right]), d: q.distractors, vars: q.vars, calcs: q.calcs, k: q.constraint, f: q.feedback, s: q.solution, points: q.points, tags: q.tags };
+		const pick = { type: q.type, title: q.title, stem: q.stem, img: q.image ? (q.image.data ? q.image.data.length + q.image.data.slice(-40) : 'ref:' + q.image.ref) : '', choices: (q.choices || []).map((c) => [c.text, c.correct, c.feedback]), answer: q.type === 'num' ? q.answer : null, pairs: (q.pairs || []).map((p) => [p.left, p.right]), d: q.distractors, vars: q.vars, calcs: q.calcs, k: q.constraint, f: q.feedback, s: q.solution, points: q.points, tags: q.tags };
 		const s = JSON.stringify(pick);
 		let h1 = 0x811c9dc5, h2 = 0;
 		for (let i = 0; i < s.length; i++) {

@@ -774,6 +774,342 @@
 		return entries.length;
 	}
 
+	/* ---------------- pictures in Theta Questions banks and Quiz Builder quizzes ---------------- */
+	// localStorage holds only ~5 MB per site, and banks used to carry every picture inside the save. Now a
+	// picture is kept once in IndexedDB ("happytheta-qassets", key = an id made from its content, picId) and
+	// the save keeps {name, mime, alt, ref}. For signed-in teachers the pictures are also copied to the server
+	// (/api/assets, server/assets.js) so another computer can fetch them. HT.files packs on write and fills the
+	// pictures back in on read, so the tools still see image.data. Downloaded bank/quiz files and backups carry
+	// the pictures inline. A picture stays inline in a save until IndexedDB has it, then the save is re-packed.
+	const QA_TOOLS = ['qbank', 'qquiz'];
+	const QA_KEY = /^(?:happytheta:save:|htstash:.+?:save:)(qbank|qquiz):(.+)$/;
+	const QA_ID = /^i[0-9a-z]{28}$/;
+	const QA = {
+		cache: new Map(), // id → {id, mime, data, t}
+		byData: new Map(), // data: URL → id
+		stored: new Set(), // ids safely in IndexedDB
+		saving: new Map(), // id → promise of the IndexedDB write
+		waiting: new Map(), // 'tool:id' → last file written with a picture still inline
+		inlineNow: false,
+		ok: false, // IndexedDB works (if not, pictures simply stay inside the saves, as before)
+		server: null, // Set of ids the server has (signed-in teacher), or null
+		up: [],
+		upTimer: null,
+		ready: null,
+		db: null
+	};
+
+	/* cyrb128 over the data: URL → "i" + 4 × 7 base-36 digits. Must match picId in server/assets.js. */
+	function picId(s) {
+		let h1 = 1779033703, h2 = 3144134277, h3 = 1013904242, h4 = 2773480762;
+		for (let i = 0; i < s.length; i++) {
+			const k = s.charCodeAt(i);
+			h1 = h2 ^ Math.imul(h1 ^ k, 597399067);
+			h2 = h3 ^ Math.imul(h2 ^ k, 2869860233);
+			h3 = h4 ^ Math.imul(h3 ^ k, 951274213);
+			h4 = h1 ^ Math.imul(h4 ^ k, 2716044179);
+		}
+		h1 = Math.imul(h3 ^ (h1 >>> 18), 597399067);
+		h2 = Math.imul(h4 ^ (h2 >>> 22), 2869860233);
+		h3 = Math.imul(h1 ^ (h3 >>> 17), 951274213);
+		h4 = Math.imul(h2 ^ (h4 >>> 19), 2716044179);
+		h1 ^= h2 ^ h3 ^ h4;
+		h2 ^= h1;
+		h3 ^= h1;
+		h4 ^= h1;
+		return 'i' + [h1, h2, h3, h4].map((x) => (x >>> 0).toString(36).padStart(7, '0')).join('');
+	}
+	const isPic = (s) => typeof s === 'string' && /^data:image\//.test(s);
+	function qaIdOf(data) {
+		let id = QA.byData.get(data);
+		if (!id) {
+			id = picId(data);
+			QA.byData.set(data, id);
+		}
+		return id;
+	}
+	function qaRemember(rec) {
+		QA.cache.set(rec.id, rec);
+		QA.byData.set(rec.data, rec.id);
+	}
+	/* Call fn(imageObject, holder, key) for every picture in a save's data. */
+	function qaEach(o, fn, depth = 0) {
+		if (!o || typeof o !== 'object' || depth > 8) return;
+		if (Array.isArray(o)) return o.forEach((x) => qaEach(x, fn, depth + 1));
+		for (const k of Object.keys(o)) {
+			const v = o[k];
+			if (k === 'image' && v && typeof v === 'object' && !Array.isArray(v)) fn(v, o, k);
+			else if (v && typeof v === 'object') qaEach(v, fn, depth + 1);
+		}
+	}
+
+	function qaDb() {
+		if (QA.db) return QA.db;
+		return (QA.db = new Promise((res, rej) => {
+			if (!('indexedDB' in window)) return rej(new Error('no idb'));
+			let r;
+			try {
+				r = indexedDB.open('happytheta-qassets', 1);
+			} catch (e) {
+				return rej(e);
+			}
+			r.onupgradeneeded = () => r.result.createObjectStore('assets', { keyPath: 'id' });
+			r.onsuccess = () => res(r.result);
+			r.onerror = () => rej(r.error);
+			r.onblocked = () => rej(new Error('blocked'));
+		}));
+	}
+	async function qaTx(mode, fn) {
+		const db = await qaDb();
+		return new Promise((res, rej) => {
+			const t = db.transaction('assets', mode);
+			const out = fn(t.objectStore('assets'));
+			t.oncomplete = () => res(out);
+			t.onerror = () => rej(t.error);
+			t.onabort = () => rej(t.error || new Error('aborted'));
+		});
+	}
+	async function qaPutMany(recs) {
+		if (!recs.length) return;
+		await qaTx('readwrite', (s) => recs.forEach((r) => s.put(r)));
+		for (const r of recs) QA.stored.add(r.id);
+	}
+
+	/* Keep a picture in IndexedDB; once it is there, re-save the saves that still had it inline. */
+	function qaSave(id) {
+		if (QA.stored.has(id)) return Promise.resolve();
+		if (QA.saving.has(id)) return QA.saving.get(id);
+		const rec = QA.cache.get(id);
+		const p = qaPutMany([rec])
+			.then(() => {
+				QA.saving.delete(id);
+				qaQueueUpload(id);
+				qaRepackSoon();
+			})
+			.catch((err) => {
+				QA.saving.delete(id);
+				console.warn('picture not stored', err);
+			});
+		QA.saving.set(id, p);
+		return p;
+	}
+	let repackTimer = null;
+	function qaRepackSoon() {
+		clearTimeout(repackTimer);
+		repackTimer = setTimeout(qaRepack, 50);
+	}
+	function qaRepack() {
+		if (QA.saving.size) return; // the last write to finish calls this again
+		for (const [k, file] of [...QA.waiting]) {
+			QA.waiting.delete(k);
+			try {
+				window.HT.files.write(file);
+			} catch (err) {
+				console.warn('re-saving without inline pictures failed', err);
+			}
+		}
+	}
+
+	const qaPacker = {
+		replacer(key, v) {
+			if (key !== 'image' || !v || typeof v !== 'object' || Array.isArray(v)) return v;
+			if (isPic(v.data)) {
+				if (!QA.ok) return v;
+				const id = qaIdOf(v.data);
+				if (!QA.cache.has(id)) qaRemember({ id, mime: v.data.slice(5, v.data.indexOf(';')), data: v.data, t: Date.now() });
+				if (!QA.stored.has(id)) {
+					qaSave(id);
+					QA.inlineNow = true;
+					return v; // stays inside the save until IndexedDB has it
+				}
+				return { name: v.name, mime: v.mime, alt: v.alt, ref: id };
+			}
+			if (typeof v.ref === 'string') return { name: v.name, mime: v.mime, alt: v.alt, ref: v.ref };
+			return v;
+		},
+		written(file) {
+			const k = file.tool + ':' + file.id;
+			if (QA.inlineNow) QA.waiting.set(k, file);
+			else QA.waiting.delete(k);
+			QA.inlineNow = false;
+		},
+		unpack(file) {
+			qaEach(file.data, (img) => {
+				if (!isPic(img.data) && typeof img.ref === 'string') {
+					const rec = QA.cache.get(img.ref);
+					if (rec) img.data = rec.data;
+				}
+			});
+			return file;
+		}
+	};
+	if (window.HT && window.HT.files && window.HT.files.packers) for (const t of QA_TOOLS) window.HT.files.packers[t] = qaPacker;
+
+	/* Every picture id used by qbank/qquiz saves on this computer (all = also other spaces' stashed saves). */
+	function qaUsed(all) {
+		const used = new Set();
+		for (const k of ls.keys(all ? '' : SAVE_PREFIX)) {
+			if (!QA_KEY.test(k)) continue;
+			const raw = ls.get(k);
+			if (!raw || raw.indexOf('"ref"') < 0) continue;
+			const f = json(raw, null);
+			if (f) qaEach(f.data, (img) => typeof img.ref === 'string' && used.add(img.ref));
+		}
+		return used;
+	}
+
+	/* Move the pictures out of saves made before this (in every space on this computer). */
+	async function qaMigrate() {
+		for (const k of ls.keys('')) {
+			const m = QA_KEY.exec(k);
+			if (!m) continue;
+			const raw = ls.get(k);
+			if (!raw || raw.indexOf('"data:image/') < 0) continue;
+			const f = json(raw, null);
+			if (!f || !f.data) continue;
+			const recs = [];
+			qaEach(f.data, (img) => {
+				if (!isPic(img.data)) return;
+				const id = qaIdOf(img.data);
+				if (!QA.cache.has(id)) qaRemember({ id, mime: img.data.slice(5, img.data.indexOf(';')), data: img.data, t: Date.now() });
+				if (!QA.stored.has(id) && !recs.some((r) => r.id === id)) recs.push(QA.cache.get(id));
+			});
+			await qaPutMany(recs);
+			const text = JSON.stringify(f, qaPacker.replacer);
+			QA.inlineNow = false;
+			if (text !== raw && ls.set(k, text) && k.startsWith(SAVE_PREFIX)) mark(m[1], m[2], 'put');
+		}
+	}
+
+	/* Signed-in teacher: fetch the pictures this computer is missing; send up the ones the server lacks. */
+	const qaSignedIn = () => Gate.ctx && Gate.ctx.kind === 'user' && !Gate.ctx.offline && Gate.ctx.user && Gate.ctx.user.role === 'teacher';
+	async function qaServerSync() {
+		let r;
+		try {
+			r = await api('assets', { timeout: 15000 });
+		} catch {
+			return;
+		}
+		QA.server = new Set(r.ids || []);
+		const used = qaUsed(false);
+		let want = [...used].filter((id) => !QA.cache.has(id) && QA.server.has(id));
+		while (want.length) {
+			let got;
+			try {
+				got = (await api('assets/fetch', { method: 'POST', body: { ids: want.slice(0, 200) }, timeout: 60000 })).assets || [];
+			} catch {
+				break;
+			}
+			if (!got.length) break;
+			const recs = got.filter((a) => a && QA_ID.test(a.id) && isPic(a.data)).map((a) => ({ id: a.id, mime: a.mime, data: a.data, t: Date.now() }));
+			recs.forEach(qaRemember);
+			try {
+				await qaPutMany(recs);
+			} catch {}
+			const done = new Set(got.map((a) => a.id));
+			want = want.filter((id) => !done.has(id));
+		}
+		for (const id of used) if (QA.cache.has(id)) qaQueueUpload(id);
+	}
+	function qaQueueUpload(id) {
+		if (!QA.server || QA.server.has(id) || QA.up.includes(id) || !qaSignedIn()) return;
+		QA.up.push(id);
+		clearTimeout(QA.upTimer);
+		QA.upTimer = setTimeout(() => queue(qaUpload), 1500);
+	}
+	async function qaUpload() {
+		while (QA.up.length) {
+			const batch = [];
+			let bytes = 0;
+			while (QA.up.length && (batch.length === 0 || bytes + (QA.cache.get(QA.up[0])?.data.length || 0) < 4e6)) {
+				const rec = QA.cache.get(QA.up.shift());
+				if (!rec) continue;
+				batch.push({ id: rec.id, data: rec.data });
+				bytes += rec.data.length;
+			}
+			if (!batch.length) continue;
+			try {
+				const r = await api('assets/put', { method: 'POST', body: { assets: batch }, timeout: 120000 });
+				for (const id of r.stored || []) QA.server.add(id);
+				if (r.errors && r.errors.length) console.warn('pictures not stored on the server', r.errors);
+			} catch (err) {
+				console.warn('picture upload', err);
+				return; // tried again on the next page load
+			}
+		}
+	}
+
+	/* Forget pictures no save on this computer uses any more (e.g. after signing out or deleting a bank). */
+	async function qaCollect() {
+		const used = qaUsed(true);
+		const old = Date.now() - 3600 * 1000;
+		const gone = [...QA.cache.values()].filter((r) => !used.has(r.id) && (r.t || 0) < old).map((r) => r.id);
+		if (!gone.length) return;
+		await qaTx('readwrite', (s) => gone.forEach((id) => s.delete(id)));
+		for (const id of gone) {
+			const rec = QA.cache.get(id);
+			QA.cache.delete(id);
+			QA.stored.delete(id);
+			if (rec) QA.byData.delete(rec.data);
+		}
+	}
+
+	/* Load the pictures into memory (before a teacher tool page runs), tidy up, sync with the server. */
+	function qaReady() {
+		if (QA.ready) return QA.ready;
+		return (QA.ready = (async () => {
+			try {
+				const all = await qaTx('readonly', (s) => {
+					const out = [];
+					s.openCursor().onsuccess = (e) => {
+						const c = e.target.result;
+						if (!c) return;
+						out.push(c.value);
+						c.continue();
+					};
+					return out;
+				});
+				for (const r of all) if (r && QA_ID.test(r.id) && isPic(r.data)) (qaRemember(r), QA.stored.add(r.id));
+				QA.ok = true;
+			} catch (err) {
+				console.warn('IndexedDB unavailable; pictures stay inside the saves', err);
+				return;
+			}
+			try {
+				await qaMigrate();
+				if (qaSignedIn()) await qaServerSync();
+				await qaCollect();
+			} catch (err) {
+				console.warn('pictures', err);
+			}
+		})());
+	}
+	/* Fill a raw save's pictures back in (for backups). */
+	async function qaInline(doc) {
+		await qaReady();
+		if (QA_TOOLS.includes(doc.tool)) qaPacker.unpack(doc);
+		return doc;
+	}
+	/* Store a save's inline pictures, then give its packed text (for importing backups). */
+	async function qaPackText(doc) {
+		await qaReady();
+		if (!QA.ok || !QA_TOOLS.includes(doc.tool)) return JSON.stringify(doc);
+		const recs = [];
+		qaEach(doc.data, (img) => {
+			if (!isPic(img.data)) return;
+			const id = qaIdOf(img.data);
+			if (!QA.cache.has(id)) qaRemember({ id, mime: img.data.slice(5, img.data.indexOf(';')), data: img.data, t: Date.now() });
+			if (!QA.stored.has(id) && !recs.some((r) => r.id === id)) recs.push(QA.cache.get(id));
+		});
+		try {
+			await qaPutMany(recs);
+		} catch {}
+		recs.forEach((r) => qaQueueUpload(r.id));
+		const text = JSON.stringify(doc, qaPacker.replacer);
+		QA.inlineNow = false;
+		return text;
+	}
+
 	/* Accepts a backup file, or any single tool file (name.fbd.json, name.mindmap.json …). */
 	function readBackup(text) {
 		const f = json(text, undefined);
@@ -931,7 +1267,7 @@
 			for (const [, { tool, id }] of localSaves()) {
 				const f = json(ls.get(saveKey(tool, id)), null);
 				if (!f || !f.data) continue;
-				docs.push(f);
+				docs.push(QA_TOOLS.includes(tool) ? await qaInline(f) : f); // question pictures go inside the file
 				if (ASSET_DB[tool]) {
 					const a = await readAssets(tool, id);
 					if (Object.keys(a).length) assets[tool + ':' + id] = a;
@@ -968,14 +1304,19 @@
 						notAllowed++;
 						continue;
 					}
-					const text = JSON.stringify(doc);
+					// question pictures go to IndexedDB, the save keeps references (see qaPackText)
+					const pack = () => (QA_TOOLS.includes(doc.tool) ? qaPackText(doc) : JSON.stringify(doc));
+					let text = await pack();
 					const existing = ls.get(saveKey(doc.tool, doc.id));
 					if (existing === text) {
 						same++;
 						continue;
 					}
-					if (existing) doc.id = newId();
-					if (!ls.set(saveKey(doc.tool, doc.id), JSON.stringify(doc))) {
+					if (existing) {
+						doc.id = newId();
+						text = await pack();
+					}
+					if (!ls.set(saveKey(doc.tool, doc.id), text)) {
 						full = true;
 						continue;
 					}
@@ -1064,6 +1405,25 @@
 				);
 			}
 			return bar;
+		}
+	};
+	// Teacher pages: load the question pictures (and move them out of old saves) before the tools run.
+	const startGate = Gate.start;
+	Gate.start = async function (opts = {}) {
+		const ctx = await startGate.call(Gate, opts);
+		if (opts.section === 'teacher') await qaReady().catch((err) => console.warn('pictures', err));
+		return ctx;
+	};
+	/* Theta Questions / Quiz Builder: a save whose new pictures are still on their way into IndexedDB. */
+	Gate.pictures = {
+		ready: () => qaReady(),
+		busy: () => QA.saving.size > 0 || QA.waiting.size > 0,
+		async flush() {
+			while (QA.saving.size) await Promise.all([...QA.saving.values()]);
+			qaRepack();
+		},
+		get enabled() {
+			return QA.ok;
 		}
 	};
 	window.HTGate = Gate;
